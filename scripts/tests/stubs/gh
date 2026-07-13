@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Fake `gh` for integration-testing find-broken-prs.sh / pr-ci-detail.sh
+# without hitting the network. Dispatches on argv shape.
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FIXTURES="$DIR/../fixtures"
+
+if [[ "$1" == "search" && "$2" == "prs" ]]; then
+  # Record invocation args so tests can assert on which flags were passed
+  # (e.g. --repo, --assignee) without a real gh call.
+  if [[ -n "${GH_STUB_SEARCH_ARGS_FILE:-}" ]]; then
+    printf '%s\n' "$*" > "$GH_STUB_SEARCH_ARGS_FILE"
+  fi
+  cat "$FIXTURES/search-prs-result.json"
+  exit 0
+fi
+
+if [[ "$1" == "pr" && "$2" == "view" ]]; then
+  number="$3"
+  case "$number" in
+    1) cat "$FIXTURES/status-check-rollup-failure.json" ;;
+    2) cat "$FIXTURES/status-check-rollup-success.json" ;;
+    3) cat "$FIXTURES/status-check-rollup-mixed.json" ;;
+    *) echo "[]" ;;
+  esac
+  exit 0
+fi
+
+echo "stub gh: unhandled args: $*" >&2
+exit 1

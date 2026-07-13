@@ -1,0 +1,4 @@
+[
+  {"name": "build", "conclusion": "SUCCESS", "detailsUrl": "https://example.com/1"},
+  {"name": "test", "conclusion": "FAILURE", "detailsUrl": "https://example.com/2"}
+]

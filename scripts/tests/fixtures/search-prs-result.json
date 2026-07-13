@@ -1,0 +1,12 @@
+[
+  {
+    "number": 1,
+    "url": "https://github.com/tomacheese/test-repo/pull/1",
+    "repository": {"nameWithOwner": "tomacheese/test-repo"}
+  },
+  {
+    "number": 2,
+    "url": "https://github.com/jaoafa/test-repo2/pull/2",
+    "repository": {"nameWithOwner": "jaoafa/test-repo2"}
+  }
+]
