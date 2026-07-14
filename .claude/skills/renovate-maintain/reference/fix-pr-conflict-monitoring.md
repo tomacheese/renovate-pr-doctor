@@ -18,15 +18,16 @@ in-flight liveness cron.
 
 ## Setting up the monitor
 
-As soon as the first fix PR is opened in a sweep (i.e. the moment
-`records/ledger.tsv` gets its first `fixed` row with a real `fix_pr_url` for
-that day's run), start a persistent background `Monitor` (not `CronCreate` —
+As soon as the first fix PR is opened in a sweep (i.e. the moment today's
+`records/ledger-YYYY-MM-DD.tsv` gets its first `fixed` row with a real
+`fix_pr_url`), start a persistent background `Monitor` (not `CronCreate` —
 this needs continuous polling, not a fixed-interval single check) that:
 
-- Polls every fix PR opened so far this sweep (`records/ledger.tsv` rows
-  for today's date with `status=fixed` and a non-empty `fix_pr_url`) on an
-  interval of a few minutes (`gh pr view <fix-pr-number> -R <owner/repo>
-  --json state,mergeable,mergeStateStatus`, e.g. every 300s — cheap enough
+- Polls every fix PR opened so far this sweep (today's
+  `records/ledger-YYYY-MM-DD.tsv` rows with `status=fixed` and a
+  non-empty `fix_pr_url`) on an interval of a few minutes (`gh pr view
+  <fix-pr-number> -R <owner/repo> --json state,mergeable,mergeStateStatus`,
+  e.g. every 300s — cheap enough
   for the sweep's typical scale, courteous of `gh` API rate limits at higher
   `--concurrency`). Do **not** pre-filter to `state: OPEN` only — a fix PR
   that has just transitioned to `MERGED`/`CLOSED` is itself a signal the
@@ -43,7 +44,7 @@ this needs continuous polling, not a fixed-interval single check) that:
   confirmed terminal, drop it from the conflict-tracking flagged set (it can
   no longer go stale) and from the set of PRs polled on subsequent loops —
   no further `gh pr view` calls are needed for it.
-- Re-scans the ledger's `fixed` rows on each poll (not just a fixed snapshot
+- Re-scans today's `records/ledger-YYYY-MM-DD.tsv` `fixed` rows on each poll (not just a fixed snapshot
   taken at monitor-start time) so fix PRs opened later in the sweep are
   picked up automatically without restarting the monitor.
 - Once every fix PR the ledger currently knows about for this sweep has
