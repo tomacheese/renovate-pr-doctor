@@ -111,9 +111,9 @@ applies — findings never split across bullets within one PR):
    CI failure (one combined PR, not two). `STATE.md`'s detail line notes
    this explicitly, e.g.: "dependency currency: `@book000/eslint-config`
    proposed 1.15.44, latest 1.15.51 (unexplained gap) — bumped to 1.15.51 in
-   fix PR." No ledger.tsv schema change; this is prose-only in `STATE.md`
-   (ledger.tsv's `fix_pr_url` column already points at the one fix PR either
-   way).
+   fix PR." No ledger schema change; this is prose-only in `STATE.md` (the
+   ledger row's `fix_pr_url` column, in today's `records/ledger-YYYY-MM-DD.tsv`,
+   already points at the one fix PR either way).
 3. **Otherwise (all packages `current` or `stale-explained`)**: proceed
    exactly as the base behavior already does — fix CI for the version(s)
    the Renovate PR currently proposes. Record which packages were checked
