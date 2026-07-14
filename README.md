@@ -54,7 +54,10 @@ about specific target repos and PRs).
   conversation memory).
 - `records/YYYY-MM-DD-run.md` — permanent record of what was done on a given
   run date.
-- `records/ledger.tsv` — permanent, machine-readable, append-only record of
-  every PR ever handled across all run dates (repo, PR number, root cause
-  signature, status, fix PR). What `/renovate-maintain` uses to avoid
-  redispatching and to bulk-classify known signatures.
+- `records/ledger-YYYY-MM-DD.tsv` — permanent, machine-readable,
+  append-only record of every PR handled on that run date (repo, PR
+  number, root cause signature, status, fix PR); one file per sweep
+  run-date, so no single file grows unbounded across the workflow's
+  lifetime. What `/renovate-maintain` uses to avoid redispatching and to
+  bulk-classify known signatures, queried across all dates with a
+  `records/ledger*.tsv` glob.
