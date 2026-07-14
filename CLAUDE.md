@@ -19,9 +19,13 @@ auto-merge due to failing CI, across a configurable set of GitHub orgs/users
   conversation memory is not trusted (auto-compact can wipe it). Do not let
   it grow unbounded — see `.claude/skills/renovate-maintain/SKILL.md`'s
   pruning rule.
-- **`records/ledger.tsv`**: the only permanent, machine-readable record of
-  every PR ever handled, across all runs. Never re-derive this from parsing
-  `records/*.md` prose — read the TSV directly.
+- **`records/ledger-YYYY-MM-DD.tsv`**: one per sweep run-date; together
+  they are the only permanent, machine-readable record of every PR ever
+  handled, across all runs. Never re-derive this from parsing
+  `records/*.md` prose — query the TSVs directly (`records/ledger*.tsv`, a
+  glob that also covers any legacy pre-rotation `records/ledger.tsv`),
+  always via targeted `grep`/`awk`, never by loading a whole file's
+  contents.
 - **`records/YYYY-MM-DD-run.md`**: permanent, human-readable record of what
   was done on a given run date.
 - **Same-repo serialization**: never run two sub-agents (Investigator,
