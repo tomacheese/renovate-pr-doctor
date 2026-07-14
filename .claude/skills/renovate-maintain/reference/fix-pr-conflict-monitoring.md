@@ -23,11 +23,10 @@ As soon as the first fix PR is opened in a sweep (i.e. the moment today's
 `fix_pr_url`), start a persistent background `Monitor` (not `CronCreate` —
 this needs continuous polling, not a fixed-interval single check) that:
 
-- Polls every fix PR opened so far this sweep (today's
-  `records/ledger-YYYY-MM-DD.tsv` rows with `status=fixed` and a
-  non-empty `fix_pr_url`) on an interval of a few minutes (`gh pr view
-  <fix-pr-number> -R <owner/repo> --json state,mergeable,mergeStateStatus`,
-  e.g. every 300s — cheap enough
+- Polls every fix PR opened so far this sweep (today's `records/ledger-
+  YYYY-MM-DD.tsv` rows with `status=fixed` and a non-empty `fix_pr_url`) on
+  an interval of a few minutes (`gh pr view <fix-pr-number> -R <owner/repo>
+  --json state,mergeable,mergeStateStatus`, e.g. every 300s — cheap enough
   for the sweep's typical scale, courteous of `gh` API rate limits at higher
   `--concurrency`). Do **not** pre-filter to `state: OPEN` only — a fix PR
   that has just transitioned to `MERGED`/`CLOSED` is itself a signal the
@@ -44,9 +43,10 @@ this needs continuous polling, not a fixed-interval single check) that:
   confirmed terminal, drop it from the conflict-tracking flagged set (it can
   no longer go stale) and from the set of PRs polled on subsequent loops —
   no further `gh pr view` calls are needed for it.
-- Re-scans today's `records/ledger-YYYY-MM-DD.tsv` `fixed` rows on each poll (not just a fixed snapshot
-  taken at monitor-start time) so fix PRs opened later in the sweep are
-  picked up automatically without restarting the monitor.
+- Re-scans today's `records/ledger-YYYY-MM-DD.tsv` `fixed` rows on each
+  poll (not just a fixed snapshot taken at monitor-start time) so fix PRs
+  opened later in the sweep are picked up automatically without
+  restarting the monitor.
 - Once every fix PR the ledger currently knows about for this sweep has
   reached a terminal state (i.e. a poll finds zero remaining `OPEN` fix
   PRs), emit a single summary line (e.g. `ALL FIX PRS TERMINAL: N merged,
