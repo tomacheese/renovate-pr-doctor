@@ -310,6 +310,22 @@ user RESET) to the user rather than silently recording it.
 
 ### 4. The refill loop — this is the core of the skill
 
+**The trigger is the `SendMessage` report, not a `STATE.md` checkpoint.** A
+checkpoint an in-flight sub-agent writes to its own `STATE.md` subsection
+(e.g. `escalated`, `fix-pr-opened-plus-escalated`) is that sub-agent's own
+internal progress bookkeeping; seeing it on disk *before* the sub-agent's
+`SendMessage` report has arrived in your conversation is normal and
+expected — not a stuck or stalled state, and not itself a signal to act.
+Never proactively ping an in-flight sub-agent for a status update just
+because its checkpoint moved: background completions are always delivered to
+you automatically (a `SendMessage` report or a `<task-notification>`), so
+simply continue other queue work (or wait) until one arrives — do not
+solicit it. When a report *does* arrive, act on it in the same turn; in
+particular, dispatching the sibling an escalation calls for (Arbiter on
+`NEEDS_ARBITER`, Executor on Arbiter `proceed`) is the orchestrator's own
+non-delegable responsibility, done immediately — never something to
+characterize as "waiting" on the escalating sub-agent.
+
 On every `SendMessage` report you receive (from any Investigator, Arbiter,
 or Executor), in order:
 

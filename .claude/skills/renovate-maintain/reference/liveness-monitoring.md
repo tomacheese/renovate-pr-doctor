@@ -24,6 +24,14 @@ the run would silently stall.
   may be repeated across several consecutive firings (e.g. 2-3 checks, ~30-45
   minutes) — a sub-agent that is merely slow (large repo, slow CI logs) will
   eventually respond and update `STATE.md` itself.
+- **A probe is only ever for a genuinely suspect (no-progress) sub-agent.**
+  Never send a status-check message to an in-flight sub-agent just because
+  its `STATE.md` checkpoint *advanced* (e.g. it reached `escalated` or
+  `fix-pr-opened-plus-escalated`) but you haven't yet received its
+  `SendMessage` report — that is progress, the opposite of a stall, and its
+  real completion notification will arrive on its own. Soliciting a report in
+  that case adds noise and risks interrupting a sub-agent still finishing its
+  own verification steps. See `SKILL.md`'s refill loop (Step 4) opening note.
 - **Only after repeated probes get no response** (the agent does not reply
   and its `STATE.md` checkpoint still hasn't moved) is it treated as
   genuinely dead. At that point, and without asking the user (consistent
