@@ -8,8 +8,9 @@ disable-model-invocation: true
 # Renovate Maintenance Status
 
 Read-only companion to `/renovate-maintain`. **Never dispatches a sub-agent,
-never writes to `STATE.md`/`records/`/`ledger.tsv`, never runs `find-broken-
-prs.sh`.** If you find yourself wanting to act on something this report
+never writes to `STATE.md`/`records/`/any `records/ledger*.tsv` file
+(rotated or legacy), never runs `find-broken-prs.sh`.** If you find yourself
+wanting to act on something this report
 surfaces (retry a dead sub-agent, dispatch an Arbiter for a stuck
 escalation), that's `/renovate-maintain --resume`'s job — stop and tell the
 user to run that instead.
@@ -30,10 +31,12 @@ user to run that instead.
 2. **STATE.md summary**: current `## Phase`, and a one-line-per-PR list of
    `## Targets and their state` checkpoints, split into terminal
    (`completed`/`skipped`/`blocked`) vs. non-terminal.
-3. **Ledger summary** (`records/ledger.tsv`): counts by `status`, and the
-   distinct `root_cause_signature` values seen so far with their counts —
-   this is the same view `/renovate-maintain` uses to decide what can be
-   bulk-skipped next run, so it doubles as a preview of that.
+3. **Ledger summary** (`records/ledger*.tsv` — all per-run-date files
+   combined, plus any legacy pre-rotation `records/ledger.tsv`): counts by
+   `status`, and the distinct `root_cause_signature` values seen so far
+   with their counts — this is the same view `/renovate-maintain` uses to
+   decide what can be bulk-skipped next run, so it doubles as a preview of
+   that.
 4. **Undispatched backlog**: if `--repo` is given, or if a recent discovery
    TSV exists (e.g. `/tmp/renovate-broken-prs.tsv`), report how many
    candidate PRs are neither in the ledger nor currently in flight — i.e.

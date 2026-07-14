@@ -34,8 +34,9 @@ prior session's persistent `Monitor` does **not** survive across sessions
 On `--resume`, regardless of whether the main `## Queue` had anything
 pending:
 
-- Re-arm a fresh conflict `Monitor` if `records/ledger.tsv` has any
-  `fixed` rows with a non-empty `fix_pr_url` still `state: OPEN` on
+- Re-arm a fresh conflict `Monitor` if `records/ledger*.tsv` (all
+  per-run-date files, plus any legacy pre-rotation `records/ledger.tsv`)
+  has any `fixed` rows with a non-empty `fix_pr_url` still `state: OPEN` on
   GitHub — the monitor's own polling loop will discover current
   `mergeable`/`mergeStateStatus` for all of them on its first pass, so you
   do not need to replay history to reconstruct which ones were already

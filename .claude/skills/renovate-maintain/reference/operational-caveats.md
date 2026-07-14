@@ -2,8 +2,9 @@
 
 - `CronCreate` liveness monitoring is session-scoped and best-effort — it
   does not survive the session ending, is capped at 7 days, and only fires
-  while idle. State on disk (`STATE.md`, `records/`, `ledger.tsv`, git
-  commits) is the only real durability guarantee, which is exactly what
+  while idle. State on disk (`STATE.md`, `records/` — including the
+  per-run-date `ledger-YYYY-MM-DD.tsv` files — and git commits) is the
+  only real durability guarantee, which is exactly what
   the `## Queue` section and `--resume` are for. Say this plainly in the
   end-of-sweep report rather than implying continuous monitoring.
 - `gh` API rate limits: watch for `gh` rate-limit errors from

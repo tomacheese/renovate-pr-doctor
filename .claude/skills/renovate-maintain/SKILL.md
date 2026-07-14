@@ -89,6 +89,44 @@ and `.claude/agents/investigator.md`) — this needs no extra step here,
 except handling the new `escalate-to-user` Arbiter verdict in the refill
 loop (step 4 below).
 
+### 0. Pre-work cleanup (always runs, `--resume` included)
+
+Before Discover/Resume, clean up state left over from previous sweeps —
+this runs every invocation regardless of `--resume`, since everything it
+touches is already confirmed terminal and therefore cannot affect
+`--resume`'s own non-terminal reconciliation (see `reference/resuming.md`).
+`/renovate-status` never runs this step (it stays read-only).
+
+1. **Stale `STATE.md` per-PR subsections**: for each `### owner/repo#pr-
+   number` subsection under `## Targets and their state`, check whether a
+   matching row (same repo + PR number) already exists in
+   `records/ledger*.tsv` (glob covers both the current per-run-date files
+   and any pre-rotation legacy `records/ledger.tsv` — see Step 2 below).
+   If a matching row exists, the PR is already terminal and this
+   subsection is dead weight left over from a session that ended before
+   the refill loop's own Terminal handling (`### 4`, step 2) could delete
+   it — delete the subsection now. Leave subsections with no matching
+   ledger row untouched (still non-terminal, needed by `--resume`).
+2. **Stale `## Phase` narrative**: if `## Queue` is already empty (no
+   `pending`, no `in-flight`) but `## Phase` still holds multi-paragraph
+   narrative about a finished sweep (i.e. Step 5's close-out compression
+   never ran, most likely because the session ended before reaching it),
+   compress it now using the same rule as Step 5: replace it with "Last
+   completed sweep: YYYY-MM-DD, see `records/YYYY-MM-DD-run.md`. Currently
+   idle." This is a safety net for Step 5, not a replacement for it — Step
+   5 still runs normally at the end of a sweep that completes cleanly.
+3. **Stale `scratchpad/renovate-fix-<repo>-<pr>` clones**: for each
+   directory matching `scratchpad/renovate-fix-*`, recover `repo`/`pr`
+   from the directory name and check `records/ledger*.tsv` for a matching
+   terminal row (`fixed`/`skipped`/`blocked`, regardless of whether a
+   `fixed` row's own fix PR has itself reached `MERGED`/`CLOSED` on
+   GitHub — this check only looks at the ledger's own status column, not
+   live GitHub state). If found, delete the clone directory
+   (`rm -rf scratchpad/renovate-fix-<repo>-<pr>`). If a conflict-fixer
+   later needs to work a `fixed` PR whose fix PR went stale, it clones
+   fresh — see `.claude/agents/conflict-fixer.md`. Clones with no matching
+   ledger row are left alone (still in progress).
+
 ### 1. Discover (skip if `--resume`)
 
 ```bash
@@ -103,22 +141,33 @@ See `reference/architecture.md`'s "Target definition" for exactly what counts (o
 
 ### 2. Classify against the ledger before queuing anything
 
-`records/ledger.tsv` (columns: `date  repo  pr_number  renovate_pr_url
-root_cause_signature  status  fix_pr_url`) is the durable, machine-readable
-memory of every PR this workflow has ever touched, across all runs — do not
-re-derive this from parsing `records/*.md` prose tables.
+`records/ledger-YYYY-MM-DD.tsv` — one file per sweep run-date, same
+`date  repo  pr_number  renovate_pr_url  root_cause_signature  status
+fix_pr_url` columns as before — is the durable, machine-readable memory of
+every PR this workflow has ever touched, across all runs. Today's sweep
+appends only to today's own `records/ledger-YYYY-MM-DD.tsv` (created fresh
+if this is the first sweep run today); never to a previous day's file.
+Query across all of history with a glob, `records/ledger*.tsv` (the
+unhyphenated pattern also matches any pre-rotation legacy
+`records/ledger.tsv` still on disk from before this rotation existed) —
+always via `grep`/`awk` targeted queries, never by loading every file's
+full contents with the `Read` tool. Do not re-derive this from parsing
+`records/*.md` prose tables.
 
 For each candidate PR from discovery:
 
-- **Already in the ledger for this exact repo+PR number** → drop it, don't
-  queue (already handled in a prior run; `/renovate-status` is where you'd
-  check whether it since went green/merged, not this skill).
+- **Already in the ledger for this exact repo+PR number** (`awk -F'\t' -v
+  r="$repo" -v p="$pr" '$2==r && $3==p' records/ledger*.tsv`) → drop it,
+  don't queue (already handled in a prior run; `/renovate-status` is where
+  you'd check whether it since went green/merged, not this skill).
 - **Not yet in the ledger, but its failing-check names/signature exactly
   match an existing `root_cause_signature` that is still `skipped`-for-a-
-  systemic reason** (e.g. `ts7-typescript-eslint-load-crash` — an
-  ecosystem-wide incompatibility, not a per-repo bug) → classify it
-  `skipped` automatically, with the same root-cause text, **without
-  queuing an Investigator at all**. Append a ledger row and a
+  systemic reason** (`awk -F'\t' '$6=="skipped" {print $5}' records/
+  ledger*.tsv | sort -u` for the known-signature set; e.g.
+  `ts7-typescript-eslint-load-crash` — an ecosystem-wide incompatibility,
+  not a per-repo bug) → classify it `skipped` automatically, with the same
+  root-cause text, **without queuing an Investigator at all**. Append a
+  row to today's `records/ledger-YYYY-MM-DD.tsv` and a
   `records/YYYY-MM-DD-run.md` row directly. This is the "bulk
   pre-classification" scale lever — intentionally fully automatic (no
   per-batch confirmation gate), since the underlying signature was already
@@ -153,8 +202,9 @@ this cron to matter more here — but it is still best-effort only (see
 "Operational caveats").
 
 Start the fix-PR conflict monitor (see `reference/fix-pr-conflict-monitoring.md`)
-as soon as the first fix PR is opened (the first `fixed` ledger
-row with a real `fix_pr_url` this sweep) — a persistent `Monitor` polling
+as soon as the first fix PR is opened (the first `fixed` row with a real
+`fix_pr_url` appended to today's `records/ledger-YYYY-MM-DD.tsv` this
+sweep) — a persistent `Monitor` polling
 every fix PR opened so far both for `mergeable`/`mergeStateStatus` drift
 *and* for reaching a terminal GitHub state (`MERGED`/`CLOSED`), if one isn't
 already running. This is a separate mechanism from the liveness cron above:
@@ -200,8 +250,11 @@ or Executor), in order:
 2. **Terminal handling** (frees the slot):
    - Arbiter `skip`, or any terminal `fixed`/`skipped`/`blocked` report →
      confirm the sub-agent's own `STATE.md` subsection/`records` row are
-     present and consistent, then append a ledger row (`root_cause_signature`
-     is a short kebab-case slug you assign from the reported root cause —
+     present and consistent, then append a row to today's
+     `records/ledger-YYYY-MM-DD.tsv` (create the file, TSV rows in the
+     same column order as before, if this is the first row appended
+     today) — `root_cause_signature` is a short kebab-case slug you assign
+     from the reported root cause —
      reuse an existing slug verbatim if this is the same underlying cause
      as a prior entry, so later PRs in *this same sweep* can also
      bulk-skip against it, not just future runs). Remove the slot from
