@@ -25,7 +25,12 @@ auto-merge due to failing CI, across a configurable set of GitHub orgs/users
   `records/*.md` prose — query the TSVs directly (`records/ledger*.tsv`, a
   glob that also covers any legacy pre-rotation `records/ledger.tsv`),
   always via targeted `grep`/`awk`, never by loading a whole file's
-  contents.
+  contents. A ledger row is not a permanent "never look at this PR again":
+  a matching row still gets a cheap staleness recheck (failing-check-name
+  drift, `fixed`-but-still-failing, or age-based re-verification) before
+  being dropped from a future sweep's discovery — see
+  `.claude/skills/renovate-maintain/SKILL.md`'s Step 2 and
+  `scripts/lib/ledger-staleness.sh`.
 - **`records/YYYY-MM-DD-run.md`**: permanent, human-readable record of what
   was done on a given run date.
 - **Same-repo serialization**: never run two sub-agents (Investigator,

@@ -69,11 +69,22 @@ concurrency: 5
 in-flight:
   - slot: investigator-owner-repo-123
     target: owner/repo#123
+    checks: build,lint
 pending (not yet dispatched, in order):
-  - owner/repo2#456
-  - owner/repo3#789
+  - owner/repo2#456 [checks: test]
+  - owner/repo3#789 [checks: build]
 done this sweep: 12 (fixed=5 skipped=6 blocked=1)
 ```
+
+`checks` is the comma-joined failing check names discovery already reported
+for that PR (column 4 of `scripts/find-broken-prs.sh`'s output) — carried
+through the queue so it's available, without any extra `gh` call, both when
+the completing sub-agent's ledger row gets written (Step 4, step 2) and if
+the same PR needs to be recompared for staleness on a future sweep (Step 2).
+For a candidate re-queued by Step 2's staleness recheck (see below), also
+note `recheck-of: <prior status>/<prior root_cause_signature>` next to it so
+the dispatched Investigator gets that context for free instead of starting
+from zero.
 
 Update it in the same commit as any per-PR `STATE.md` subsection change
 that moves a slot (dispatch, terminal completion, escalation handoff) — it
@@ -143,23 +154,88 @@ See `reference/architecture.md`'s "Target definition" for exactly what counts (o
 
 `records/ledger-YYYY-MM-DD.tsv` — one file per sweep run-date, same
 `date  repo  pr_number  renovate_pr_url  root_cause_signature  status
-fix_pr_url` columns as before — is the durable, machine-readable memory of
-every PR this workflow has ever touched, across all runs. Today's sweep
-appends only to today's own `records/ledger-YYYY-MM-DD.tsv` (created fresh
-if this is the first sweep run today); never to a previous day's file.
-Query across all of history with a glob, `records/ledger*.tsv` (the
-unhyphenated pattern also matches any pre-rotation legacy
-`records/ledger.tsv` still on disk from before this rotation existed) —
-always via `grep`/`awk` targeted queries, never by loading every file's
-full contents with the `Read` tool. Do not re-derive this from parsing
-`records/*.md` prose tables.
+fix_pr_url  failing_checks` columns as before, plus one new 8th column
+(`failing_checks` — comma-joined failing check names known at the time this
+row was written, from discovery's own output; see "Staleness recheck"
+below) — is the durable, machine-readable memory of every PR this workflow
+has ever touched, across all runs. Rows written before this column existed
+simply have it blank; treat a blank `failing_checks` on an old row as
+"unknown," never as "matches" (see below). Today's sweep appends only to
+today's own `records/ledger-YYYY-MM-DD.tsv` (created fresh if this is the
+first sweep run today); never to a previous day's file. Query across all of
+history with a glob, `records/ledger*.tsv` (the unhyphenated pattern also
+matches any pre-rotation legacy `records/ledger.tsv` still on disk from
+before this rotation existed) — always via `grep`/`awk` targeted queries,
+never by loading every file's full contents with the `Read` tool. Do not
+re-derive this from parsing `records/*.md` prose tables.
 
 For each candidate PR from discovery:
 
 - **Already in the ledger for this exact repo+PR number** (`awk -F'\t' -v
-  r="$repo" -v p="$pr" '$2==r && $3==p' records/ledger*.tsv`) → drop it,
-  don't queue (already handled in a prior run; `/renovate-status` is where
-  you'd check whether it since went green/merged, not this skill).
+  r="$repo" -v p="$pr" '$2==r && $3==p' records/ledger*.tsv` — if more than
+  one row matches, e.g. because it was re-queued and re-classified across
+  separate days, use only the most recent one, i.e. the last matching
+  line) → **do not drop it unconditionally.** A ledger row only means "a
+  human/sub-agent understood this PR's failure once" — not that the
+  understanding, or the PR's current failure, is still the same today. Run
+  the cheap staleness check below (`scripts/lib/ledger-staleness.sh`,
+  function `classify_ledger_match`) before deciding:
+
+  ```bash
+  source scripts/lib/ledger-staleness.sh
+  classify_ledger_match "$row_date" "$row_status" "$row_checks" "$current_checks" "$today"
+  ```
+
+  where `row_date`/`row_status`/`row_checks` are that matched row's columns
+  1/6/8, `current_checks` is this candidate's failing check names from
+  today's discovery output (already fetched — zero extra `gh` calls), and
+  `today` is today's date. It returns `drop` (same fast path as before —
+  don't queue) or `recheck:<reason>` (queue it like any new candidate,
+  tagging the queue entry `recheck-of: <row_status>/<root_cause_signature>`
+  from the matched row so the dispatched Investigator has that context for
+  free). The decision, and why:
+  - Same-day row → always `drop`: it was already looked at earlier this
+    same sweep/run-date: no benefit to re-checking again within the day.
+  - `fixed` row whose PR still shows up in discovery at all (still open,
+    still CI-failing) → **always** `recheck`, regardless of whether the
+    current failing check names match the row's. A fix that actually held
+    should have left the PR green or closed; recurrence under the *same*
+    check name can mean "the dependency moved further and outpaced the
+    fix" (confirmed today: `book000/github-changelog-translator#1647`) just
+    as easily as under a *different* check name — check-name comparison
+    can't tell those apart, so don't rely on it for `fixed` rows
+    specifically.
+  - Row has no recorded `failing_checks` (pre-migration) → `recheck`: no
+    baseline to compare against, so treat as unknown rather than assuming a
+    match. Self-healing — the row this sweep writes back carries the
+    column, restoring the fast path for that PR from the next sweep on.
+  - Current failing check names differ from the row's recorded ones →
+    `recheck`: this is probably a different failure than what's recorded,
+    not a recurrence of the understood one (confirmed today:
+    `tomacheese/collect-points#670`, ledgered `skipped` for an
+    eslint-config/unicorn signature, now failing on an unrelated `prettier`
+    reformat instead).
+  - Otherwise (same check names, `blocked`/`skipped` status) → `drop`
+    unless the row has aged past `$RENOVATE_MAINTAIN_LEDGER_STALE_DAYS`
+    (default 3), in which case `recheck` anyway. This exists because a
+    `blocked`/`skipped` verdict's own *reasoning* can be wrong in a way no
+    check-name comparison ever surfaces — e.g. a judgment call that a gate
+    is "transient, self-resolves" when the real cause is a structural
+    misconfiguration that never will (confirmed today: `book000/create-
+    ts#17`). Re-deriving that reasoning text isn't possible without parsing
+    `records/*.md` prose (out of bounds per this file's own rule above), so
+    this is a periodic time-based backstop instead: cheap (only the row's
+    own date column), and it bounds how long a wrong "it'll resolve itself"
+    call can go unchallenged.
+
+  This keeps the common case — a PR still failing for the exact
+  already-understood reason — on the original fast, zero-`gh`-call path
+  (most `blocked`/`skipped` recurrences hit `drop` immediately), while
+  surfacing the staleness modes above for a real Investigator instead of
+  silently trusting a possibly-outdated row. When `classify_ledger_match`
+  itself is unsure which bucket applies (e.g. ambiguous check-name
+  normalization), prefer `recheck` — same "when in doubt, investigate"
+  spirit as the bulk-skip path below.
 - **Not yet in the ledger, but its failing-check names/signature exactly
   match an existing `root_cause_signature` that is still `skipped`-for-a-
   systemic reason** (`awk -F'\t' '$6=="skipped" {print $5}' records/
@@ -167,7 +243,8 @@ For each candidate PR from discovery:
   `ts7-typescript-eslint-load-crash` — an ecosystem-wide incompatibility,
   not a per-repo bug) → classify it `skipped` automatically, with the same
   root-cause text, **without queuing an Investigator at all**. Append a
-  row to today's `records/ledger-YYYY-MM-DD.tsv` and a
+  row to today's `records/ledger-YYYY-MM-DD.tsv` (including this
+  candidate's own `failing_checks` column, from discovery) and a
   `records/YYYY-MM-DD-run.md` row directly. This is the "bulk
   pre-classification" scale lever — intentionally fully automatic (no
   per-batch confirmation gate), since the underlying signature was already
@@ -175,21 +252,30 @@ For each candidate PR from discovery:
   you are ever unsure whether a new PR's failure truly matches an existing
   signature (not just a superficially similar check name), do NOT bulk-skip
   it — queue a real Investigator instead. When in doubt, investigate.
-- **Everything else** (new signature, or a `fixed`/`escalated` signature
-  that needs real per-PR judgment) → goes into the queue.
+- **Everything else** (new signature; a `fixed`/`escalated` signature that
+  needs real per-PR judgment; or a `recheck:<reason>` result from the
+  staleness check above) → goes into the queue.
 
 ### 3. Build the queue and fill the pool
 
 Order the queue however you like (repo diversity first mirrors the pilot's
 selection rule, but it doesn't matter much since the whole queue will
-eventually be drained). Write it to `STATE.md`'s `## Queue` section (all
-pending, no in-flight yet), commit.
+eventually be drained). Carry each candidate's `checks` (its failing check
+names from discovery) into its queue entry as it's written — needed later
+both to write the `failing_checks` ledger column on completion (Step 4,
+step 2) and, on a future sweep, to re-run this same staleness check without
+an extra `gh` call. For a `recheck:<reason>` candidate, also carry
+`recheck-of: <prior status>/<prior root_cause_signature>` from the matched
+row. Write it to `STATE.md`'s `## Queue` section (all pending, no in-flight
+yet), commit.
 
 Then fill up to `--concurrency` slots: dispatch one Investigator sub-agent
 per PR taken off the front of the queue (`subagent_type: investigator`),
 background mode, per its own file's input contract (repo, PR number, URL,
-failing check names — nothing else) — **except** skip over any queued PR
-whose repo already has another sub-agent in flight (same-repo
+failing check names — nothing else) — plus, for a `recheck-of` entry, that
+prior status/root-cause text as extra context so it isn't investigating
+from a cold start — **except** skip over any queued PR whose repo already
+has another sub-agent in flight (same-repo
 serialization: never two Investigators racing to push competing fix
 branches into the same repo). Send all of a fill's `Agent` calls in a
 single message so they actually run concurrently. Move each dispatched PR
@@ -257,7 +343,12 @@ or Executor), in order:
      from the reported root cause —
      reuse an existing slug verbatim if this is the same underlying cause
      as a prior entry, so later PRs in *this same sweep* can also
-     bulk-skip against it, not just future runs). Remove the slot from
+     bulk-skip against it, not just future runs. Set the row's 8th column,
+     `failing_checks`, from this completing slot's own queue entry's
+     `checks` field (the failing check names discovery reported when this
+     PR was queued — not a fresh `gh` lookup) so a future sweep's Step 2 can
+     run its staleness check against this row without an extra `gh` call.
+     Remove the slot from
      `in-flight` in `STATE.md`, **and delete that PR's own `###
      owner/repo#pr-number` subsection from `STATE.md`'s `## Targets and
      their state` entirely** — the ledger row and `records/` row just
