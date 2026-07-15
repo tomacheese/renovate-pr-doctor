@@ -61,4 +61,7 @@ about specific target repos and PRs).
   run-date, so no single file grows unbounded across the workflow's
   lifetime. What `/renovate-maintain` uses to avoid redispatching and to
   bulk-classify known signatures, queried across all dates with a
-  `records/ledger*.tsv` glob.
+  `records/ledger*.tsv` glob. A matching row is not a permanent "never
+  look at this PR again": it still gets a cheap staleness recheck
+  (failing-check-name drift, `fixed`-but-still-failing, or age-based
+  re-verification) before being dropped from a future sweep's discovery.
