@@ -65,3 +65,7 @@ about specific target repos and PRs).
   look at this PR again": it still gets a cheap staleness recheck
   (failing-check-name drift, `fixed`-but-still-failing, or age-based
   re-verification) before being dropped from a future sweep's discovery.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
