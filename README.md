@@ -24,7 +24,8 @@ detail, and `STATE.md` for the current run's status.
   or changes state.
 
 Agent roles used by these skills: `.claude/agents/investigator.md`,
-`.claude/agents/arbiter.md`, `.claude/agents/executor.md`.
+`.claude/agents/arbiter.md`, `.claude/agents/executor.md`,
+`.claude/agents/conflict-fixer.md`.
 
 ## Scripts
 
