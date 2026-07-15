@@ -1,4 +1,4 @@
-# broken-renovate-prs
+# renovate-pr-doctor
 
 Tooling and records for maintaining Renovate-authored PRs that cannot
 auto-merge due to failing CI, across a configurable set of GitHub orgs/users
