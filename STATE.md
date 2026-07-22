@@ -10,7 +10,8 @@ left over from the interruption before continuing the refill loop.
 ## Targets and their state
 
 ### tomacheese/collect-points#670
-checkpoint: fix-pr-opened-plus-escalated
+checkpoint: escalated-to-user
+arbiter (arb-collect-points-670): verdict escalate-to-user. Major-version dependency-currency gap on the Node runtime line — Node.js `@types/node` (proposed 24.13.3, latest 26.1.1) and `.node-version`/`node` (proposed 24.18.0, latest 26.5.0). Per the major-version rule this is a human call, and there is a real decision here. Independently verified against the official nodejs/Release schedule: as of 2026-07-22, Node 24 (Krypton) is Active LTS (LTS 2025-10-28, maintenance 2026-10-20, EOL 2028-04-30); Node 25 is already EOL (ended 2026-06-01); Node 26 started 2026-05-05 and does NOT enter LTS until 2026-10-28 (~3 months out) — it is a 'Current' (non-LTS) release today. The repo is deliberately on the Node 24 Active LTS line: Dockerfile `FROM node:24-alpine`, `.node-version` 24.18.0, CI derives its Node from `.node-version`, no `engines` field. Renovate PR #670 keeps everything on the 24 line. Trade-offs relayed to user: (a) LEAVE AS-IS / no action [arbiter-recommended] — stay on Node 24 Active LTS; a proper Node 26 major needs coordinated Dockerfile base-image + .node-version + @types/node changes with its own dedicated CI, which Renovate will propose separately on its major-bump schedule; folding it into lint-fix PR #710 would be scope creep and adopt a non-LTS runtime early. (b) Bump to Node 26 now in a fresh follow-up PR — premature: puts a production Dockerized service on a 'Current' (non-LTS) release until 2026-10-28, mixes concerns. (c) Explicitly defer + track for re-check — functionally same as (a) but redundant, since Renovate already tracks the major. NOTE: the actual CI-failure fix (PR #710) is DONE and independent of this escalation; this only concerns the untouched Node major gap.
 detail: Fix PR https://github.com/tomacheese/collect-points/pull/710 opened against master from branch `fix/eslint-config-1-16-14-lint-errors` (pushed directly — push access confirmed, no fork needed). Root cause: `@book000/eslint-config` bump to 1.16.14 (as proposed by Renovate PR #670) newly enables unicorn rules (`unicorn/no-top-level-side-effects`, `unicorn/no-useless-else`, `unicorn/prefer-simple-condition-first`, `unicorn/no-duplicate-if-branches`) that flag 40 pre-existing files (91 lint errors, 18 auto-fixable).
 
 Resume-session correction: the branch inherited from `inv-collect-points-670-r2` had the 91 lint fixes staged but was missing the Renovate PR's own dependency bump itself (package.json/pnpm-lock.yaml/.node-version still showed pre-bump versions e.g. eslint-config 1.15.1) — running lint against that state produced 46 new "rule not found" errors from disable-comments referencing not-yet-existent unicorn rules. Fixed by pulling `package.json`/`pnpm-lock.yaml`/`.node-version` from `origin/renovate/all-minor-patch` (the Renovate PR's actual branch) onto the fix branch, then re-applying the currency-driven bumps on top.
@@ -23,11 +24,11 @@ Local verification before opening PR: `pnpm run lint` (prettier + eslint + tsc) 
 
 concurrency: 5
 in-flight:
-  - slot: inv-collect-points-670-r3
+  - slot: arb-collect-points-670
     target: tomacheese/collect-points#670
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
     recheck-of: fixed/prettier-bump-reformat-mismatch
-    note: 3rd dispatch, resuming from intact clone/branch (91 lint fixes uncommitted) — see detail above
+    note: inv-collect-points-670-r3 finished (fix-pr-opened-plus-escalated, fix PR #710 open) and escalated NEEDS_ARBITER for the @types/node/node major-version gap only; Arbiter dispatched to judge that, CI-fix work itself already done independent of this outcome.
 pending (not yet dispatched, in order):
   (empty)
 done this sweep: 21 (fixed=16 skipped=3 blocked=2)
@@ -42,14 +43,18 @@ Investigator redispatch needed. Slot freed.
 
 ## Conflict-fixer queue
 
-(empty — no fix PR from this sweep is currently `CONFLICTING`/`DIRTY`.
-Re-armed the conflict monitor this session per `reference/resuming.md`
-since 3 of this sweep's fix PRs are still `OPEN`:
-tomacheese/booth-purchased-items-manager#1017 (CLEAN),
-jaoafa/jaotan.ts#2152 (BLOCKED — required-check gate, not a conflict),
-book000/create-ts#66 (CLEAN). All others already `MERGED`. The 2026-07-13
-sweep's own conflict-fixer queue fully drained earlier; full round-by-round
-detail for that is in `records/2026-07-13-run.md`, not duplicated here.)
+(empty — the re-armed conflict monitor confirmed all 3 remaining `OPEN` fix
+PRs reached `MERGED` (tomacheese/booth-purchased-items-manager#1017,
+jaoafa/jaotan.ts#2152, book000/create-ts#66) and emitted `ALL FIX PRS
+TERMINAL`; independently spot-checked via `gh pr view` — all 3 confirmed
+`MERGED`. Every fix PR the ledger currently knows about for this sweep
+(except tomacheese/collect-points#710, not yet ledgered — still pending the
+Arbiter's currency-gap verdict) is now terminal. Monitor has stopped
+itself (ledger had zero remaining OPEN rows); will need re-arming once
+#710 gets its own ledger row, if it's still OPEN at that point. The
+2026-07-13 sweep's own conflict-fixer queue fully drained earlier;
+full round-by-round detail for that is in `records/2026-07-13-run.md`, not
+duplicated here.)
 
 ## Escalate-to-user policy
 
