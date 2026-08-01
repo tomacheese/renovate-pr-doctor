@@ -17,9 +17,34 @@ discovery ran.
 
 ## Targets and their state
 
-(none yet — queue dispatch in progress, per-PR subsections will appear
-here as Investigators/Arbiters/Executors report back non-terminal
-checkpoints.)
+### tomacheese/comico-downloader#823
+
+- checkpoint: blocked
+- detail: dependency-currency check returned `[]` (lockFileMaintenance PR,
+  no explicit package bumps to check — nothing to note). All 3 failing
+  checks (`Node CI / setup`, `Node CI / Check finished Node CI`, `Approval
+  gate`) fail with the same GitHub Actions org-wide billing outage already
+  seen on `tomacheese/collect-points#670` this sweep: "The job was not
+  started because recent account payments have failed or your spending
+  limit needs to be increased." Purely environmental, not repo-specific
+  (same `tomacheese` org) — not a judgment call, reporting `blocked`
+  directly without escalation, no clone made.
+
+### tomacheese/api.tomacheese.com#502
+
+- checkpoint: blocked
+- detail: dependency-currency check returned `[]` (lockFileMaintenance PR
+  bumping only `pnpm-lock.yaml`, no explicit package version bumps to
+  check — nothing to note). All 3 failing checks (`Node CI / setup`, `Node
+  CI / Check finished Node CI`, `Approval gate`) fail with the same GitHub
+  Actions org-wide billing outage already seen on
+  `tomacheese/collect-points#670` and `tomacheese/comico-downloader#823`
+  this sweep: "The job was not started because recent account payments
+  have failed or your spending limit needs to be increased." Purely
+  environmental, not repo-specific (same `tomacheese` org) — not a
+  judgment call, reporting `blocked` directly without escalation. Clone
+  attempted but investigation stopped once billing outage confirmed as
+  root cause of all failing checks.
 
 ## Queue
 
