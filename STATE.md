@@ -17,23 +17,6 @@ discovery ran.
 
 ## Targets and their state
 
-### tomacheese/collect-points#697
-
-- checkpoint: root-cause-identified
-- detail: dependency-currency check: all 3 bumped packages
-  (`@vitest/coverage-v8`, `vitest`, `zod`) classified `current` (proposed ==
-  latest) — no special handling needed. Both failing `Approval gate` checks
-  are the same already-resolved tomacheese-org GitHub Actions billing
-  outage seen elsewhere this sweep (comico-downloader#823,
-  api.tomacheese.com#502, comet-web-router#60, collect-points#714):
-  `gh api` on the job shows `conclusion: failure`, `steps: []`, and a
-  3-second start-to-completion span with no actual step execution — the
-  classic outage signature, not a real check failure. Re-ran both failed
-  jobs (`gh run rerun --failed` on runs 30206895800 and 30206895806);
-  awaiting result before declaring `completed`.
-- action: no fix PR needed if the rerun goes green — this is an
-  infrastructure hiccup, not a code/config defect in the target repo.
-
 (All 5 originally-dispatched Investigators — tomacheese/vrcx-web-server#1085,
 book000/templates#462 (+ siblings #456/#455/#454/#453 bulk-classified from its
 Arbiter verdict), book000/rss-deliver#2625, book000/chrome-mcp-router#14, and
