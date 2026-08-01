@@ -115,9 +115,20 @@ run.md` rows are the durable record.)
   rss-deliver's code; no existing upstream issue found on
   jens-maus/node-ical for it. `tsconfig.json` currently has no
   `skipLibCheck`, so `tsc` type-checks node_modules `.d.ts` files too.
-  Confident fix: add `"skipLibCheck": true` to `tsconfig.json` — the
-  standard, low-risk remedy for a broken vendored declaration file (skips
-  type-checking of `.d.ts` files only, does not affect `src/` semantics).
+  Note: the repo's own `CLAUDE.md` explicitly forbids `skipLibCheck` — used
+  `pnpm patch` instead to fix the vendored `.d.ts` directly (see below).
+
+- checkpoint: fix-pr-opened
+- detail: fix PR opened: https://github.com/book000/rss-deliver/pull/2651
+  (branch `fix/node-ical-tsc-declare-error`, off `master`). Bumped
+  `node-ical` to `0.27.1` (same bump as Renovate PR #2625) and added a
+  `pnpm patch` (`patches/node-ical@0.27.1.patch`, registered in
+  `pnpm-workspace.yaml`'s `patchedDependencies`) that removes the redundant
+  `declare` keyword from `node-ical.d.ts`'s `declare const _default` line.
+  Locally verified: `pnpm lint` (Prettier/ESLint/tsc) passes clean;
+  `node-ical`'s `fromURL`/`async` exports import and resolve correctly at
+  runtime via `tsx`. Waiting on the fix PR's own CI before declaring
+  `completed`.
 
 ### book000/create-ts#65
 
@@ -156,6 +167,18 @@ run.md` rows are the durable record.)
   multiple plausible fixes, it's confirming and hardening a workaround the
   repo owner already made deliberately and documented.
 
+- checkpoint: fix-pr-opened
+- detail: fix PR opened: https://github.com/book000/create-ts/pull/97
+  (branch `fix/renovate-ignore-rolldown-plugin-dts-override`, off `main`).
+  Adds a `packageRules` entry to `renovate.json` disabling Renovate updates
+  for `rolldown-plugin-dts` (with a comment explaining why), so future
+  Renovate runs stop proposing bumps that revert the deliberate
+  `pnpm-workspace.yaml` pin. Validated locally with `npx
+  renovate-config-validator`. This PR does not touch PR #65's branch and
+  does not modify application code; PR #65 itself should be closed/skipped
+  by the workflow (its bump is invalid), separate from this hardening fix.
+  Waiting on fix PR #97's own CI before declaring `completed`.
+
 ### book000/chrome-mcp-router#14
 
 - checkpoint: fix-pr-opened
@@ -176,8 +199,14 @@ run.md` rows are the durable record.)
   errors, reproduced identically on `master` before this branch's
   changes) — out of scope, not touched. Fix PR opened against `master`:
   https://github.com/book000/chrome-mcp-router/pull/34 — push access
-  confirmed (pushed directly to origin, no fork needed). Waiting on fix
-  PR #34's own CI before marking completed.
+  confirmed (pushed directly to origin, no fork needed).
+
+- checkpoint: completed
+- detail: fix PR #34's own CI finished — both originally-failing checks
+  now pass (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`),
+  plus `Node CI / setup`, no unrelated failures introduced. Fix PR left
+  open (not merged) per workflow rules. Renovate PR #14 itself untouched
+  (no commits made to its branch).
 
 ## Queue
 
