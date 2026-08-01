@@ -18,87 +18,11 @@ discovery ran.
 ## Targets and their state
 
 (tomacheese/comico-downloader#823, tomacheese/api.tomacheese.com#502,
-tomacheese/comet-web-router#60, and tomacheese/collect-points#714 are all
-terminal now and their subsections have been removed — see the note under
-`## Queue` for the reclassification. Ledger rows and `records/2026-08-01-
-run.md` rows are the durable record.)
-
-### tomacheese/vrcx-web-server#1085
-
-- checkpoint: root-cause-identified
-- detail: dependency-currency check: `better-sqlite3` proposed `13.0.1`,
-  latest `13.0.2` — classification `stale-unexplained-minor` (no
-  explanation given); will bump to `13.0.2` in the fix PR per the
-  currency-handling rule. Root cause of both failing checks (`Docker CI /
-  Docker build (vrcx-web-server, linux/amd64)`, `Docker CI / Check finished
-  Docker CI`): `pnpm fetch` in the Dockerfile's `node:24-alpine` builder
-  stage fails with "Could not find any Python installation to use" while
-  building `better-sqlite3`'s native addon via `node-gyp rebuild`. This is
-  a known upstream packaging bug in `better-sqlite3` v13
-  (WiseLibs/better-sqlite3#1503, confirmed still present in `13.0.2`,
-  latest as of this check): v13 dropped its old `install` script
-  (`prebuild-install`) but ships a `binding.gyp`, so npm/pnpm auto-inject
-  `"install": "node-gyp rebuild"` at publish time even though the package
-  already bundles a matching prebuilt binary
-  (`prebuilds/linuxmusl-x64.node`) that would otherwise be used directly.
-  The repo's `pnpm-workspace.yaml` has `allowBuilds: better-sqlite3: true`
-  (added for v12.11.1, where the equivalent auto-injected script was a
-  network-fetching `prebuild-install`, which doesn't need Python) — the
-  Alpine builder stage has no `python3`/`make`/`g++`, so the v13 gyp
-  rebuild fails outright. Confirmed fix (verified working by multiple
-  commenters on the upstream issue): flip `allowBuilds.better-sqlite3` to
-  `false` in `pnpm-workspace.yaml`, which makes pnpm skip the auto-injected
-  install script entirely and use the bundled prebuilt binary as-is — no
-  Dockerfile/build-toolchain changes needed. Confident fix, proceeding to
-  implement (not escalating).
-
-- checkpoint: fix-pr-opened
-- detail: fix PR opened: https://github.com/tomacheese/vrcx-web-server/pull/1104
-  (branch `fix/better-sqlite3-v13-alpine-gyp-build`, off `master`). Flipped
-  `allowBuilds.better-sqlite3` to `false` in `pnpm-workspace.yaml`, bumped
-  `better-sqlite3` to `13.0.2`, regenerated `pnpm-lock.yaml`. Locally
-  verified: `docker build .` succeeds; a container built from the image
-  can open a `better-sqlite3` DB and do CREATE/INSERT/SELECT; `pnpm lint`
-  (Prettier/ESLint/tsc) passes clean. Waiting on the fix PR's own CI before
-  declaring `completed`.
-
-- checkpoint: completed
-- detail: fix PR #1104's own CI finished — both originally-failing checks
-  now pass (`Docker CI / Docker build (vrcx-web-server, linux/amd64)`,
-  `Docker CI / Check finished Docker CI`), plus every other check
-  (`Node CI`, `Approval gate`, `CodeQL`, `Analyze (actions)`, `Analyze
-  (javascript-typescript)`), no unrelated failures introduced. Fix PR left
-  open (not merged) per workflow rules. Renovate PR #1085 itself untouched
-  (no commits made to its branch).
-
-### book000/templates#462
-
-- checkpoint: skipped
-- detail: Arbiter verdict `skip` (independently verified 2026-08-01, not
-  merely re-affirming the Investigator). Verified directly via `gh api`
-  that `background: true` / `wait-all: true` step keys are still present
-  verbatim on master's `reusable-nodejs-ci.yml` (lines ~139-153), that
-  #462's diff is purely the `docker/login-action` v4.4.0 -> v4.5.2 bump
-  (plus the same bump in `workflows/old/*`), and that the `actionlint`
-  workflow has failed on every one of the last 5 master runs
-  (e24ba5f, fda5125, bb5ae5c, be20e5a, 355d2f7) — so the failure is
-  pre-existing master breakage, wholly independent of the Renovate bump.
-  Additionally verified that GitHub's runner *accepts* these keys: the
-  `Test reusable-nodejs-ci / node-ci` jobs on this PR's own run
-  (30617646442) pass and their step list includes the `⏳ Wait for
-  parallel steps` step. So the keys are a deliberate, working feature for
-  the repo owner and only `actionlint` rejects them — option (a)
-  (stripping the keys) would be a behavior-changing regression, not a
-  mechanical lint fix, and option (b) (a standalone master repair PR) is
-  out of this workflow's scope since there is no correct repair we can
-  choose on the owner's behalf (suppress the rule vs. drop the feature is
-  the owner's call). Nothing in this PR can be fixed to make its checks
-  pass. Dependency currency `stale-unexplained-minor`
-  (`docker/login-action` v4.5.2 vs latest v4.6.0) is moot — no fix PR.
-- siblings: this verdict also covers book000/templates#456, #455, #454,
-  #453 — independently confirmed each has exactly the same three FAILURE
-  checks (`actionlint`, `Test reusable-actionlint / actionlint`, `Test
-  Summary Finished`) and the same master-breakage root cause.
+tomacheese/comet-web-router#60, tomacheese/collect-points#714,
+tomacheese/vrcx-web-server#1085, book000/templates#462/#456/#455/#454/#453,
+and book000/chrome-mcp-router#14 are all terminal now and their subsections
+have been removed — see the note under `## Queue` for the reclassification.
+Ledger rows and `records/2026-08-01-run.md` rows are the durable record.)
 
 ### book000/rss-deliver#2625
 
@@ -129,6 +53,13 @@ run.md` rows are the durable record.)
   `node-ical`'s `fromURL`/`async` exports import and resolve correctly at
   runtime via `tsx`. Waiting on the fix PR's own CI before declaring
   `completed`.
+
+- checkpoint: completed
+- detail: fix PR #2651's own CI finished — all 6 checks pass (including
+  both originally-failing `Node CI / node-ci (.)` and `Node CI / Check
+  finished Node CI`), no unrelated failures. PR is `MERGEABLE`/`CLEAN`.
+  Fix PR left open (not merged) per workflow rules. Renovate PR #2625
+  itself untouched (no commits made to its branch).
 
 ### book000/create-ts#65
 
@@ -178,6 +109,15 @@ run.md` rows are the durable record.)
   does not modify application code; PR #65 itself should be closed/skipped
   by the workflow (its bump is invalid), separate from this hardening fix.
   Waiting on fix PR #97's own CI before declaring `completed`.
+
+- checkpoint: completed
+- detail: fix PR #97's own CI finished — all 3 checks pass (`Node CI /
+  setup`, `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`), PR
+  is `MERGEABLE`/`CLEAN`, no unrelated failures. Fix PR left open (not
+  merged) per workflow rules. Renovate PR #65 itself untouched (no commits
+  made to its branch) — it remains broken/invalid and should be
+  closed/skipped by the workflow rather than merged, since its bump
+  reintroduces a documented, still-unfixed upstream bug.
 
 ### book000/chrome-mcp-router#14
 
