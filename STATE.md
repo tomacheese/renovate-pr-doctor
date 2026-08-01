@@ -62,6 +62,35 @@ run.md` rows are the durable record.)
   (Prettier/ESLint/tsc) passes clean. Waiting on the fix PR's own CI before
   declaring `completed`.
 
+### book000/templates#462
+
+- checkpoint: escalated
+- detail: dependency currency: `docker/login-action` proposed `v4.5.2`,
+  latest `v4.6.0` — classification `stale-unexplained-minor` (no
+  explanation given). Moot for now since no fix PR is planned (see root
+  cause below); noted for traceability only. Root cause of all 3 failing
+  checks (`actionlint`, `Test reusable-actionlint / actionlint`, `Test
+  Summary Finished`): re-confirmed the exact same signature as the
+  2026-07-22 `skipped` ledger row
+  (`actionlint-invalid-parallel-step-keys-PR450-master-breakage`) still
+  holds verbatim on current master (`e24ba5f`, 2026-08-01). `actionlint`
+  fails on `reusable-nodejs-ci.yml`/`reusable-nodejs-ci-pnpm.yml`/
+  `reusable-docker.yml` over `background: true`/`wait-all: true` step keys
+  (still present at the same line numbers), which are not real
+  actionlint-recognized/official GitHub Actions syntax — confirmed via
+  `gh run view --log-failed` on this PR's actual failing run
+  (30617646232): `step must run script with "run" section or run action
+  with "uses" section [syntax-check]` at `reusable-nodejs-ci.yml:152`.
+  Introduced by PR #450 (merged 2026-07-16 with these same checks already
+  failing), pre-existing on master, unrelated to this PR's
+  `docker/login-action` bump. NOT stale/fixed despite being past the
+  10-day recheck window — root cause unchanged. This PR's own fix is
+  outside mechanical-fix authority (stripping the keys reverts the owner's
+  deliberate parallel-step-execution feature; behavior-changing) — same
+  reasoning as the prior arbitrated verdict. Escalating per team lead's
+  request so one Arbiter run can also close out siblings #456/#455/#454/
+  #453, which share the identical failing-check signature.
+
 ## Queue
 
 concurrency: 5
