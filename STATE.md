@@ -156,6 +156,29 @@ run.md` rows are the durable record.)
   multiple plausible fixes, it's confirming and hardening a workaround the
   repo owner already made deliberately and documented.
 
+### book000/chrome-mcp-router#14
+
+- checkpoint: fix-pr-opened
+- detail: dependency-currency check: `@book000/eslint-config` proposed
+  `1.16.23`, latest `1.16.23` — classification `current`, no special
+  handling needed. Root cause of both failing checks (`Node CI / node-ci
+  (.)`, `Node CI / Check finished Node CI`): the eslint-config bump enables
+  three new `unicorn` rules (`prefer-early-return`,
+  `no-declarations-before-early-exit`, `prefer-url-href`) that flag 6
+  pre-existing violations across `src/bridge.ts` (2), `src/health-
+  monitor.ts` (2), `src/index.ts` (2) — `pnpm run lint` fails with 6
+  errors. Confident fix (no ambiguity, mechanical rule-driven refactor, no
+  behavior change): refactored the flagged functions to early-return
+  style and `URL#href` instead of `URL#toString()`. Verified locally:
+  `pnpm run lint` clean, `pnpm run test` 21/21 passing, `pnpm run build`
+  succeeds, `prettier --check src` clean. `pnpm run typecheck` fails
+  independently (pre-existing `@vitest/expect`/`vite` type-resolution
+  errors, reproduced identically on `master` before this branch's
+  changes) — out of scope, not touched. Fix PR opened against `master`:
+  https://github.com/book000/chrome-mcp-router/pull/34 — push access
+  confirmed (pushed directly to origin, no fork needed). Waiting on fix
+  PR #34's own CI before marking completed.
+
 ## Queue
 
 concurrency: 5
