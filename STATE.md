@@ -58,19 +58,19 @@ in-flight:
     target: book000/chrome-response-recorder#409
     checks: Docker CI / Docker build (chrome-response-recorder, linux/amd64),Docker CI / Check finished Docker CI
     recheck-of: skipped/pnpm11-requires-node22-docker-base-stale
-  - slot: investigator-collect-points-697
-    target: tomacheese/collect-points#697
-    checks: Approval gate,Approval gate
   - slot: investigator-api-tomacheese-com-501
     target: tomacheese/api.tomacheese.com#501
     checks: Add reviewer / add-reviewer,Node CI / setup,Approval gate,Node CI / Check finished Node CI
   - slot: investigator-comico-downloader-820
     target: tomacheese/comico-downloader#820
     checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI
+  - slot: investigator-collect-points-670
+    target: tomacheese/collect-points#670
+    checks: Approval gate,Approval gate
+    recheck-of: fixed/eslint-config-1-16-14-lint-errors-large-scope
 pending (not yet dispatched, in order):
-  - tomacheese/collect-points#670 [checks: Approval gate,Approval gate] recheck-of: fixed/eslint-config-1-16-14-lint-errors-large-scope (waiting: same-repo serialization, collect-points#697 in flight)
   - tomacheese/api.tomacheese.com#500 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI] (waiting: same-repo serialization, api.tomacheese.com#501 in flight)
-done this sweep: 15 (fixed=10 skipped=5 blocked=0)
+done this sweep: 16 (fixed=11 skipped=5 blocked=0)
 
 Reclassification note (post-dispatch, before terminal handling of the above
 4 was finalized): `comico-downloader#823`, `api.tomacheese.com#502`, and
