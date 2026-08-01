@@ -46,6 +46,26 @@ discovery ran.
   attempted but investigation stopped once billing outage confirmed as
   root cause of all failing checks.
 
+### tomacheese/comet-web-router#60
+
+- checkpoint: blocked
+- detail: dependency-currency check returned only `nginx` `1.31.2-alpine` →
+  `1.31.3-alpine` with `latest_version` empty / `classification:
+  lookup-failed` — treated as "nothing to note" per the fallback rule. Both
+  failing checks (`hadolint / hadolint`, `Approval gate`) fail immediately
+  (~3s, zero steps run) with the same GitHub Actions org-wide billing
+  outage already seen this sweep on `tomacheese/collect-points#670`,
+  `tomacheese/comico-downloader#823`, and `tomacheese/api.tomacheese.com#502`:
+  check-run annotation reads "The job was not started because recent
+  account payments have failed or your spending limit needs to be
+  increased." Confirmed via annotations on both failing check-runs
+  (89484948354, 89484949059). Purely environmental, not repo-specific
+  (same `tomacheese` org) — not a judgment call, reporting `blocked`
+  directly without escalation. Clone made
+  (`scratchpad/renovate-fix-comet-web-router-60`) but no fix needed/possible;
+  investigation stopped once billing outage confirmed as root cause of all
+  failing checks.
+
 ## Queue
 
 concurrency: 5
