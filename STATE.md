@@ -73,32 +73,32 @@ run.md` rows are the durable record.)
 
 ### book000/templates#462
 
-- checkpoint: escalated
-- detail: dependency currency: `docker/login-action` proposed `v4.5.2`,
-  latest `v4.6.0` — classification `stale-unexplained-minor` (no
-  explanation given). Moot for now since no fix PR is planned (see root
-  cause below); noted for traceability only. Root cause of all 3 failing
+- checkpoint: skipped
+- detail: Arbiter verdict `skip` (independently verified 2026-08-01, not
+  merely re-affirming the Investigator). Verified directly via `gh api`
+  that `background: true` / `wait-all: true` step keys are still present
+  verbatim on master's `reusable-nodejs-ci.yml` (lines ~139-153), that
+  #462's diff is purely the `docker/login-action` v4.4.0 -> v4.5.2 bump
+  (plus the same bump in `workflows/old/*`), and that the `actionlint`
+  workflow has failed on every one of the last 5 master runs
+  (e24ba5f, fda5125, bb5ae5c, be20e5a, 355d2f7) — so the failure is
+  pre-existing master breakage, wholly independent of the Renovate bump.
+  Additionally verified that GitHub's runner *accepts* these keys: the
+  `Test reusable-nodejs-ci / node-ci` jobs on this PR's own run
+  (30617646442) pass and their step list includes the `⏳ Wait for
+  parallel steps` step. So the keys are a deliberate, working feature for
+  the repo owner and only `actionlint` rejects them — option (a)
+  (stripping the keys) would be a behavior-changing regression, not a
+  mechanical lint fix, and option (b) (a standalone master repair PR) is
+  out of this workflow's scope since there is no correct repair we can
+  choose on the owner's behalf (suppress the rule vs. drop the feature is
+  the owner's call). Nothing in this PR can be fixed to make its checks
+  pass. Dependency currency `stale-unexplained-minor`
+  (`docker/login-action` v4.5.2 vs latest v4.6.0) is moot — no fix PR.
+- siblings: this verdict also covers book000/templates#456, #455, #454,
+  #453 — independently confirmed each has exactly the same three FAILURE
   checks (`actionlint`, `Test reusable-actionlint / actionlint`, `Test
-  Summary Finished`): re-confirmed the exact same signature as the
-  2026-07-22 `skipped` ledger row
-  (`actionlint-invalid-parallel-step-keys-PR450-master-breakage`) still
-  holds verbatim on current master (`e24ba5f`, 2026-08-01). `actionlint`
-  fails on `reusable-nodejs-ci.yml`/`reusable-nodejs-ci-pnpm.yml`/
-  `reusable-docker.yml` over `background: true`/`wait-all: true` step keys
-  (still present at the same line numbers), which are not real
-  actionlint-recognized/official GitHub Actions syntax — confirmed via
-  `gh run view --log-failed` on this PR's actual failing run
-  (30617646232): `step must run script with "run" section or run action
-  with "uses" section [syntax-check]` at `reusable-nodejs-ci.yml:152`.
-  Introduced by PR #450 (merged 2026-07-16 with these same checks already
-  failing), pre-existing on master, unrelated to this PR's
-  `docker/login-action` bump. NOT stale/fixed despite being past the
-  10-day recheck window — root cause unchanged. This PR's own fix is
-  outside mechanical-fix authority (stripping the keys reverts the owner's
-  deliberate parallel-step-execution feature; behavior-changing) — same
-  reasoning as the prior arbitrated verdict. Escalating per team lead's
-  request so one Arbiter run can also close out siblings #456/#455/#454/
-  #453, which share the identical failing-check signature.
+  Summary Finished`) and the same master-breakage root cause.
 
 ### book000/rss-deliver#2625
 
@@ -118,6 +118,43 @@ run.md` rows are the durable record.)
   Confident fix: add `"skipLibCheck": true` to `tsconfig.json` — the
   standard, low-risk remedy for a broken vendored declaration file (skips
   type-checking of `.d.ts` files only, does not affect `src/` semantics).
+
+### book000/create-ts#65
+
+- checkpoint: root-cause-identified
+- detail: dependency-currency check: `rolldown-plugin-dts` proposed
+  `0.27.14`, latest `0.28.0` — classification `stale-unexplained-minor` (no
+  explanation given). However, bumping to `0.28.0` would NOT fix anything
+  here (confirmed by downloading the `0.28.0` tarball from npm directly:
+  its `dist/*.d.mts` still references `@volar/typescript`), so the
+  currency-handling "bump to latest" rule is superseded by the actual root
+  cause below — no version bump belongs in the fix here at all. Root cause
+  of both failing checks (`Node CI / node-ci (.)`, `Node CI / Check
+  finished Node CI`): this repo's `pnpm-workspace.yaml` already carries a
+  deliberate `overrides: rolldown-plugin-dts: '0.27.9'` pin, with an
+  explicit comment explaining that `rolldown-plugin-dts@0.27.10+` ships a
+  `.d.mts` that unconditionally references `typeof
+  import("@volar/typescript")` types even though `@volar/typescript` is
+  only an optional peer dependency that is never installed, which breaks
+  `tsc` (TS2307) since this repo has no `skipLibCheck`. Renovate PR #65
+  bumps that same override from `0.27.9` to `0.27.14` — i.e. it proposes
+  re-introducing the exact bug the pin exists to avoid. Confirmed via
+  `gh run view --log-failed`: `tsc` fails with `TS2307: Cannot find module
+  '@volar/typescript'` at
+  `rolldown-plugin-dts/dist/custom-language-*.d.mts:20/27`, identical to
+  the documented failure mode. Tried the "add `@volar/typescript` as a
+  devDependency" workaround locally — it only cascades into a second
+  missing-type error (`@volar/language-service` from
+  `@volar/typescript`'s own `createSys.d.ts`), so that's not a clean fix
+  either. Confident conclusion: PR #65 itself should not be merged (its
+  bump is invalid — reverts a deliberate, documented workaround for a
+  still-unfixed upstream bug, reconfirmed present in both `0.27.14` and
+  latest `0.28.0`). The durable fix is a separate PR (against `main`, not
+  PR #65's branch) adding a Renovate `packageRules` entry to stop Renovate
+  from proposing further bumps to this pinned override until upstream
+  fixes the type leak. Not escalating — this isn't a judgment call between
+  multiple plausible fixes, it's confirming and hardening a workaround the
+  repo owner already made deliberately and documented.
 
 ## Queue
 
