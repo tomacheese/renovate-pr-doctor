@@ -17,73 +17,11 @@ discovery ran.
 
 ## Targets and their state
 
-### tomacheese/comico-downloader#823
-
-- checkpoint: blocked
-- detail: dependency-currency check returned `[]` (lockFileMaintenance PR,
-  no explicit package bumps to check — nothing to note). All 3 failing
-  checks (`Node CI / setup`, `Node CI / Check finished Node CI`, `Approval
-  gate`) fail with the same GitHub Actions org-wide billing outage already
-  seen on `tomacheese/collect-points#670` this sweep: "The job was not
-  started because recent account payments have failed or your spending
-  limit needs to be increased." Purely environmental, not repo-specific
-  (same `tomacheese` org) — not a judgment call, reporting `blocked`
-  directly without escalation, no clone made.
-
-### tomacheese/api.tomacheese.com#502
-
-- checkpoint: blocked
-- detail: dependency-currency check returned `[]` (lockFileMaintenance PR
-  bumping only `pnpm-lock.yaml`, no explicit package version bumps to
-  check — nothing to note). All 3 failing checks (`Node CI / setup`, `Node
-  CI / Check finished Node CI`, `Approval gate`) fail with the same GitHub
-  Actions org-wide billing outage already seen on
-  `tomacheese/collect-points#670` and `tomacheese/comico-downloader#823`
-  this sweep: "The job was not started because recent account payments
-  have failed or your spending limit needs to be increased." Purely
-  environmental, not repo-specific (same `tomacheese` org) — not a
-  judgment call, reporting `blocked` directly without escalation. Clone
-  attempted but investigation stopped once billing outage confirmed as
-  root cause of all failing checks.
-
-### tomacheese/comet-web-router#60
-
-- checkpoint: blocked
-- detail: dependency-currency check returned only `nginx` `1.31.2-alpine` →
-  `1.31.3-alpine` with `latest_version` empty / `classification:
-  lookup-failed` — treated as "nothing to note" per the fallback rule. Both
-  failing checks (`hadolint / hadolint`, `Approval gate`) fail immediately
-  (~3s, zero steps run) with the same GitHub Actions org-wide billing
-  outage already seen this sweep on `tomacheese/collect-points#670`,
-  `tomacheese/comico-downloader#823`, and `tomacheese/api.tomacheese.com#502`:
-  check-run annotation reads "The job was not started because recent
-  account payments have failed or your spending limit needs to be
-  increased." Confirmed via annotations on both failing check-runs
-  (89484948354, 89484949059). Purely environmental, not repo-specific
-  (same `tomacheese` org) — not a judgment call, reporting `blocked`
-  directly without escalation. Clone made
-  (`scratchpad/renovate-fix-comet-web-router-60`) but no fix needed/possible;
-  investigation stopped once billing outage confirmed as root cause of all
-  failing checks.
-
-### tomacheese/collect-points#714
-
-- checkpoint: completed
-- detail: dependency-currency check returned `[]` (lockFileMaintenance PR,
-  no explicit package bumps to check — nothing to note). Both failing
-  `Approval gate` checks initially failed (~3s, zero steps run) with the
-  same GitHub Actions org-wide billing outage seen this sweep on
-  `tomacheese/collect-points#670`, `tomacheese/comico-downloader#823`,
-  `tomacheese/api.tomacheese.com#502`, and `tomacheese/comet-web-router#60`.
-  **However, the outage has since resolved**: `gh run list` showed a
-  successful `Docker` run in this same repo at 2026-08-01T05:27 UTC (after
-  the PR's original 2026-07-30 failures), so I re-ran the two failed
-  `Approval gate` jobs (`gh run rerun 30575753177/30575753201 --failed`)
-  and all checks now pass (`Approval gate` x2, `Node CI` x3, `Docker CI`
-  x4). PR is now `MERGEABLE`/`CLEAN`. No code fix was needed or made — no
-  clone, no fix PR. **This confirms the org billing issue behind the
-  sibling `blocked` PRs above is resolved as of ~05:27 UTC today; those
-  should be worth a quick re-check/re-run rather than staying blocked.**
+(tomacheese/comico-downloader#823, tomacheese/api.tomacheese.com#502,
+tomacheese/comet-web-router#60, and tomacheese/collect-points#714 are all
+terminal now and their subsections have been removed — see the note under
+`## Queue` for the reclassification. Ledger rows and `records/2026-08-01-
+run.md` rows are the durable record.)
 
 ### tomacheese/vrcx-web-server#1085
 
@@ -114,30 +52,36 @@ discovery ran.
   Dockerfile/build-toolchain changes needed. Confident fix, proceeding to
   implement (not escalating).
 
+- checkpoint: fix-pr-opened
+- detail: fix PR opened: https://github.com/tomacheese/vrcx-web-server/pull/1104
+  (branch `fix/better-sqlite3-v13-alpine-gyp-build`, off `master`). Flipped
+  `allowBuilds.better-sqlite3` to `false` in `pnpm-workspace.yaml`, bumped
+  `better-sqlite3` to `13.0.2`, regenerated `pnpm-lock.yaml`. Locally
+  verified: `docker build .` succeeds; a container built from the image
+  can open a `better-sqlite3` DB and do CREATE/INSERT/SELECT; `pnpm lint`
+  (Prettier/ESLint/tsc) passes clean. Waiting on the fix PR's own CI before
+  declaring `completed`.
+
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-collect-points-714
-    target: tomacheese/collect-points#714
-    checks: Approval gate,Approval gate
-  - slot: investigator-api-tomacheese-com-502
-    target: tomacheese/api.tomacheese.com#502
-    checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI
-  - slot: investigator-comico-downloader-823
-    target: tomacheese/comico-downloader#823
-    checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI
-  - slot: investigator-comet-web-router-60
-    target: tomacheese/comet-web-router#60
-    checks: hadolint / hadolint,Approval gate
   - slot: investigator-vrcx-web-server-1085
     target: tomacheese/vrcx-web-server#1085
     checks: Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI
+  - slot: investigator-templates-462
+    target: book000/templates#462
+    checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished
+  - slot: investigator-rss-deliver-2625
+    target: book000/rss-deliver#2625
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-chrome-mcp-router-14
+    target: book000/chrome-mcp-router#14
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-create-ts-65
+    target: book000/create-ts#65
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/templates#462 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished]
-  - book000/rss-deliver#2625 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
-  - book000/chrome-mcp-router#14 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
-  - book000/create-ts#65 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/chrome-response-recorder#409 [checks: Docker CI / Docker build (chrome-response-recorder, linux/amd64),Docker CI / Check finished Docker CI] recheck-of: skipped/pnpm11-requires-node22-docker-base-stale
   - tomacheese/collect-points#697 [checks: Approval gate,Approval gate]
   - tomacheese/api.tomacheese.com#501 [checks: Add reviewer / add-reviewer,Node CI / setup,Approval gate,Node CI / Check finished Node CI]
@@ -148,7 +92,22 @@ pending (not yet dispatched, in order):
   - book000/templates#455 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished] recheck-of: skipped/actionlint-invalid-parallel-step-keys-PR450-master-breakage (stale, 10d old)
   - book000/templates#454 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished] recheck-of: skipped/actionlint-invalid-parallel-step-keys-PR450-master-breakage (stale, 10d old)
   - book000/templates#453 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished] recheck-of: skipped/actionlint-invalid-parallel-step-keys-PR450-master-breakage (stale, 10d old)
-done this sweep: 0 (fixed=0 skipped=0 blocked=0)
+done this sweep: 4 (fixed=4 skipped=0 blocked=0)
+
+Reclassification note (post-dispatch, before terminal handling of the above
+4 was finalized): `comico-downloader#823`, `api.tomacheese.com#502`, and
+`comet-web-router#60` were each initially reported `blocked` (org-wide
+GitHub Actions billing outage in the `tomacheese` org). A concurrent
+sibling (`collect-points#714`) discovered the outage had since resolved and
+turned itself green by re-running the originally-failed jobs. The
+orchestrator applied the same recheck to the 3 `blocked` siblings
+(`gh run rerun --failed`, twice each — once for the initially-failed job
+set, once more for the separately-gated `Approval gate` job) and confirmed
+all 3 PRs are now fully green (`MERGEABLE`/`CLEAN`, `api.tomacheese.com#502`
+briefly `UNKNOWN` mergeability which is a transient GitHub recompute, not a
+check failure). All 4 reclassified/recorded as `fixed` with root-cause
+signature `tomacheese-org-gh-actions-billing-outage` — see
+`records/ledger-2026-08-01.tsv` and `records/2026-08-01-run.md`.
 
 Notes on classification (Step 2):
 - book000/templates has 5 candidates (462/456/455/454/453) all sharing the
