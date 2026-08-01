@@ -17,6 +17,10 @@ discovery ran.
 
 ## Targets and their state
 
+### tomacheese/api.tomacheese.com#501
+checkpoint: root-cause-identified
+detail: Dependency currency: `better-sqlite3` stale-unexplained-minor (proposed 13.0.1, latest 13.0.2) — will bump to 13.0.2 in the fix PR. Confirmed the 4 originally-reported failing checks (Add reviewer/add-reviewer, Node CI/setup, Approval gate, Node CI/Check finished Node CI) were the already-known tomacheese-org GH Actions billing outage — `gh run rerun --failed` on all 3 runs turned them green. However, once the outage clearance let the previously-`skipping` Docker CI job actually run, it failed for real: `Docker CI / Docker build (api.tomacheese.com, linux/amd64)` — `pnpm fetch` fails with `gyp ERR! Could not find any Python installation to use` while building `better-sqlite3` from source. Root cause: better-sqlite3 v13 (both 13.0.1 and 13.0.2) dropped `prebuild-install` and ships no explicit `install`/`postinstall` script override, so npm/pnpm's implicit "run `node-gyp rebuild` if `binding.gyp` exists" behavior kicks in unconditionally on install, ignoring the bundled `prebuilds/linuxmusl-x64.node` binary that v13 ships for exactly this platform. v12.11.1 avoided this via an explicit `"install": "prebuild-install || node-gyp rebuild --release"` script. The target repo's `Dockerfile` (`node:24-alpine`) has no C/Python build toolchain, so the fallback gyp compile fails. Verified fix in a real `node:24-alpine` container: adding `python3 make g++` via `apk add` before `pnpm fetch` lets `better-sqlite3@13.0.1`'s node-gyp fallback build succeed cleanly. This is a confident, non-ambiguous fix — proceeding to implement (Dockerfile toolchain addition + bump better-sqlite3 to 13.0.2), no escalation needed for the CI fix itself (dependency-currency minor bump handled inline, not an Arbiter case).
+
 (All 5 originally-dispatched Investigators — tomacheese/vrcx-web-server#1085,
 book000/templates#462 (+ siblings #456/#455/#454/#453 bulk-classified from its
 Arbiter verdict), book000/rss-deliver#2625, book000/chrome-mcp-router#14, and
@@ -25,6 +29,25 @@ comico-downloader#823/api.tomacheese.com#502/comet-web-router#60/collect-
 points#714 batch are all terminal now and their subsections have been
 removed. Ledger rows and `records/2026-08-01-run.md` rows are the durable
 record.)
+
+### tomacheese/comico-downloader#820
+
+- checkpoint: root-cause-identified
+- dependency currency: all 7 packages `lookup-failed` (script returned no
+  usable classification) — no special handling, proceeding with the
+  Renovate PR's proposed versions as-is.
+- detail: `Node CI / setup` and `Approval gate` were the same org-wide
+  GitHub Actions billing outage seen elsewhere this sweep — confirmed
+  resolved via `gh run rerun --failed`, both now pass. But `Node CI /
+  node-ci (downloader)` is a distinct, real failure: the
+  `@book000/eslint-config` bump (1.16.8 → 1.16.23, part of this PR)
+  enables the `unicorn/prefer-simple-condition-first` rule, which flags
+  pre-existing code at `downloader/src/comico.ts:191` (an `else if` with
+  a cheap boolean check listed after a pure function call). Fix:
+  reorder the condition so `isGaugeRentable` (simple, side-effect-free)
+  comes first — confirmed safe since `isRentable()` has no side effects.
+  Verified locally with the PR's exact dependency versions:
+  `pnpm run lint` passes clean after the reorder.
 
 ## Queue
 
