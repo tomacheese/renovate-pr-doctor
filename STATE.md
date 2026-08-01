@@ -17,168 +17,36 @@ discovery ran.
 
 ## Targets and their state
 
-(tomacheese/comico-downloader#823, tomacheese/api.tomacheese.com#502,
-tomacheese/comet-web-router#60, tomacheese/collect-points#714,
-tomacheese/vrcx-web-server#1085, book000/templates#462/#456/#455/#454/#453,
-and book000/chrome-mcp-router#14 are all terminal now and their subsections
-have been removed — see the note under `## Queue` for the reclassification.
-Ledger rows and `records/2026-08-01-run.md` rows are the durable record.)
-
-### book000/rss-deliver#2625
-
-- checkpoint: root-cause-identified
-- detail: dependency-currency check: `node-ical` proposed `0.27.1`, latest
-  `0.27.1` — classification `current`, no special handling needed. Root
-  cause of both failing checks (`Node CI / node-ci (.)`, `Node CI / Check
-  finished Node CI`): `pnpm run lint` → `tsc` fails with `TS1038: A
-  'declare' modifier cannot be used in an already ambient context` at
-  `node_modules/.../node-ical@0.27.1/node-ical.d.ts:112` (`declare const
-  _default: {...}` nested inside the file's outer `declare module
-  'node-ical'` block). Confirmed by downloading `node-ical@0.27.1` from npm
-  directly — this is a bug in node-ical's own shipped `.d.ts`, not in
-  rss-deliver's code; no existing upstream issue found on
-  jens-maus/node-ical for it. `tsconfig.json` currently has no
-  `skipLibCheck`, so `tsc` type-checks node_modules `.d.ts` files too.
-  Note: the repo's own `CLAUDE.md` explicitly forbids `skipLibCheck` — used
-  `pnpm patch` instead to fix the vendored `.d.ts` directly (see below).
-
-- checkpoint: fix-pr-opened
-- detail: fix PR opened: https://github.com/book000/rss-deliver/pull/2651
-  (branch `fix/node-ical-tsc-declare-error`, off `master`). Bumped
-  `node-ical` to `0.27.1` (same bump as Renovate PR #2625) and added a
-  `pnpm patch` (`patches/node-ical@0.27.1.patch`, registered in
-  `pnpm-workspace.yaml`'s `patchedDependencies`) that removes the redundant
-  `declare` keyword from `node-ical.d.ts`'s `declare const _default` line.
-  Locally verified: `pnpm lint` (Prettier/ESLint/tsc) passes clean;
-  `node-ical`'s `fromURL`/`async` exports import and resolve correctly at
-  runtime via `tsx`. Waiting on the fix PR's own CI before declaring
-  `completed`.
-
-- checkpoint: completed
-- detail: fix PR #2651's own CI finished — all 6 checks pass (including
-  both originally-failing `Node CI / node-ci (.)` and `Node CI / Check
-  finished Node CI`), no unrelated failures. PR is `MERGEABLE`/`CLEAN`.
-  Fix PR left open (not merged) per workflow rules. Renovate PR #2625
-  itself untouched (no commits made to its branch).
-
-### book000/create-ts#65
-
-- checkpoint: root-cause-identified
-- detail: dependency-currency check: `rolldown-plugin-dts` proposed
-  `0.27.14`, latest `0.28.0` — classification `stale-unexplained-minor` (no
-  explanation given). However, bumping to `0.28.0` would NOT fix anything
-  here (confirmed by downloading the `0.28.0` tarball from npm directly:
-  its `dist/*.d.mts` still references `@volar/typescript`), so the
-  currency-handling "bump to latest" rule is superseded by the actual root
-  cause below — no version bump belongs in the fix here at all. Root cause
-  of both failing checks (`Node CI / node-ci (.)`, `Node CI / Check
-  finished Node CI`): this repo's `pnpm-workspace.yaml` already carries a
-  deliberate `overrides: rolldown-plugin-dts: '0.27.9'` pin, with an
-  explicit comment explaining that `rolldown-plugin-dts@0.27.10+` ships a
-  `.d.mts` that unconditionally references `typeof
-  import("@volar/typescript")` types even though `@volar/typescript` is
-  only an optional peer dependency that is never installed, which breaks
-  `tsc` (TS2307) since this repo has no `skipLibCheck`. Renovate PR #65
-  bumps that same override from `0.27.9` to `0.27.14` — i.e. it proposes
-  re-introducing the exact bug the pin exists to avoid. Confirmed via
-  `gh run view --log-failed`: `tsc` fails with `TS2307: Cannot find module
-  '@volar/typescript'` at
-  `rolldown-plugin-dts/dist/custom-language-*.d.mts:20/27`, identical to
-  the documented failure mode. Tried the "add `@volar/typescript` as a
-  devDependency" workaround locally — it only cascades into a second
-  missing-type error (`@volar/language-service` from
-  `@volar/typescript`'s own `createSys.d.ts`), so that's not a clean fix
-  either. Confident conclusion: PR #65 itself should not be merged (its
-  bump is invalid — reverts a deliberate, documented workaround for a
-  still-unfixed upstream bug, reconfirmed present in both `0.27.14` and
-  latest `0.28.0`). The durable fix is a separate PR (against `main`, not
-  PR #65's branch) adding a Renovate `packageRules` entry to stop Renovate
-  from proposing further bumps to this pinned override until upstream
-  fixes the type leak. Not escalating — this isn't a judgment call between
-  multiple plausible fixes, it's confirming and hardening a workaround the
-  repo owner already made deliberately and documented.
-
-- checkpoint: fix-pr-opened
-- detail: fix PR opened: https://github.com/book000/create-ts/pull/97
-  (branch `fix/renovate-ignore-rolldown-plugin-dts-override`, off `main`).
-  Adds a `packageRules` entry to `renovate.json` disabling Renovate updates
-  for `rolldown-plugin-dts` (with a comment explaining why), so future
-  Renovate runs stop proposing bumps that revert the deliberate
-  `pnpm-workspace.yaml` pin. Validated locally with `npx
-  renovate-config-validator`. This PR does not touch PR #65's branch and
-  does not modify application code; PR #65 itself should be closed/skipped
-  by the workflow (its bump is invalid), separate from this hardening fix.
-  Waiting on fix PR #97's own CI before declaring `completed`.
-
-- checkpoint: completed
-- detail: fix PR #97's own CI finished — all 3 checks pass (`Node CI /
-  setup`, `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`), PR
-  is `MERGEABLE`/`CLEAN`, no unrelated failures. Fix PR left open (not
-  merged) per workflow rules. Renovate PR #65 itself untouched (no commits
-  made to its branch) — it remains broken/invalid and should be
-  closed/skipped by the workflow rather than merged, since its bump
-  reintroduces a documented, still-unfixed upstream bug.
-
-### book000/chrome-mcp-router#14
-
-- checkpoint: fix-pr-opened
-- detail: dependency-currency check: `@book000/eslint-config` proposed
-  `1.16.23`, latest `1.16.23` — classification `current`, no special
-  handling needed. Root cause of both failing checks (`Node CI / node-ci
-  (.)`, `Node CI / Check finished Node CI`): the eslint-config bump enables
-  three new `unicorn` rules (`prefer-early-return`,
-  `no-declarations-before-early-exit`, `prefer-url-href`) that flag 6
-  pre-existing violations across `src/bridge.ts` (2), `src/health-
-  monitor.ts` (2), `src/index.ts` (2) — `pnpm run lint` fails with 6
-  errors. Confident fix (no ambiguity, mechanical rule-driven refactor, no
-  behavior change): refactored the flagged functions to early-return
-  style and `URL#href` instead of `URL#toString()`. Verified locally:
-  `pnpm run lint` clean, `pnpm run test` 21/21 passing, `pnpm run build`
-  succeeds, `prettier --check src` clean. `pnpm run typecheck` fails
-  independently (pre-existing `@vitest/expect`/`vite` type-resolution
-  errors, reproduced identically on `master` before this branch's
-  changes) — out of scope, not touched. Fix PR opened against `master`:
-  https://github.com/book000/chrome-mcp-router/pull/34 — push access
-  confirmed (pushed directly to origin, no fork needed).
-
-- checkpoint: completed
-- detail: fix PR #34's own CI finished — both originally-failing checks
-  now pass (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`),
-  plus `Node CI / setup`, no unrelated failures introduced. Fix PR left
-  open (not merged) per workflow rules. Renovate PR #14 itself untouched
-  (no commits made to its branch).
+(All 5 originally-dispatched Investigators — tomacheese/vrcx-web-server#1085,
+book000/templates#462 (+ siblings #456/#455/#454/#453 bulk-classified from its
+Arbiter verdict), book000/rss-deliver#2625, book000/chrome-mcp-router#14, and
+book000/create-ts#65 — plus the earlier
+comico-downloader#823/api.tomacheese.com#502/comet-web-router#60/collect-
+points#714 batch are all terminal now and their subsections have been
+removed. Ledger rows and `records/2026-08-01-run.md` rows are the durable
+record.)
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-vrcx-web-server-1085
-    target: tomacheese/vrcx-web-server#1085
-    checks: Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI
-  - slot: investigator-templates-462
-    target: book000/templates#462
-    checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished
-  - slot: investigator-rss-deliver-2625
-    target: book000/rss-deliver#2625
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-chrome-mcp-router-14
-    target: book000/chrome-mcp-router#14
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-create-ts-65
-    target: book000/create-ts#65
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-chrome-response-recorder-409
+    target: book000/chrome-response-recorder#409
+    checks: Docker CI / Docker build (chrome-response-recorder, linux/amd64),Docker CI / Check finished Docker CI
+    recheck-of: skipped/pnpm11-requires-node22-docker-base-stale
+  - slot: investigator-collect-points-697
+    target: tomacheese/collect-points#697
+    checks: Approval gate,Approval gate
+  - slot: investigator-api-tomacheese-com-501
+    target: tomacheese/api.tomacheese.com#501
+    checks: Add reviewer / add-reviewer,Node CI / setup,Approval gate,Node CI / Check finished Node CI
+  - slot: investigator-comico-downloader-820
+    target: tomacheese/comico-downloader#820
+    checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/chrome-response-recorder#409 [checks: Docker CI / Docker build (chrome-response-recorder, linux/amd64),Docker CI / Check finished Docker CI] recheck-of: skipped/pnpm11-requires-node22-docker-base-stale
-  - tomacheese/collect-points#697 [checks: Approval gate,Approval gate]
-  - tomacheese/api.tomacheese.com#501 [checks: Add reviewer / add-reviewer,Node CI / setup,Approval gate,Node CI / Check finished Node CI]
-  - tomacheese/comico-downloader#820 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI]
-  - book000/templates#456 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished]
-  - tomacheese/collect-points#670 [checks: Approval gate,Approval gate] recheck-of: fixed/eslint-config-1-16-14-lint-errors-large-scope
-  - tomacheese/api.tomacheese.com#500 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI]
-  - book000/templates#455 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished] recheck-of: skipped/actionlint-invalid-parallel-step-keys-PR450-master-breakage (stale, 10d old)
-  - book000/templates#454 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished] recheck-of: skipped/actionlint-invalid-parallel-step-keys-PR450-master-breakage (stale, 10d old)
-  - book000/templates#453 [checks: actionlint,Test reusable-actionlint / actionlint,Test Summary Finished] recheck-of: skipped/actionlint-invalid-parallel-step-keys-PR450-master-breakage (stale, 10d old)
-done this sweep: 4 (fixed=4 skipped=0 blocked=0)
+  - tomacheese/collect-points#670 [checks: Approval gate,Approval gate] recheck-of: fixed/eslint-config-1-16-14-lint-errors-large-scope (waiting: same-repo serialization, collect-points#697 in flight)
+  - tomacheese/api.tomacheese.com#500 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI] (waiting: same-repo serialization, api.tomacheese.com#501 in flight)
+done this sweep: 15 (fixed=10 skipped=5 blocked=0)
 
 Reclassification note (post-dispatch, before terminal handling of the above
 4 was finalized): `comico-downloader#823`, `api.tomacheese.com#502`, and
