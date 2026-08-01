@@ -154,4 +154,11 @@ changes, and keep going until both `in-flight` and `pending` are empty and
 the conflict monitor reports `ALL FIX PRS TERMINAL`.
 
 ## Open questions / concerns
-(none)
+
+- `inv-chrome-response-recorder-409` flagged **suspect** at the 2026-08-01
+  09:xx UTC liveness firing: no `STATE.md` subsection created and no new
+  commit in `scratchpad/renovate-fix-chrome-response-recorder-409` beyond
+  the original PR commit (`fc2628b`) since the previous firing's baseline.
+  Sent a `SendMessage` probe asking for a status update (per
+  `reference/liveness-monitoring.md`) — not yet redispatching; will repeat
+  the probe across the next 1-2 firings before treating it as dead.
