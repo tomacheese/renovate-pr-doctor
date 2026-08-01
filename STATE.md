@@ -32,7 +32,8 @@ record.)
 
 ### tomacheese/comico-downloader#820
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
+- fix PR: https://github.com/tomacheese/comico-downloader/pull/824
 - dependency currency: all 7 packages `lookup-failed` (script returned no
   usable classification) — no special handling, proceeding with the
   Renovate PR's proposed versions as-is.
