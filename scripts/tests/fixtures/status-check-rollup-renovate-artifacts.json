@@ -1,0 +1,4 @@
+[
+  {"name": "build", "conclusion": "SUCCESS", "detailsUrl": "https://example.com/1"},
+  {"context": "renovate/artifacts", "state": "FAILURE", "targetUrl": ""}
+]

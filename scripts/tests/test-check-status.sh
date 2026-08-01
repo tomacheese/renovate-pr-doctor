@@ -31,6 +31,7 @@ assert_true  "all-failure fixture is detected as failing"        "status-check-r
 assert_false "all-success fixture is not failing"                "status-check-rollup-success.json"
 assert_true  "mixed fixture with one failure is detected"        "status-check-rollup-mixed.json"
 assert_true  "StatusContext-shaped ERROR is detected"             "status-check-rollup-context-shape.json"
+assert_false "renovate/artifacts FAILURE alone is not real CI failure" "status-check-rollup-renovate-artifacts.json"
 
 extracted=$(extract_failing_checks "$(cat "$DIR/fixtures/status-check-rollup-mixed.json")")
 expected=$'test\thttps://example.com/2'

@@ -44,10 +44,23 @@ fi
 
 prs_json=$(gh search prs "${search_args[@]}" --json number,url,repository)
 
+# Caches each repo's archived status across PRs so a repo with multiple
+# candidate PRs only costs one `gh repo view` call, not one per PR.
+declare -A archived_cache
+
 echo "$prs_json" | jq -c '.[]' | while IFS= read -r pr; do
   number=$(echo "$pr" | jq -r '.number')
   pr_repo=$(echo "$pr" | jq -r '.repository.nameWithOwner')
   url=$(echo "$pr" | jq -r '.url')
+
+  if [[ -z "${archived_cache[$pr_repo]+x}" ]]; then
+    archived_cache[$pr_repo]=$(gh repo view "$pr_repo" --json isArchived -q '.isArchived')
+  fi
+  if [[ "${archived_cache[$pr_repo]}" == "true" ]]; then
+    # Archived repos are read-only: no fix PR can ever be pushed, so
+    # there's no point surfacing them as candidates at all.
+    continue
+  fi
 
   rollup=$(gh pr view "$number" -R "$pr_repo" --json statusCheckRollup -q '.statusCheckRollup')
 
