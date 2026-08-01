@@ -43,16 +43,16 @@ in-flight:
     target: book000/chrome-response-recorder#409
     checks: Docker CI / Docker build (chrome-response-recorder, linux/amd64),Docker CI / Check finished Docker CI
     recheck-of: skipped/pnpm11-requires-node22-docker-base-stale
-  - slot: investigator-api-tomacheese-com-501
-    target: tomacheese/api.tomacheese.com#501
-    checks: Add reviewer / add-reviewer,Node CI / setup,Approval gate,Node CI / Check finished Node CI
   - slot: investigator-collect-points-670
     target: tomacheese/collect-points#670
     checks: Approval gate,Approval gate
     recheck-of: fixed/eslint-config-1-16-14-lint-errors-large-scope
+  - slot: investigator-api-tomacheese-com-500
+    target: tomacheese/api.tomacheese.com#500
+    checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/api.tomacheese.com#500 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI] (waiting: same-repo serialization, api.tomacheese.com#501 in flight)
-done this sweep: 17 (fixed=12 skipped=5 blocked=0)
+  (empty)
+done this sweep: 18 (fixed=13 skipped=5 blocked=0)
 
 Reclassification note (post-dispatch, before terminal handling of the above
 4 was finalized): `comico-downloader#823`, `api.tomacheese.com#502`, and
@@ -114,9 +114,10 @@ No standing override in effect. Default behavior applies: relay any
 Liveness-monitoring cron (`79e3eb57`, every ~15 min) already running.
 Fix-PR conflict/merge monitor (persistent `Monitor` task `bu2abvg5c`,
 polling every 300s) started once the first fix PRs landed in the ledger —
-currently tracking 5 open fix PRs: tomacheese/vrcx-web-server#1104,
+currently tracking 6 open fix PRs: tomacheese/vrcx-web-server#1104,
 book000/rss-deliver#2651, book000/chrome-mcp-router#34,
-book000/create-ts#97, tomacheese/comico-downloader#824. It re-scans
+book000/create-ts#97, tomacheese/comico-downloader#824,
+tomacheese/api.tomacheese.com#503. It re-scans
 `records/ledger-2026-08-01.tsv`'s `fixed`
 rows each poll, so newly-opened fix PRs (from the 4 in-flight Investigators
 above) are picked up automatically without restarting it. On a `CONFLICT
@@ -134,11 +135,6 @@ changes, and keep going until both `in-flight` and `pending` are empty and
 the conflict monitor reports `ALL FIX PRS TERMINAL`.
 
 ## Open questions / concerns
-
-- `inv-chrome-response-recorder-409` flagged **suspect** at the 2026-08-01
-  09:xx UTC liveness firing: no `STATE.md` subsection created and no new
-  commit in `scratchpad/renovate-fix-chrome-response-recorder-409` beyond
-  the original PR commit (`fc2628b`) since the previous firing's baseline.
-  Sent a `SendMessage` probe asking for a status update (per
-  `reference/liveness-monitoring.md`) — not yet redispatching; will repeat
-  the probe across the next 1-2 firings before treating it as dead.
+(none — `inv-chrome-response-recorder-409`'s earlier suspect flag is
+resolved: it has since reached `fix-pr-opened` with fix PR #495, real
+progress since the probe.)
