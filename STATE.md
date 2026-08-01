@@ -32,8 +32,11 @@ record.)
 
 ### tomacheese/comico-downloader#820
 
-- checkpoint: fix-pr-opened
-- fix PR: https://github.com/tomacheese/comico-downloader/pull/824
+- checkpoint: completed
+- fix PR: https://github.com/tomacheese/comico-downloader/pull/824 — all
+  checks pass (Approval gate, Node CI setup/node-ci/Check finished, Docker
+  CI build x2/Check finished), no unrelated failures. Done, subsection can
+  be removed.
 - dependency currency: all 7 packages `lookup-failed` (script returned no
   usable classification) — no special handling, proceeding with the
   Renovate PR's proposed versions as-is.
