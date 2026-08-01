@@ -95,7 +95,8 @@ Notes on classification (Step 2):
 
 ## Conflict-fixer queue
 
-(empty — no fix PRs opened yet this sweep.)
+(empty — no conflicts detected yet. Fix-PR conflict/merge monitor is
+running, see below.)
 
 ## Escalate-to-user policy
 
@@ -104,12 +105,26 @@ No standing override in effect. Default behavior applies: relay any
 
 ## Next concrete action
 
-Liveness-monitoring cron needs to be started now that the first
-Investigators are in flight. Then continue the refill loop: on each
-`SendMessage` report, handle escalation/terminal per SKILL.md step 4,
-refill the freed slot from `pending` (respecting same-repo
-serialization), commit STATE.md queue changes, and keep going until both
-`in-flight` and `pending` are empty.
+Liveness-monitoring cron (`79e3eb57`, every ~15 min) already running.
+Fix-PR conflict/merge monitor (persistent `Monitor` task `bu2abvg5c`,
+polling every 300s) started once the first fix PRs landed in the ledger —
+currently tracking 4 open fix PRs: tomacheese/vrcx-web-server#1104,
+book000/rss-deliver#2651, book000/chrome-mcp-router#34,
+book000/create-ts#97. It re-scans `records/ledger-2026-08-01.tsv`'s `fixed`
+rows each poll, so newly-opened fix PRs (from the 4 in-flight Investigators
+above) are picked up automatically without restarting it. On a `CONFLICT
+DETECTED` line, dispatch a `conflict-fixer` sibling per
+`reference/fix-pr-conflict-monitoring.md`. On a `TERMINAL`/`ALL FIX PRS
+TERMINAL` line, independently confirm via `gh pr view` and note it in the
+relevant PR's `STATE.md` history (already-removed subsections: just note
+in this file's own running log if needed) — an unexpected `CLOSED` (not
+already explained) is worth flagging to the user.
+
+Continue the main refill loop: on each `SendMessage` report, handle
+escalation/terminal per SKILL.md step 4, refill the freed slot from
+`pending` (respecting same-repo serialization), commit STATE.md queue
+changes, and keep going until both `in-flight` and `pending` are empty and
+the conflict monitor reports `ALL FIX PRS TERMINAL`.
 
 ## Open questions / concerns
 (none)
