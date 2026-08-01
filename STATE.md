@@ -66,6 +66,54 @@ discovery ran.
   investigation stopped once billing outage confirmed as root cause of all
   failing checks.
 
+### tomacheese/collect-points#714
+
+- checkpoint: completed
+- detail: dependency-currency check returned `[]` (lockFileMaintenance PR,
+  no explicit package bumps to check — nothing to note). Both failing
+  `Approval gate` checks initially failed (~3s, zero steps run) with the
+  same GitHub Actions org-wide billing outage seen this sweep on
+  `tomacheese/collect-points#670`, `tomacheese/comico-downloader#823`,
+  `tomacheese/api.tomacheese.com#502`, and `tomacheese/comet-web-router#60`.
+  **However, the outage has since resolved**: `gh run list` showed a
+  successful `Docker` run in this same repo at 2026-08-01T05:27 UTC (after
+  the PR's original 2026-07-30 failures), so I re-ran the two failed
+  `Approval gate` jobs (`gh run rerun 30575753177/30575753201 --failed`)
+  and all checks now pass (`Approval gate` x2, `Node CI` x3, `Docker CI`
+  x4). PR is now `MERGEABLE`/`CLEAN`. No code fix was needed or made — no
+  clone, no fix PR. **This confirms the org billing issue behind the
+  sibling `blocked` PRs above is resolved as of ~05:27 UTC today; those
+  should be worth a quick re-check/re-run rather than staying blocked.**
+
+### tomacheese/vrcx-web-server#1085
+
+- checkpoint: root-cause-identified
+- detail: dependency-currency check: `better-sqlite3` proposed `13.0.1`,
+  latest `13.0.2` — classification `stale-unexplained-minor` (no
+  explanation given); will bump to `13.0.2` in the fix PR per the
+  currency-handling rule. Root cause of both failing checks (`Docker CI /
+  Docker build (vrcx-web-server, linux/amd64)`, `Docker CI / Check finished
+  Docker CI`): `pnpm fetch` in the Dockerfile's `node:24-alpine` builder
+  stage fails with "Could not find any Python installation to use" while
+  building `better-sqlite3`'s native addon via `node-gyp rebuild`. This is
+  a known upstream packaging bug in `better-sqlite3` v13
+  (WiseLibs/better-sqlite3#1503, confirmed still present in `13.0.2`,
+  latest as of this check): v13 dropped its old `install` script
+  (`prebuild-install`) but ships a `binding.gyp`, so npm/pnpm auto-inject
+  `"install": "node-gyp rebuild"` at publish time even though the package
+  already bundles a matching prebuilt binary
+  (`prebuilds/linuxmusl-x64.node`) that would otherwise be used directly.
+  The repo's `pnpm-workspace.yaml` has `allowBuilds: better-sqlite3: true`
+  (added for v12.11.1, where the equivalent auto-injected script was a
+  network-fetching `prebuild-install`, which doesn't need Python) — the
+  Alpine builder stage has no `python3`/`make`/`g++`, so the v13 gyp
+  rebuild fails outright. Confirmed fix (verified working by multiple
+  commenters on the upstream issue): flip `allowBuilds.better-sqlite3` to
+  `false` in `pnpm-workspace.yaml`, which makes pnpm skip the auto-injected
+  install script entirely and use the bundled prebuilt binary as-is — no
+  Dockerfile/build-toolchain changes needed. Confident fix, proceeding to
+  implement (not escalating).
+
 ## Queue
 
 concurrency: 5
