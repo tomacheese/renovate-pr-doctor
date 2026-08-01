@@ -62,6 +62,15 @@ run.md` rows are the durable record.)
   (Prettier/ESLint/tsc) passes clean. Waiting on the fix PR's own CI before
   declaring `completed`.
 
+- checkpoint: completed
+- detail: fix PR #1104's own CI finished — both originally-failing checks
+  now pass (`Docker CI / Docker build (vrcx-web-server, linux/amd64)`,
+  `Docker CI / Check finished Docker CI`), plus every other check
+  (`Node CI`, `Approval gate`, `CodeQL`, `Analyze (actions)`, `Analyze
+  (javascript-typescript)`), no unrelated failures introduced. Fix PR left
+  open (not merged) per workflow rules. Renovate PR #1085 itself untouched
+  (no commits made to its branch).
+
 ### book000/templates#462
 
 - checkpoint: escalated
