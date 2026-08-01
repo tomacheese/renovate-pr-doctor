@@ -112,18 +112,27 @@ cron `79e3eb57` has been cancelled (`CronDelete`) accordingly — no
 sub-agents remain in flight to watch for stalls.
 
 Fix-PR conflict/merge monitor (persistent `Monitor` task `bu2abvg5c`,
-polling every 300s) is still running — this is the one remaining open
-thread. It tracks all 8 open fix PRs now in the ledger:
-tomacheese/vrcx-web-server#1104, book000/rss-deliver#2651,
-book000/chrome-mcp-router#34, book000/create-ts#97,
-tomacheese/comico-downloader#824, tomacheese/api.tomacheese.com#503,
-book000/chrome-response-recorder#495, tomacheese/collect-points#716. It
-re-scans `records/ledger-2026-08-01.tsv`'s `fixed` rows each poll, so no
-restart was needed for #716 to be picked up. On a `CONFLICT DETECTED`
-line, dispatch a `conflict-fixer` sibling per
-`reference/fix-pr-conflict-monitoring.md`. On a `TERMINAL`/`ALL FIX PRS
-TERMINAL` line, independently confirm via `gh pr view` and note it here —
-an unexpected `CLOSED` (not already explained) is worth flagging to the
+polling every 300s) is still running, tracking the 8 fix PRs opened this
+sweep. Terminal events confirmed independently via `gh pr view` so far:
+- `tomacheese/vrcx-web-server#1104` → MERGED
+- `book000/chrome-mcp-router#34` → MERGED
+- `book000/rss-deliver#2651` → MERGED
+- `tomacheese/comico-downloader#824` → MERGED
+- `tomacheese/api.tomacheese.com#503` → MERGED
+- `book000/create-ts#97` → **CLOSED, NOT merged** — unexpected, flagged to
+  the user. Repo owner (`book000`) closed it directly with comment
+  "改善されるまで待つ。特別定義追加はしない。" (wait until upstream improves;
+  won't add the special-case Renovate rule). This is a legitimate
+  repo-owner rejection of the fix's approach, not a workflow failure — the
+  underlying original Renovate PR #65 is still invalid/should be closed
+  per the original ledger note, that part is unaffected.
+- Still open (not yet terminal): `book000/chrome-response-recorder#495`,
+  `tomacheese/collect-points#716`.
+
+On a `CONFLICT DETECTED` line, dispatch a `conflict-fixer` sibling per
+`reference/fix-pr-conflict-monitoring.md`. On further `TERMINAL`/`ALL FIX
+PRS TERMINAL` lines, independently confirm via `gh pr view` and note here
+— an unexpected `CLOSED` (not already explained) is worth flagging to the
 user.
 
 Once the conflict monitor reports `ALL FIX PRS TERMINAL`, run SKILL.md
