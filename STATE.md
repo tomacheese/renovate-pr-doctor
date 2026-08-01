@@ -91,6 +91,25 @@ run.md` rows are the durable record.)
   request so one Arbiter run can also close out siblings #456/#455/#454/
   #453, which share the identical failing-check signature.
 
+### book000/rss-deliver#2625
+
+- checkpoint: root-cause-identified
+- detail: dependency-currency check: `node-ical` proposed `0.27.1`, latest
+  `0.27.1` — classification `current`, no special handling needed. Root
+  cause of both failing checks (`Node CI / node-ci (.)`, `Node CI / Check
+  finished Node CI`): `pnpm run lint` → `tsc` fails with `TS1038: A
+  'declare' modifier cannot be used in an already ambient context` at
+  `node_modules/.../node-ical@0.27.1/node-ical.d.ts:112` (`declare const
+  _default: {...}` nested inside the file's outer `declare module
+  'node-ical'` block). Confirmed by downloading `node-ical@0.27.1` from npm
+  directly — this is a bug in node-ical's own shipped `.d.ts`, not in
+  rss-deliver's code; no existing upstream issue found on
+  jens-maus/node-ical for it. `tsconfig.json` currently has no
+  `skipLibCheck`, so `tsc` type-checks node_modules `.d.ts` files too.
+  Confident fix: add `"skipLibCheck": true` to `tsconfig.json` — the
+  standard, low-risk remedy for a broken vendored declaration file (skips
+  type-checking of `.d.ts` files only, does not affect `src/` semantics).
+
 ## Queue
 
 concurrency: 5
