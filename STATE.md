@@ -3,8 +3,7 @@
 ## Phase
 
 Last completed sweep: 2026-08-12, see `records/2026-08-12-run.md`.
-Currently idle (main queue drained; fix-PR conflict/terminal monitor still
-running until all 5 fix PRs reach MERGED/CLOSED).
+Currently idle.
 
 ## Targets and their state
 
@@ -21,13 +20,11 @@ done this sweep: 5 (fixed=4 skipped=1 blocked=0)
 
 ## Conflict-fixer queue
 
-(empty — no conflicts detected so far. Fix-PR terminal states confirmed
-independently via `gh pr view`, this sweep:
-- tomacheese/cmcutter#2716 → MERGED
-- book000/templates#477 → MERGED
-- book000/node-utils#1620 → MERGED
-- tomacheese/booth-purchased-items-manager#1091 → still OPEN, monitor
-  (`bkjx32lmm`) still tracking.)
+(empty — no conflicts detected during the 2026-08-12 sweep; monitor
+`bkjx32lmm` ended on its own once all 4 tracked fix PRs reached a terminal
+GitHub state, all MERGED: tomacheese/cmcutter#2716, book000/templates#477,
+book000/node-utils#1620, tomacheese/booth-purchased-items-manager#1091 —
+each independently confirmed via `gh pr view`.)
 
 ## Escalate-to-user policy
 
@@ -36,11 +33,8 @@ No standing override in effect. Default behavior applies: relay any
 
 ## Next concrete action
 
-Main sweep queue drained. Only remaining work: the fix-PR conflict/terminal
-monitor (task `bkjx32lmm`) tracking the 4 fix PRs opened this sweep until
-each reaches MERGED/CLOSED, and the liveness cron (`8bbc161f`) which is now
-a no-op (nothing in flight) and should be deleted. On the monitor's
-`ALL FIX PRS TERMINAL` summary line, stop it and fully close the sweep.
+None — idle between sweeps. Next `/renovate-maintain` invocation starts
+fresh discovery.
 
 ## Open questions / concerns
 (none)
