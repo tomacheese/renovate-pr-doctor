@@ -31,76 +31,6 @@ to Investigators immediately (concurrency 5, no backlog).
   as prior cmcutter fixes). Fix PR:
   https://github.com/tomacheese/cmcutter/pull/2716
 
-### tomacheese/booth-purchased-items-manager#1047
-- checkpoint: root-cause-identified (2026-08-12). Renovate bumped
-  `node-html-parser` to `9.0.1` in `package.json` but failed to
-  regenerate `pnpm-lock.yaml` (still pinned to `9.0.0`) — matches the
-  separately-failing `renovate/artifacts` check ("Artifact file update
-  failure"). `pnpm install --frozen-lockfile` then fails with
-  `ERR_PNPM_OUTDATED_LOCKFILE`, which cascades to both Node CI and Docker
-  CI (same frozen-lockfile install step). Confident fix: regenerate the
-  lockfile on a fresh branch.
-- dependency currency: `node-html-parser` classified `current` (proposed
-  9.0.1 == latest 9.0.1) — no version bump beyond what the Renovate PR
-  already proposes.
-- checkpoint: fix-pr-opened (2026-08-12). Bumped `node-html-parser` to
-  `9.0.1` and regenerated `pnpm-lock.yaml`; also discovered and removed
-  the now-obsolete 9.0.0-era declaration patch (`#987`,
-  `patches/node-html-parser@9.0.0.patch`, worked around a self-referencing
-  `declare namespace parse { var X: typeof X }` TS2502 bug) — 9.0.1's
-  `dist/index.d.ts` rewrites those exports as `typeof import(".").X`,
-  which no longer self-shadows, and pnpm fails fast
-  (`ERR_PNPM_UNUSED_PATCH`) if the stale patch is left in place. Verified
-  via a standalone `tsc` check against the packed 9.0.1 tarball (no
-  TS2502), plus `pnpm install`/`--frozen-lockfile`, `pnpm lint`, `pnpm
-  test` (97 passed, 7 skipped) all green locally. Fix PR:
-  https://github.com/tomacheese/booth-purchased-items-manager/pull/1091
-- checkpoint: completed (2026-08-12). Fix PR #1091 CI confirmed green: all
-  5 originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check
-  finished Node CI`, both `Docker CI / Docker build` platforms, `Docker CI
-  / Check finished Docker CI`) pass, plus every other check (CodeQL,
-  Analyze, Approval gate, etc.) — no unrelated failures surfaced.
-
-### book000/create-ts#65
-- Investigator dispatched 2026-08-12 (recheck). Ledger had a `fixed` row
-  (2026-08-01, signature
-  `rolldown-plugin-dts-override-bump-reintroduces-volar-typescript-type-leak`,
-  noted "PR #65 itself invalid/should be closed") but PR #65 still shows up
-  in today's discovery as CI-failing — per the always-recheck-fixed-rows
-  rule. Failing checks: Node CI / node-ci (.), Node CI / Check finished
-  Node CI.
-- checkpoint: root-cause-identified. Same recurring root cause, unchanged
-  from 2026-08-01: PR #65 bumps `pnpm-workspace.yaml`'s
-  `overrides.rolldown-plugin-dts` pin from `0.27.9` to `0.28.0`, which
-  reintroduces the documented `@volar/typescript` type leak
-  (`rolldown-plugin-dts@0.27.10+` ships a `.d.mts` unconditionally
-  referencing the optional, never-installed `@volar/typescript` peer dep;
-  this repo has no `skipLibCheck`, so `tsc` fails with `TS2307`).
-  Confirmed via `gh run view --log-failed` on the PR's own failing run:
-  `lint:tsc` errors on `rolldown-plugin-dts@0.28.0`'s bundled
-  `custom-language-*.d.mts`, same signature as before.
-  Dependency-currency check (`scripts/check-dependency-currency.sh`):
-  `rolldown-plugin-dts` classified `stale-unexplained-minor` (proposed
-  0.28.0, latest 0.28.1) — but 0.28.1's only change is an unrelated
-  feature (`TSImportEqualsDeclaration` support per its GitHub release
-  notes); the type-leak bug is still present, so bumping to 0.28.1 instead
-  would not help and is not worth doing.
-- checkpoint: skipped (no fix PR opened). The only plausible fix — the
-  hardening approach from the 2026-08-01 run (fix PR #97, adding a
-  Renovate `packageRules` entry to stop further bumps to the pinned
-  override) — was explicitly rejected by the repo owner in a PR #97 review
-  comment: "改善されるまで待つ。特別定義追加はしない。" ("Wait until it's
-  improved upstream. No special-case rule additions.") PR #97 was then
-  closed without merging. That is a settled human decision already on
-  record, not a fresh ambiguous judgment call, so this does not go through
-  NEEDS_ARBITER again — re-proposing the same packageRules fix would just
-  repeat what the owner already declined. No other fix exists: the pin
-  itself is correct and deliberate, upstream `0.28.x` still has the leak,
-  and PR #65's bump is simply invalid to merge. Recommend the repo owner
-  (not this workflow — no explicit authorization to close a Renovate PR)
-  close PR #65 manually; absent that, it will keep resurfacing on every
-  sweep's recheck of `fixed` rows, each time with this same explanation.
-
 ## Queue
 
 concurrency: 5
@@ -108,16 +38,9 @@ in-flight:
   - slot: investigator-cmcutter-2692
     target: tomacheese/cmcutter#2692
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-booth-purchased-items-manager-1047
-    target: tomacheese/booth-purchased-items-manager#1047
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (booth-purchased-items-manager, linux/amd64),Docker CI / Docker build (booth-purchased-items-manager, linux/arm64),Docker CI / Check finished Docker CI
-  - slot: investigator-create-ts-65
-    target: book000/create-ts#65
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-    recheck-of: fixed/rolldown-plugin-dts-override-bump-reintroduces-volar-typescript-type-leak
 pending (not yet dispatched, in order):
   (empty)
-done this sweep: 2 (fixed=2 skipped=0 blocked=0)
+done this sweep: 4 (fixed=3 skipped=1 blocked=0)
 
 ## Conflict-fixer queue
 
