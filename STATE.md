@@ -31,34 +31,6 @@ to Investigators immediately (concurrency 5, no backlog).
   as prior cmcutter fixes). Fix PR:
   https://github.com/tomacheese/cmcutter/pull/2716
 
-### book000/node-utils#1593
-- checkpoint: root-cause-identified (2026-08-12). Renovate bumped
-  `@sentry/node` to `10.69.0` in `package.json` but failed to regenerate
-  `pnpm-lock.yaml` (matches the separately-failing `renovate/artifacts`
-  check: "Artifact file update failure"). `pnpm install --frozen-lockfile`
-  in Node CI then fails with `ERR_PNPM_OUTDATED_LOCKFILE` (lockfile:
-  10.68.0, manifest: 10.69.0). Confident fix: regenerate the lockfile on a
-  fresh branch.
-- dependency currency: `@sentry/node` classified `stale-unexplained-minor`
-  (proposed 10.69.0, latest 10.70.0) — bumping to 10.70.0 in the fix PR
-  instead of the Renovate-proposed 10.69.0.
-- checkpoint: fix-pr-opened (2026-08-12). Bumped `@sentry/node` to
-  `10.70.0` and regenerated `pnpm-lock.yaml`; also removed the now-unused
-  `patchedDependencies`/`patches/` entry for
-  `@apm-js-collab/code-transformer-bundler-plugins@0.7.1` — at 10.70.0,
-  `@sentry/server-utils` pulls `code-transformer-bundler-plugins@^0.7.3`,
-  which upstream-fixes the same `.d.cts` extension-less-import bug that
-  patch was working around (same fix pattern as
-  tomacheese/collect-points#670). Verified locally:
-  `pnpm install --frozen-lockfile`, `pnpm run lint` (0 errors), `pnpm test`
-  (110/110). Fix PR: https://github.com/book000/node-utils/pull/1620
-  (branch `fix/sentry-node-lockfile`, pushed via SSH, direct push access —
-  no fork needed).
-- checkpoint: completed (2026-08-12). Fix PR #1620 CI confirmed green: 12
-  checks pass incl. both originally-failing `Node CI / node-ci (.)` /
-  `Node CI / Check finished Node CI`, plus CodeQL/Analyze; no unrelated
-  failures. PR is `MERGEABLE`/`CLEAN`.
-
 ### tomacheese/booth-purchased-items-manager#1047
 - checkpoint: root-cause-identified (2026-08-12). Renovate bumped
   `node-html-parser` to `9.0.1` in `package.json` but failed to
@@ -131,9 +103,6 @@ in-flight:
   - slot: investigator-cmcutter-2692
     target: tomacheese/cmcutter#2692
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-node-utils-1593
-    target: book000/node-utils#1593
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-booth-purchased-items-manager-1047
     target: tomacheese/booth-purchased-items-manager#1047
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (booth-purchased-items-manager, linux/amd64),Docker CI / Docker build (booth-purchased-items-manager, linux/arm64),Docker CI / Check finished Docker CI
@@ -143,7 +112,7 @@ in-flight:
     recheck-of: fixed/rolldown-plugin-dts-override-bump-reintroduces-volar-typescript-type-leak
 pending (not yet dispatched, in order):
   (empty)
-done this sweep: 1 (fixed=1 skipped=0 blocked=0)
+done this sweep: 2 (fixed=2 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
