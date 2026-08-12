@@ -9,8 +9,22 @@ to Investigators immediately (concurrency 5, no backlog).
 ## Targets and their state
 
 ### tomacheese/cmcutter#2692
-- Investigator dispatched 2026-08-12. Failing checks: Node CI / node-ci
-  (.), Node CI / Check finished Node CI.
+- checkpoint: root-cause-identified (2026-08-12). Dependency currency:
+  `config` proposed `5.0.0`, latest `5.0.0` (`current`, nothing to note).
+  Root cause: `config@5.0.0`'s published `types/lib/config.d.ts` does
+  `type Config = import("./config.mjs").Config;` — a type-only import of
+  an ESM sibling from a file TS treats as CommonJS (the package has no
+  `exports` map / `"type"` field), which tsc rejects as TS1542 under this
+  project's `moduleResolution: "node16"`. Upstream bug in
+  node-config/node-config, no newer patch exists to pick up instead.
+  `skipLibCheck` is forbidden by this repo's CLAUDE.md, so fixed by
+  redirecting the `"config"` module specifier via a `tsconfig.json`
+  `paths` entry to a small local ambient `.d.ts` stub covering the
+  `get`/`has` calls this project actually uses (type-check only — runtime
+  resolution via Node/tsx is unaffected). Also dropped the now-orphaned
+  `@types/config` devDependency (v5 ships its own types). Verified
+  locally: `pnpm run lint` (prettier + eslint + tsc) and `pnpm run
+  compile` both green after checking out the Renovate PR's branch.
 
 ### book000/templates#465
 - checkpoint: root-cause-identified (2026-08-12). Dependency currency:
@@ -45,6 +59,18 @@ to Investigators immediately (concurrency 5, no backlog).
 - dependency currency: `@sentry/node` classified `stale-unexplained-minor`
   (proposed 10.69.0, latest 10.70.0) — bumping to 10.70.0 in the fix PR
   instead of the Renovate-proposed 10.69.0.
+- checkpoint: fix-pr-opened (2026-08-12). Bumped `@sentry/node` to
+  `10.70.0` and regenerated `pnpm-lock.yaml`; also removed the now-unused
+  `patchedDependencies`/`patches/` entry for
+  `@apm-js-collab/code-transformer-bundler-plugins@0.7.1` — at 10.70.0,
+  `@sentry/server-utils` pulls `code-transformer-bundler-plugins@^0.7.3`,
+  which upstream-fixes the same `.d.cts` extension-less-import bug that
+  patch was working around (same fix pattern as
+  tomacheese/collect-points#670). Verified locally:
+  `pnpm install --frozen-lockfile`, `pnpm run lint` (0 errors), `pnpm test`
+  (110/110). Fix PR: https://github.com/book000/node-utils/pull/1620
+  (branch `fix/sentry-node-lockfile`, pushed via SSH, direct push access —
+  no fork needed).
 
 ### tomacheese/booth-purchased-items-manager#1047
 - checkpoint: root-cause-identified (2026-08-12). Renovate bumped
