@@ -55,6 +55,11 @@ to Investigators immediately (concurrency 5, no backlog).
   TS2502), plus `pnpm install`/`--frozen-lockfile`, `pnpm lint`, `pnpm
   test` (97 passed, 7 skipped) all green locally. Fix PR:
   https://github.com/tomacheese/booth-purchased-items-manager/pull/1091
+- checkpoint: completed (2026-08-12). Fix PR #1091 CI confirmed green: all
+  5 originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check
+  finished Node CI`, both `Docker CI / Docker build` platforms, `Docker CI
+  / Check finished Docker CI`) pass, plus every other check (CodeQL,
+  Analyze, Approval gate, etc.) — no unrelated failures surfaced.
 
 ### book000/create-ts#65
 - Investigator dispatched 2026-08-12 (recheck). Ledger had a `fixed` row
