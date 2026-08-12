@@ -25,6 +25,9 @@ to Investigators immediately (concurrency 5, no backlog).
   already creates via `addgroup -g 1000`/`adduser -u 1000`). Verified
   locally with `docker run --rm -i hadolint/hadolint:v2.15.0` against the
   fixed Dockerfile — clean, no findings.
+- checkpoint: fix-pr-opened (2026-08-12). Fix branch
+  `fix/hadolint-dl3066-numeric-user` pushed directly (had push access, no
+  fork needed). Fix PR: https://github.com/book000/templates/pull/477
 
 ### book000/node-utils#1593
 - checkpoint: root-cause-identified (2026-08-12). Renovate bumped
@@ -59,6 +62,37 @@ to Investigators immediately (concurrency 5, no backlog).
   in today's discovery as CI-failing — per the always-recheck-fixed-rows
   rule. Failing checks: Node CI / node-ci (.), Node CI / Check finished
   Node CI.
+- checkpoint: root-cause-identified. Same recurring root cause, unchanged
+  from 2026-08-01: PR #65 bumps `pnpm-workspace.yaml`'s
+  `overrides.rolldown-plugin-dts` pin from `0.27.9` to `0.28.0`, which
+  reintroduces the documented `@volar/typescript` type leak
+  (`rolldown-plugin-dts@0.27.10+` ships a `.d.mts` unconditionally
+  referencing the optional, never-installed `@volar/typescript` peer dep;
+  this repo has no `skipLibCheck`, so `tsc` fails with `TS2307`).
+  Confirmed via `gh run view --log-failed` on the PR's own failing run:
+  `lint:tsc` errors on `rolldown-plugin-dts@0.28.0`'s bundled
+  `custom-language-*.d.mts`, same signature as before.
+  Dependency-currency check (`scripts/check-dependency-currency.sh`):
+  `rolldown-plugin-dts` classified `stale-unexplained-minor` (proposed
+  0.28.0, latest 0.28.1) — but 0.28.1's only change is an unrelated
+  feature (`TSImportEqualsDeclaration` support per its GitHub release
+  notes); the type-leak bug is still present, so bumping to 0.28.1 instead
+  would not help and is not worth doing.
+- checkpoint: skipped (no fix PR opened). The only plausible fix — the
+  hardening approach from the 2026-08-01 run (fix PR #97, adding a
+  Renovate `packageRules` entry to stop further bumps to the pinned
+  override) — was explicitly rejected by the repo owner in a PR #97 review
+  comment: "改善されるまで待つ。特別定義追加はしない。" ("Wait until it's
+  improved upstream. No special-case rule additions.") PR #97 was then
+  closed without merging. That is a settled human decision already on
+  record, not a fresh ambiguous judgment call, so this does not go through
+  NEEDS_ARBITER again — re-proposing the same packageRules fix would just
+  repeat what the owner already declined. No other fix exists: the pin
+  itself is correct and deliberate, upstream `0.28.x` still has the leak,
+  and PR #65's bump is simply invalid to merge. Recommend the repo owner
+  (not this workflow — no explicit authorization to close a Renovate PR)
+  close PR #65 manually; absent that, it will keep resurfacing on every
+  sweep's recheck of `fixed` rows, each time with this same explanation.
 
 ## Queue
 
