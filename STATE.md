@@ -21,10 +21,13 @@ done this sweep: 5 (fixed=4 skipped=1 blocked=0)
 
 ## Conflict-fixer queue
 
-(empty so far — the fix-PR conflict/terminal monitor is watching 5 fix PRs:
-tomacheese/cmcutter#2716, book000/templates#477, book000/node-utils#1620,
-tomacheese/booth-purchased-items-manager#1091. Will dispatch conflict-fixer
-sub-agents here if any drift CONFLICTING/DIRTY.)
+(empty — no conflicts detected so far. Fix-PR terminal states confirmed
+independently via `gh pr view`, this sweep:
+- tomacheese/cmcutter#2716 → MERGED
+- book000/templates#477 → MERGED
+- book000/node-utils#1620 → MERGED
+- tomacheese/booth-purchased-items-manager#1091 → still OPEN, monitor
+  (`bkjx32lmm`) still tracking.)
 
 ## Escalate-to-user policy
 
