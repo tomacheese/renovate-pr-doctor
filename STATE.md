@@ -29,7 +29,16 @@ to Investigators immediately (concurrency 5, no backlog).
   `fix/config-v5-broken-types` pushed directly (had push access, no fork
   needed), built on top of the Renovate PR's own bump commit (same pattern
   as prior cmcutter fixes). Fix PR:
-  https://github.com/tomacheese/cmcutter/pull/2716
+  https://github.com/tomacheese/cmcutter/pull/2716. Initially opened as
+  `CONFLICTING` (branched off a stale point on `renovate/config-5.x`,
+  missing 2 newer master commits) — rebased onto latest `master`,
+  regenerated `pnpm-lock.yaml`, re-verified `pnpm run lint`/`compile`
+  green, force-pushed; now `MERGEABLE`.
+- checkpoint: completed (2026-08-12). Fix PR #2716's own CI confirmed
+  green: both originally-failing checks (`Node CI / node-ci (.)`,
+  `Node CI / Check finished Node CI`) pass, plus `Node CI / setup`,
+  `Analyze (actions)`, `Analyze (javascript-typescript)`, `CodeQL` — no
+  unrelated failures.
 
 ## Queue
 
