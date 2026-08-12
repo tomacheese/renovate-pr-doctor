@@ -25,28 +25,11 @@ to Investigators immediately (concurrency 5, no backlog).
   `@types/config` devDependency (v5 ships its own types). Verified
   locally: `pnpm run lint` (prettier + eslint + tsc) and `pnpm run
   compile` both green after checking out the Renovate PR's branch.
-
-### book000/templates#465
-- checkpoint: root-cause-identified (2026-08-12). Dependency currency:
-  `hadolint/hadolint-action` proposed `v3.4.0`, latest `v3.4.0` (`current`,
-  nothing to note). Root cause: this action bump pulls in hadolint
-  `v2.15.0`, which flags `test-scenarios/docker/Dockerfile:31`
-  (`USER appuser`) with `DL3066` ("Non-numeric user-id may not be
-  resolvable by host system") at the default `info` failure-threshold —
-  `appuser` is a named (non-numeric) user, previously not flagged by
-  hadolint bundled in `v3.3.0`. Confident, low-risk fix: switch that line
-  to the numeric `USER 1000:1000` (matches the UID/GID the same Dockerfile
-  already creates via `addgroup -g 1000`/`adduser -u 1000`). Verified
-  locally with `docker run --rm -i hadolint/hadolint:v2.15.0` against the
-  fixed Dockerfile — clean, no findings.
 - checkpoint: fix-pr-opened (2026-08-12). Fix branch
-  `fix/hadolint-dl3066-numeric-user` pushed directly (had push access, no
-  fork needed). Fix PR: https://github.com/book000/templates/pull/477
-- checkpoint: completed (2026-08-12). Fix PR #477's own CI confirmed green
-  end to end: both originally-failing checks (`Test reusable-hadolint-ci /
-  hadolint`, `Test Summary Finished`) pass, plus every other check
-  (Analyze x4, CodeQL, actionlint, add-reviewer, Docker/Maven/Node CI
-  reusable-workflow tests), no unrelated failures.
+  `fix/config-v5-broken-types` pushed directly (had push access, no fork
+  needed), built on top of the Renovate PR's own bump commit (same pattern
+  as prior cmcutter fixes). Fix PR:
+  https://github.com/tomacheese/cmcutter/pull/2716
 
 ### book000/node-utils#1593
 - checkpoint: root-cause-identified (2026-08-12). Renovate bumped
@@ -71,6 +54,10 @@ to Investigators immediately (concurrency 5, no backlog).
   (110/110). Fix PR: https://github.com/book000/node-utils/pull/1620
   (branch `fix/sentry-node-lockfile`, pushed via SSH, direct push access —
   no fork needed).
+- checkpoint: completed (2026-08-12). Fix PR #1620 CI confirmed green: 12
+  checks pass incl. both originally-failing `Node CI / node-ci (.)` /
+  `Node CI / Check finished Node CI`, plus CodeQL/Analyze; no unrelated
+  failures. PR is `MERGEABLE`/`CLEAN`.
 
 ### tomacheese/booth-purchased-items-manager#1047
 - checkpoint: root-cause-identified (2026-08-12). Renovate bumped
@@ -132,9 +119,6 @@ in-flight:
   - slot: investigator-cmcutter-2692
     target: tomacheese/cmcutter#2692
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-templates-465
-    target: book000/templates#465
-    checks: Test reusable-hadolint-ci / hadolint,Test Summary Finished
   - slot: investigator-node-utils-1593
     target: book000/node-utils#1593
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
@@ -147,7 +131,7 @@ in-flight:
     recheck-of: fixed/rolldown-plugin-dts-override-bump-reintroduces-volar-typescript-type-leak
 pending (not yet dispatched, in order):
   (empty)
-done this sweep: 0
+done this sweep: 1 (fixed=1 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
