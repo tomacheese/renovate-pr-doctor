@@ -71,6 +71,18 @@ to Investigators immediately (concurrency 5, no backlog).
 - dependency currency: `node-html-parser` classified `current` (proposed
   9.0.1 == latest 9.0.1) — no version bump beyond what the Renovate PR
   already proposes.
+- checkpoint: fix-pr-opened (2026-08-12). Bumped `node-html-parser` to
+  `9.0.1` and regenerated `pnpm-lock.yaml`; also discovered and removed
+  the now-obsolete 9.0.0-era declaration patch (`#987`,
+  `patches/node-html-parser@9.0.0.patch`, worked around a self-referencing
+  `declare namespace parse { var X: typeof X }` TS2502 bug) — 9.0.1's
+  `dist/index.d.ts` rewrites those exports as `typeof import(".").X`,
+  which no longer self-shadows, and pnpm fails fast
+  (`ERR_PNPM_UNUSED_PATCH`) if the stale patch is left in place. Verified
+  via a standalone `tsc` check against the packed 9.0.1 tarball (no
+  TS2502), plus `pnpm install`/`--frozen-lockfile`, `pnpm lint`, `pnpm
+  test` (97 passed, 7 skipped) all green locally. Fix PR:
+  https://github.com/tomacheese/booth-purchased-items-manager/pull/1091
 
 ### book000/create-ts#65
 - Investigator dispatched 2026-08-12 (recheck). Ledger had a `fixed` row
