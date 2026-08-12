@@ -13,19 +13,43 @@ to Investigators immediately (concurrency 5, no backlog).
   (.), Node CI / Check finished Node CI.
 
 ### book000/templates#465
-- Investigator dispatched 2026-08-12. Failing checks: Test
-  reusable-hadolint-ci / hadolint, Test Summary Finished.
+- checkpoint: root-cause-identified (2026-08-12). Dependency currency:
+  `hadolint/hadolint-action` proposed `v3.4.0`, latest `v3.4.0` (`current`,
+  nothing to note). Root cause: this action bump pulls in hadolint
+  `v2.15.0`, which flags `test-scenarios/docker/Dockerfile:31`
+  (`USER appuser`) with `DL3066` ("Non-numeric user-id may not be
+  resolvable by host system") at the default `info` failure-threshold —
+  `appuser` is a named (non-numeric) user, previously not flagged by
+  hadolint bundled in `v3.3.0`. Confident, low-risk fix: switch that line
+  to the numeric `USER 1000:1000` (matches the UID/GID the same Dockerfile
+  already creates via `addgroup -g 1000`/`adduser -u 1000`). Verified
+  locally with `docker run --rm -i hadolint/hadolint:v2.15.0` against the
+  fixed Dockerfile — clean, no findings.
 
 ### book000/node-utils#1593
-- Investigator dispatched 2026-08-12. Failing checks: Node CI / node-ci
-  (.), Node CI / Check finished Node CI.
+- checkpoint: root-cause-identified (2026-08-12). Renovate bumped
+  `@sentry/node` to `10.69.0` in `package.json` but failed to regenerate
+  `pnpm-lock.yaml` (matches the separately-failing `renovate/artifacts`
+  check: "Artifact file update failure"). `pnpm install --frozen-lockfile`
+  in Node CI then fails with `ERR_PNPM_OUTDATED_LOCKFILE` (lockfile:
+  10.68.0, manifest: 10.69.0). Confident fix: regenerate the lockfile on a
+  fresh branch.
+- dependency currency: `@sentry/node` classified `stale-unexplained-minor`
+  (proposed 10.69.0, latest 10.70.0) — bumping to 10.70.0 in the fix PR
+  instead of the Renovate-proposed 10.69.0.
 
 ### tomacheese/booth-purchased-items-manager#1047
-- Investigator dispatched 2026-08-12. Failing checks: Node CI / node-ci
-  (.), Node CI / Check finished Node CI, Docker CI / Docker build
-  (booth-purchased-items-manager, linux/amd64), Docker CI / Docker build
-  (booth-purchased-items-manager, linux/arm64), Docker CI / Check finished
-  Docker CI.
+- checkpoint: root-cause-identified (2026-08-12). Renovate bumped
+  `node-html-parser` to `9.0.1` in `package.json` but failed to
+  regenerate `pnpm-lock.yaml` (still pinned to `9.0.0`) — matches the
+  separately-failing `renovate/artifacts` check ("Artifact file update
+  failure"). `pnpm install --frozen-lockfile` then fails with
+  `ERR_PNPM_OUTDATED_LOCKFILE`, which cascades to both Node CI and Docker
+  CI (same frozen-lockfile install step). Confident fix: regenerate the
+  lockfile on a fresh branch.
+- dependency currency: `node-html-parser` classified `current` (proposed
+  9.0.1 == latest 9.0.1) — no version bump beyond what the Renovate PR
+  already proposes.
 
 ### book000/create-ts#65
 - Investigator dispatched 2026-08-12 (recheck). Ledger had a `fixed` row
