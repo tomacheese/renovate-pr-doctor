@@ -28,6 +28,11 @@ to Investigators immediately (concurrency 5, no backlog).
 - checkpoint: fix-pr-opened (2026-08-12). Fix branch
   `fix/hadolint-dl3066-numeric-user` pushed directly (had push access, no
   fork needed). Fix PR: https://github.com/book000/templates/pull/477
+- checkpoint: completed (2026-08-12). Fix PR #477's own CI confirmed green
+  end to end: both originally-failing checks (`Test reusable-hadolint-ci /
+  hadolint`, `Test Summary Finished`) pass, plus every other check
+  (Analyze x4, CodeQL, actionlint, add-reviewer, Docker/Maven/Node CI
+  reusable-workflow tests), no unrelated failures.
 
 ### book000/node-utils#1593
 - checkpoint: root-cause-identified (2026-08-12). Renovate bumped
