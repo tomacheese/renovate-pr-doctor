@@ -9,13 +9,21 @@ staleness-rechecks of known create-ts#65 / collect-points#697).
 
 concurrency: 5
 in-flight:
-  (empty)
+  - slot: investigator-comico-downloader-831
+    target: tomacheese/comico-downloader#831
+    checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI
+  - slot: investigator-collect-points-757
+    target: tomacheese/collect-points#757
+    checks: Approval gate,Approval gate
+  - slot: investigator-api.tomacheese.com-511
+    target: tomacheese/api.tomacheese.com#511
+    checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI
+  - slot: investigator-create-ts-65
+    target: book000/create-ts#65
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+    recheck-of: skipped/rolldown-plugin-dts-override-bump-reintroduces-volar-typescript-type-leak
 pending (not yet dispatched, in order):
-  - tomacheese/comico-downloader#831 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI]
-  - tomacheese/collect-points#757 [checks: Approval gate,Approval gate]
-  - tomacheese/api.tomacheese.com#511 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI]
-  - book000/create-ts#65 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI] recheck-of: skipped/rolldown-plugin-dts-override-bump-reintroduces-volar-typescript-type-leak
-  - tomacheese/collect-points#697 [checks: Approval gate,Approval gate] recheck-of: blocked/github-actions-billing-payment-failure
+  - tomacheese/collect-points#697 [checks: Approval gate,Approval gate] recheck-of: blocked/github-actions-billing-payment-failure (same-repo-blocked behind collect-points#757)
 done this sweep: 0
 
 ## Cleanup
