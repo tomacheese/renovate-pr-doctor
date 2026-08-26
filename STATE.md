@@ -2,8 +2,12 @@
 
 ## Phase
 
-2026-08-27 sweep in progress. Discovery found 5 candidates (3 new, 2
-staleness-rechecks of known create-ts#65 / collect-points#697).
+Last completed sweep: 2026-08-27, see `records/2026-08-27-run.md`.
+Currently idle.
+
+## Targets and their state
+
+(none — main sweep queue drained)
 
 ## Queue
 
@@ -14,24 +18,24 @@ pending (not yet dispatched, in order):
   (empty)
 done this sweep: 5 (fixed=0 skipped=1 blocked=4)
 
-## Targets and their state
+## Conflict-fixer queue
 
-### tomacheese/collect-points#697
+(empty — no fix PRs opened this sweep, so no conflict monitor was started.)
 
-- checkpoint: blocked
-- detail: Staleness recheck (2026-08-24 row, 3+ days old) re-confirmed
-  unchanged. PR still OPEN, "Approval gate" still fails with the same
-  purely environmental cause: "The job was not started because recent
-  account payments have failed or your spending limit needs to be
-  increased." Identical root-cause-signature
-  (`github-actions-billing-payment-failure`) already independently
-  confirmed this sweep on sibling PRs tomacheese/comico-downloader#831,
-  tomacheese/api.tomacheese.com#511, tomacheese/collect-points#757. No
-  code fix possible/attempted; org-level GitHub Actions billing issue,
-  outside repo scope. No currency-check special handling applies (blocked
-  purely on environmental grounds, currency check not relevant to the
-  blocking cause).
+## Escalate-to-user policy
+
+No standing override in effect. Default behavior applies: relay any
+`escalate-to-user` Arbiter verdict immediately via `AskUserQuestion`.
+
+## Remaining broken Renovate PRs
+
+- book000/create-ts#65 — skipped: upstream rolldown-plugin-dts @volar/typescript type leak persists; owner previously declined special Renovate rule. Re-confirmed unchanged for 4 consecutive sweeps (2026-08-01, 2026-08-12, 2026-08-24, 2026-08-27).
+- tomacheese/comico-downloader#831, tomacheese/api.tomacheese.com#511, tomacheese/collect-points#757, tomacheese/collect-points#697 — blocked: account-wide `tomacheese` org GitHub Actions billing/spending-limit outage, ongoing since 2026-08-22 (5+ days as of this sweep), affecting every workflow run in the org, not just Renovate PRs. No code fix possible.
 
 ## Cleanup
 
 Attempted removal of stale `scratchpad/renovate-fix-chrome-response-recorder-409` (matching ledger row confirms `fixed`, 2026-08-01); `dist/` subfiles remain root-owned and not removable without privilege escalation — unchanged from prior sweep.
+
+## Next concrete action
+
+Recommend the user resolve the `tomacheese` org's GitHub Actions billing issue directly (blocking 4 PRs across 2+ repos for 5+ days) rather than waiting for it to self-resolve via future sweeps. create-ts#65 remains a durable skip unless upstream or owner policy changes.
