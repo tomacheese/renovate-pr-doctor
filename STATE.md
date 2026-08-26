@@ -43,6 +43,11 @@ detail: dependency currency check returned `[]` (no packages, lockFileMaintenanc
 checkpoint: blocked
 detail: dependency currency check returned `[]` (no packages parsed; lockFileMaintenance-only PR touching only `pnpm-lock.yaml`) — no special handling needed. All three failing checks (`Node CI / setup`, `Approval gate`, `Node CI / Check finished Node CI`) fail immediately (2-4s, zero steps run) with check-run annotation: "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings." — a GitHub Actions billing/spending-limit failure at the account level, purely environmental, same root cause as the known `github-actions-billing-payment-failure` pattern seen on comico-downloader#831, collect-points#697/#757 (this sweep). Not a judgment call; no code fix possible or attempted.
 
+### tomacheese/collect-points#757
+
+checkpoint: blocked
+detail: dependency currency check returned `[]` (lockFileMaintenance-only PR, no packages parsed) — no special handling needed. Both failing checks (`Approval gate` on Docker and Node CI workflows) fail immediately (3-4s, zero steps run) with check-run annotation: "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings." Confirmed via `gh run list --workflow=docker.yml`: failures started 2026-08-22 and affect every run since (including `push` to `master`), not just PR runs — an account-wide GitHub Actions billing/spending-limit failure, purely environmental, same root cause as the known `github-actions-billing-payment-failure` pattern seen on comico-downloader#831, api.tomacheese.com#511, collect-points#697 (this sweep). Not a judgment call; no code fix possible or attempted.
+
 ## Cleanup
 
 Attempted removal of stale `scratchpad/renovate-fix-chrome-response-recorder-409` (matching ledger row confirms `fixed`, 2026-08-01); `dist/` subfiles remain root-owned and not removable without privilege escalation — unchanged from prior sweep.
