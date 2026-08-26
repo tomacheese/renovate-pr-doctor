@@ -1,13 +1,9 @@
-# Current state (last updated: 2026-08-12)
+# Current state (last updated: 2026-08-27)
 
 ## Phase
 
-Last completed sweep: 2026-08-12, see `records/2026-08-12-run.md`.
-Currently idle.
-
-## Targets and their state
-
-(none — main sweep queue drained)
+2026-08-27 sweep in progress. Discovery found 5 candidates (3 new, 2
+staleness-rechecks of known create-ts#65 / collect-points#697).
 
 ## Queue
 
@@ -15,26 +11,13 @@ concurrency: 5
 in-flight:
   (empty)
 pending (not yet dispatched, in order):
-  (empty)
-done this sweep: 5 (fixed=4 skipped=1 blocked=0)
+  - tomacheese/comico-downloader#831 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI]
+  - tomacheese/collect-points#757 [checks: Approval gate,Approval gate]
+  - tomacheese/api.tomacheese.com#511 [checks: Node CI / setup,Approval gate,Node CI / Check finished Node CI]
+  - book000/create-ts#65 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI] recheck-of: skipped/rolldown-plugin-dts-override-bump-reintroduces-volar-typescript-type-leak
+  - tomacheese/collect-points#697 [checks: Approval gate,Approval gate] recheck-of: blocked/github-actions-billing-payment-failure
+done this sweep: 0
 
-## Conflict-fixer queue
+## Cleanup
 
-(empty — no conflicts detected during the 2026-08-12 sweep; monitor
-`bkjx32lmm` ended on its own once all 4 tracked fix PRs reached a terminal
-GitHub state, all MERGED: tomacheese/cmcutter#2716, book000/templates#477,
-book000/node-utils#1620, tomacheese/booth-purchased-items-manager#1091 —
-each independently confirmed via `gh pr view`.)
-
-## Escalate-to-user policy
-
-No standing override in effect. Default behavior applies: relay any
-`escalate-to-user` Arbiter verdict immediately via `AskUserQuestion`.
-
-## Next concrete action
-
-None — idle between sweeps. Next `/renovate-maintain` invocation starts
-fresh discovery.
-
-## Open questions / concerns
-(none)
+Attempted removal of stale `scratchpad/renovate-fix-chrome-response-recorder-409` (matching ledger row confirms `fixed`, 2026-08-01); `dist/` subfiles remain root-owned and not removable without privilege escalation — unchanged from prior sweep.
