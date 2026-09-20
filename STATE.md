@@ -23,6 +23,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Confident fix: apply eslint `--fix` (38/41 auto-fixable) and manually fix the remaining ~3.
 
+### book000/twitter-rss#3770
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 2 pre-existing lint violations in `src/main.ts` (`unicorn/no-immediate-mutation` at line 145, `unicorn/prefer-ternary` at line 248). `yarn lint:eslint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: `eslint --fix` auto-fixes the ternary; manually rewrote the immediate-mutation to a conditional spread (`...(proxy && { proxy })`).
+
 ### book000/rss-deliver#2787
 
 - checkpoint: root-cause-identified
