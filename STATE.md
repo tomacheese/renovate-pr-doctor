@@ -29,6 +29,18 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
+### tomacheese/fetch-youtube-bgm#3025
+
+- checkpoint: skipped
+- dependency currency: `eslint` proposed 10.10.0, latest unknown — lookup-failed, no special handling.
+- detail: Same root-cause pattern as siblings `#3021`/`#3023`/`#3024` in this same repo — `downloader/Dockerfile`'s `echogen-builder` stage `apt-get install libboost-dev libtag1-dev zlib1g-dev` 404s (`libtag1-dev_1.11.1+dfsg.1-3+deb11u1` not found on `deb.debian.org/debian-security`), pre-existing Dockerfile issue unrelated to this PR's eslint bump. Fixes already opened for `#3021`→#3031 and `#3023`→#3033; `#3024` was correctly skipped/deferred rather than opening a third duplicate. Skipping `#3025` too, deferred to #3031/#3033 — no new fix PR opened.
+
+### tomacheese/watch-vrchat-user#532
+
+- checkpoint: skipped
+- dependency currency: `eslint` proposed 10.10.0, latest 10.11.0 — stale-unexplained-minor. No fix PR opened here (deferred, see below), so no bump made.
+- detail: Same pre-existing `master`-level `pnpm-lock.yaml`/`allowBuilds` drift as siblings `#529`/`#530`/`#531` in this same repo (stale `vrchat@2.22.8` patch vs. `package.json`'s `2.22.9`, plus missing `@parcel/watcher` in `pnpm-workspace.yaml`'s `allowBuilds`). Confirmed via `Node CI / node-ci (.)` log: `Error: ERR_PNPM_OUTDATED_LOCKFILE`, plus `renovate/artifacts` check also failing with "Artifact file update failure" — identical signature to the sibling PRs, unrelated to this PR's own eslint 10.9.0→10.10.0 bump. Fixes already opened and unmerged for `#529`→#538, `#530`→#539, `#531`→#540. Not opening a fourth duplicate fix PR — deferring to the earliest, #538 (`https://github.com/tomacheese/watch-vrchat-user/pull/538`).
+
 ## Queue
 
 concurrency: 5
