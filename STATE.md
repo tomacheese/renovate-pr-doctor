@@ -31,9 +31,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-jcb#1667
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/watch-bsky-likes#1410`. The eslint-config bump newly flags a pre-existing `unicorn/prefer-early-return` violation in `src/discord.ts:104`. `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: refactor the flagged function to an early return.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/watch-bsky-likes#1410`. The eslint-config bump newly flags a pre-existing `unicorn/prefer-early-return` violation in `src/discord.ts:104`. `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, refactored `sendDiscordMessage`'s bot-message branch to an early return. Have push access; pushed branch `fix/eslint-unicorn-prefer-early-return` directly. Verified locally: `pnpm run lint` clean, `pnpm run test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-jcb/pull/1672
 
 ## Queue
 
