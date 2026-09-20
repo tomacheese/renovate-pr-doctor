@@ -25,11 +25,20 @@ slots; refill loop in progress.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
 
-### tomacheese/watch-vrchat-user#532
+
+
+### tomacheese/fetch-youtube-bgm#3027
 
 - checkpoint: completed
-- dependency currency: `eslint` proposed 10.10.0, latest 10.11.0 — stale-unexplained-minor. No fix PR opened here (self-resolved, see below), so no bump made by this investigation.
-- detail: Same pre-existing `master`-level `pnpm-lock.yaml`/`allowBuilds` drift as siblings `#529`/`#530`/`#531` in this same repo (stale `vrchat@2.22.8` patch vs. `package.json`'s `2.22.9`, plus missing `@parcel/watcher` in `pnpm-workspace.yaml`'s `allowBuilds`). Confirmed via `Node CI / node-ci (.)` log: `Error: ERR_PNPM_OUTDATED_LOCKFILE`, plus `renovate/artifacts` check also failing with "Artifact file update failure" — identical signature to the sibling PRs, unrelated to this PR's own eslint 10.9.0→10.10.0 bump. Fixes already opened for `#529`→#538, `#530`→#539, `#531`→#540; decided not to open a fourth duplicate fix PR. While investigating, `#538` merged into `master` and `#539`/`#540` were closed as redundant. Renovate then auto-rebased `#532` onto the fixed `master`, and its own CI re-ran and passed on all 5 originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, `Docker CI / Docker build` amd64+arm64, `Docker CI / Check finished Docker CI`) without any fix PR of ours — the sibling fix, once merged, resolved this PR directly. `checkpoint: completed`, not `skipped`, since the target PR's checks are now genuinely green.
+- dependency currency: `vuetify` proposed 4.2.1, lookup-failed (registry lookup unavailable) — no other finding, proceeded with normal CI-fix path.
+- detail: Same root-cause pattern as sibling PRs #3021/#3023/#3024/#3025/#3026: `downloader/Dockerfile`'s `echogen-builder` stage base image `buildpack-deps:bullseye` failed `apt-get install` due to Debian-security EOL 404s. Fix already merged to master via #3031 (opened from #3021's investigator). Re-checked #3027's current CI fresh: all Docker CI checks passing (`Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64)` pass, `Docker CI / Check finished Docker CI` pass) — self-resolved the same way #3026 did, once Renovate rebased it onto the fixed master. PR is already MERGED (state: MERGED). No new fix PR needed (would have been a duplicate of #3031).
+
+### tomacheese/watch-vrchat-user#534
+
+- checkpoint: completed
+- dependency currency: check-dependency-currency.sh not run separately (no new package version judgment needed — same pre-existing root cause as siblings, no bump proposed by this PR is at issue).
+- detail: Same root-cause pattern as sibling `tomacheese/watch-vrchat-user` PRs #529-#532: pre-existing master-level `pnpm-lock.yaml`/`allowBuilds` drift (stale `vrchat@2.22.8` patch + missing `allowBuilds` entry for `@parcel/watcher`). Fix already merged to master via #538 (opened from #529's investigator). Re-checked #534's current CI fresh: all 14 checks now passing (`gh pr checks 534` → 14 ok / 0 failed) — self-resolved the same way #532 did, once Renovate rebased it onto the fixed master. No new fix PR needed (would have been a duplicate of #538).
+- action: no fix PR opened (self-resolved via already-merged sibling fix #538). CI confirmed green, so recorded as `fixed`/`completed` (same treatment as sibling #532), not a deferred `skipped`.
 
 ## Queue
 
@@ -38,22 +47,20 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-tomacheese-watch-vrchat-user-532
-    target: tomacheese/watch-vrchat-user#532
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-fetch-youtube-bgm-3026
-    target: tomacheese/fetch-youtube-bgm#3026
+  - slot: investigator-tomacheese-fetch-youtube-bgm-3027
+    target: tomacheese/fetch-youtube-bgm#3027
     checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-watch-vrchat-user-534
+    target: tomacheese/watch-vrchat-user#534
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order):
-  - tomacheese/watch-vrchat-user#534 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #532)
-  - tomacheese/watch-vrchat-user#535 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #532)
-  - tomacheese/fetch-youtube-bgm#3027 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3026)
-  - tomacheese/watch-vrchat-user#536 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #532)
-  - tomacheese/fetch-youtube-bgm#3028 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3026)
-  - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #532)
-  - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3026)
-  - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3026)
-done this sweep: 68 (fixed=65 skipped=3 blocked=0)
+  - tomacheese/watch-vrchat-user#535 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #534)
+  - tomacheese/watch-vrchat-user#536 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #534)
+  - tomacheese/fetch-youtube-bgm#3028 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3027)
+  - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #534)
+  - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3027)
+  - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3027)
+done this sweep: 70 (fixed=68 skipped=2 blocked=0)
 
 ## Conflict-fixer queue
 
