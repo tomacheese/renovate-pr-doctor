@@ -29,6 +29,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 2 pre-existing lint violations in `src/main.ts` (`unicorn/no-immediate-mutation` at line 145, `unicorn/prefer-ternary` at line 248). `yarn lint:eslint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: `eslint --fix` auto-fixes the ternary; manually rewrote the immediate-mutation to a conditional spread (`...(proxy && { proxy })`). Push access confirmed (no fork needed). Fix PR: https://github.com/book000/twitter-rss/pull/3774
 
+### book000/kindle-booklog#2510
+
+- checkpoint: root-cause-identified
+- dependency currency: `tar-stream` proposed 3.2.1, latest 3.2.1 — current, no special handling.
+- detail: PR bumps `tar-stream` 3.2.0 → 3.2.1, which bumps its transitive `streamx` dependency to 2.28.1. streamx 2.28.1 tightens the `on()`/`EventHandler` typings to a contravariant `(data: unknown) => R`, so the existing `stream.on('data', (chunk: { toString: () => string }) => ...)` handler in `src/amazon.ts:350` no longer type-checks (`TS2345`). `pnpm run lint:tsc` fails, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: retype the handler param as `unknown` and cast to `Buffer` inside (chunks are Buffers at runtime; behavior unchanged).
+
 ### book000/rss-deliver#2787
 
 - checkpoint: root-cause-identified
