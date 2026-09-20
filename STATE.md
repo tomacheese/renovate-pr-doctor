@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### book000/niconico-mylist-video-checker#2716
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: The eslint-config bump (1.16.66 → 1.16.67) newly enables `unicorn/prefer-continue`, which flags the pre-existing `if (!initMode) { ... }` block wrapping the rest of the notification loop body in `src/main.ts:97`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: rewrote the block as an early `continue` when `initMode` is true; no logic change. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean. No push access to `book000/niconico-mylist-video-checker` — forked to `akubiusa/niconico-mylist-video-checker`, pushed there. Fix PR: https://github.com/book000/niconico-mylist-video-checker/pull/2720 — waiting on CI.
+- detail: The eslint-config bump (1.16.66 → 1.16.67) newly enables `unicorn/prefer-continue`, which flags the pre-existing `if (!initMode) { ... }` block wrapping the rest of the notification loop body in `src/main.ts:97`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: rewrote the block as an early `continue` when `initMode` is true; no logic change. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean. No push access to `book000/niconico-mylist-video-checker` — forked to `akubiusa/niconico-mylist-video-checker`, pushed there. Fix PR: https://github.com/book000/niconico-mylist-video-checker/pull/2720 — both target checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed on the fix PR's own CI run; other checks pass too (Approval gate pending is a required-review gate, not a CI failure).
 
 ### book000/twitter-auto-spam-crawler#637
 
@@ -35,18 +35,12 @@ slots; refill loop in progress.
 - dependency currency: `jest`/`jest-environment-jsdom` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor for both. Will bump to 30.5.2 in the fix PR.
 - detail: PR bumps jest/jest-environment-jsdom 30.4.x → 30.5.1, which pulls in a new transitive dependency `@parcel/watcher@2.6.0` (via jsdom/jest-environment-jsdom chain). pnpm's supply-chain build-script policy in `pnpm-workspace.yaml` (`allowBuilds:`) doesn't list it, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: add `'@parcel/watcher': true` to `allowBuilds` in `pnpm-workspace.yaml`, alongside bumping jest/jest-environment-jsdom to 30.5.2.
 
-### book000/kindle-booklog#2510
-
-- checkpoint: completed
-- dependency currency: `tar-stream` proposed 3.2.1, latest 3.2.1 — current, no special handling.
-- detail: PR bumps `tar-stream` 3.2.0 → 3.2.1, which bumps its transitive `streamx` dependency to 2.28.1. streamx 2.28.1 tightens the `on()`/`EventHandler` typings to a contravariant `(data: unknown) => R`, so the existing `stream.on('data', (chunk: { toString: () => string }) => ...)` handler in `src/amazon.ts:350` no longer type-checks (`TS2345`). `pnpm run lint:tsc` fails, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `tar-stream` to 3.2.1 and retyped the handler param as `unknown`, cast to `Buffer` inside (chunks are Buffers at runtime; behavior unchanged). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/book000/kindle-booklog/pull/2576 — all checks (13/13) passed on the fix PR's own CI run, no unrelated failures.
-
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-book000-kindle-booklog-2510
-    target: book000/kindle-booklog#2510
+  - slot: investigator-book000-moneyforward-collector-2672
+    target: book000/moneyforward-collector#2672
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
@@ -61,7 +55,6 @@ in-flight:
     target: tomacheese/fauxcord#314
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/moneyforward-collector#2672 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/chrome-response-recorder#583 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/create-ts#221 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - jaoafa/watch-guilds#2312 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -116,7 +109,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 22 (fixed=22 skipped=0 blocked=0)
+done this sweep: 23 (fixed=23 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
