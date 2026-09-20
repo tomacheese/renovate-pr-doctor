@@ -29,6 +29,12 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, will bump to 30.5.2 in fix PR.
 - detail: Renovate bumps `jest` 30.4.2 -> 30.5.1. This pulls in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (used by jest's internal file watching), which ships a native build/postinstall script. The repo's `pnpm-lock.yaml`/`package.json` have no `pnpm.onlyBuiltDependencies`/`ignoredBuiltDependencies` allow-list, so pnpm (strict-by-default on new build scripts) fails install with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0` — this is why `Node CI / node-ci (.)` (and its downstream `Check finished Node CI`) fail; Docker CI fails for the same reason (its build also runs `pnpm install`).
 
+### tomacheese/vrcx-web-server#1203
+
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, will bump to 12.5.1 in fix PR.
+- detail: Renovate bumps `packageManager` pnpm 11.x -> 12.4.2. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting removed in v12. Since `packageManager` pins the exact pnpm version, pnpm hard-errors (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, not just a warning) on any install, failing `Node CI / node-ci (.)` and (same `pnpm install` step) `Docker CI / Docker build (vrcx-web-server, linux/amd64)`, plus their downstream "Check finished" jobs. Fix: remove `confirmModulesPurge` from `pnpm-workspace.yaml` (its purpose — confirm before purging node_modules — has no v12 equivalent setting, so no replacement needed), keep `allowBuilds`/`minimumReleaseAgeExclude` as-is (still recognized by v12), bump pnpm to 12.5.1 per dependency-currency check.
+
 ## Queue
 
 concurrency: 5
