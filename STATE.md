@@ -13,9 +13,9 @@ slots; refill loop in progress.
 
 ### book000/chrome-mcp-router#115
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: `@book000/eslint-config` bump to 1.16.67 enables/tightens `unicorn/prefer-ternary` and `unicorn/prefer-early-return` rules, flagging 6 pre-existing lint violations in `src/bridge.ts`, `src/config.ts`, `src/index.ts` (tests pass, depcheck passes). Confident fix: apply `eslint --fix` (all 6 errors are auto-fixable per CI log) in a separate PR against default branch.
+- detail: `@book000/eslint-config` bump to 1.16.67 enables/tightens `unicorn/prefer-ternary` and `unicorn/prefer-early-return` rules, flagging 6 pre-existing lint violations in `src/bridge.ts`, `src/config.ts`, `src/index.ts` (tests pass, depcheck passes). Note: repo has no `.prettierrc` — used manual style-matched fixes (no semicolons, single quotes) instead of `pnpm run format`, which uses prettier's own defaults and would have reformatted every file. Fix PR: https://github.com/book000/chrome-mcp-router/pull/116, branch `fix/eslint-config-1-16-67-lint-errors`. Waiting on fix PR's own CI before marking completed.
 
 ### tomacheese/fetch-youtube-bgm#3021
 
