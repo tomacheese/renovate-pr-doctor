@@ -11,6 +11,12 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
+### book000/chrome-mcp-router#115
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: `@book000/eslint-config` bump to 1.16.67 enables/tightens `unicorn/prefer-ternary` and `unicorn/prefer-early-return` rules, flagging 6 pre-existing lint violations in `src/bridge.ts`, `src/config.ts`, `src/index.ts` (tests pass, depcheck passes). Confident fix: apply `eslint --fix` (all 6 errors are auto-fixable per CI log) in a separate PR against default branch.
+
 ## Queue
 
 concurrency: 5
