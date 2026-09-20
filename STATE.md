@@ -31,21 +31,15 @@ slots; refill loop in progress.
 
 ### tomacheese/misskey-list-eyes#2630
 
-- checkpoint: fix-pr-opened
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/utils.ts:74-77` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, hand-converted the `if` block to a ternary (not eslint auto-fixable). Have push access; pushed branch `fix/eslint-unicorn-prefer-ternary` directly. Verified locally: `pnpm run lint` clean, `pnpm test` 14/14 passing. Fix PR: https://github.com/tomacheese/misskey-list-eyes/pull/2635
-
-### tomacheese/auto-update-web-scrobbler#2360
-
 - checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/main.ts:163` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: rewrote as a single ternary (non-negated branch first, to also satisfy `unicorn/no-negated-condition`). Had push access — pushed branch `fix/eslint-prefer-ternary-main-ts` directly. Verified locally against both eslint-config 1.16.66 and 1.16.67: eslint/tsc/prettier all clean. Fix PR: https://github.com/tomacheese/auto-update-web-scrobbler/pull/2365 — CI confirmed green: both originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed; no unrelated new failures (all 8 non-skipped checks passed).
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/utils.ts:74-77` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, hand-converted the `if` block to a ternary (not eslint auto-fixable). Have push access; pushed branch `fix/eslint-unicorn-prefer-ternary` directly. Verified locally: `pnpm run lint` clean, `pnpm test` 14/14 passing. Fix PR: https://github.com/tomacheese/misskey-list-eyes/pull/2635 — CI confirmed green: both originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed; no unrelated new failures (all 10 non-skipped checks passed).
 
 ### tomacheese/watch-quicpay#2492
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, bumped to 12.5.1 in fix PR.
-- detail: Renovate bumps `packageManager` from `pnpm@11.27.0` to `pnpm@12.4.2` in `package.json` only. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm-v11-only setting; pnpm v12 rejects it with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `pnpm install --frozen-lockfile` in `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and in both `Docker CI / Docker build` matrix jobs. `renovate/artifacts` also failed for the same reason (Renovate's own artifact-update step couldn't run pnpm 12 either). Fix: removed `confirmModulesPurge` from `pnpm-workspace.yaml`, bumped `packageManager` to latest `pnpm@12.5.1`, regenerated `pnpm-lock.yaml` (adds pnpm's own `packageManagerDependencies` section, no dependency changes). Had push access — pushed branch `fix/pnpm-12-workspace-settings` directly (no fork needed). Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2530
+- detail: Renovate bumps `packageManager` from `pnpm@11.27.0` to `pnpm@12.4.2` in `package.json` only. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm-v11-only setting; pnpm v12 rejects it with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `pnpm install --frozen-lockfile` in `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and in both `Docker CI / Docker build` matrix jobs. `renovate/artifacts` also failed for the same reason (Renovate's own artifact-update step couldn't run pnpm 12 either). Fix: removed `confirmModulesPurge` from `pnpm-workspace.yaml`, bumped `packageManager` to latest `pnpm@12.5.1`, regenerated `pnpm-lock.yaml` (adds pnpm's own `packageManagerDependencies` section, no dependency changes). Had push access — pushed branch `fix/pnpm-12-workspace-settings` directly (no fork needed). Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2530 — CI confirmed green: `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` matrix jobs, and `Docker CI / Check finished Docker CI` all passed; no unrelated new failures.
 
 ## Queue
 
@@ -57,8 +51,8 @@ in-flight:
   - slot: investigator-tomacheese-misskey-list-eyes-2630
     target: tomacheese/misskey-list-eyes#2630
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-auto-update-web-scrobbler-2360
-    target: tomacheese/auto-update-web-scrobbler#2360
+  - slot: investigator-tomacheese-watch-bsky-likes-1410
+    target: tomacheese/watch-bsky-likes#1410
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-tomacheese-watch-quicpay-2492
     target: tomacheese/watch-quicpay#2492
@@ -67,7 +61,6 @@ in-flight:
     target: tomacheese/discord-crosspost-auto-translate#2694
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/watch-bsky-likes#1410 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/booth-purchased-items-manager#1191 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/watch-jcb#1667 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/lock-move-channel#2692 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -98,7 +91,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 46 (fixed=46 skipped=0 blocked=0)
+done this sweep: 47 (fixed=47 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
