@@ -17,6 +17,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — CI's `node-ci` job has been stuck in GitHub's `waiting` status (not `pending`/running) since ~11:03 UTC: the repo's workflow requires manual Environment approval (`fork-pr-build`) for any PR whose head repo differs from `book000/pixivts`, which is exactly the case here since I had no push access and opened from a fork. Only a `book000/pixivts` maintainer can click Approve on the Actions run; this is a normal, expected gate for external/fork PRs, not a code defect. Still `fix-pr-opened`, not `completed` — CI hasn't actually executed the lint fix yet.
 
+### tomacheese/watch-vrchat-user#531
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/node-utils` proposed 1.25.110, latest 1.25.110 — current, no special handling.
+- detail: Same pre-existing `master`-level root cause as sibling `#529`/`#530` (unmerged fix PRs #538/#539): `pnpm-lock.yaml`/`pnpm-workspace.yaml` still reference `vrchat@2.22.8` (patch file + `patchedDependencies` key) even though `package.json` already requires `vrchat@2.22.9`, and `allowBuilds` omits `@parcel/watcher` (Jest transitive build script) — `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE`, failing Node CI and both Docker CI matrix builds (and is also why `renovate/artifacts` fails). Unrelated to this PR's own `@book000/node-utils` 1.25.87→1.25.110 bump.
+
 ### book000/fixdevcontainer#361
 
 - checkpoint: completed
@@ -25,9 +31,9 @@ slots; refill loop in progress.
 
 ### tomacheese/pex-crawler#2170
 
-- checkpoint: root-cause-identified
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor. Fix does not itself touch the pnpm version (see detail), so no version bump applied in this fix PR.
-- detail: `pnpm-workspace.yaml` has `confirmModulesPurge: false`, a pnpm v11-only setting. Renovate's PR bumps `packageManager` to pnpm 12.4.2; pnpm 12 dropped that setting entirely, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and, by the same root cause, `Docker CI`'s build jobs (which also run `pnpm install`). Fix: remove the obsolete `confirmModulesPurge` line from `pnpm-workspace.yaml` on `master` (harmless under pnpm v11 too, since it's just an interactive-purge-confirmation toggle that CI's non-interactive frozen-lockfile install never exercises).
+- checkpoint: fix-pr-opened
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, bumped to 12.5.1 in the fix PR (matches the established pattern for this same root cause, e.g. `tomacheese/watch-quicpay#2492`/`tomacheese/get-twitter-birthdays#308`).
+- detail: `pnpm-workspace.yaml` has `confirmModulesPurge: false`, a pnpm v11-only setting. Renovate's PR bumps `packageManager` to pnpm 12.4.2; pnpm 12 dropped that setting entirely, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and, by the same root cause, `Docker CI`'s build jobs (which also run `pnpm install`) — same root cause pattern as `tomacheese/watch-quicpay#2492`/`tomacheese/get-twitter-birthdays#308` and other siblings this run. Fix: removed the obsolete `confirmModulesPurge` line from `pnpm-workspace.yaml`, bumped `packageManager` to latest `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`. Had push access — pushed directly. Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm run test` 4/4 passing. Fix PR: https://github.com/tomacheese/pex-crawler/pull/2207
 
 ### tomacheese/watch-discord-dev-changes#2349
 
