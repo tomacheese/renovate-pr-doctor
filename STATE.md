@@ -13,9 +13,9 @@ slots; refill loop in progress.
 
 ### tomacheese/fetch-youtube-bgm#3021
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest lookup-failed — no special handling, proceed with proposed version.
-- detail: `@book000/eslint-config` bump to 1.16.67 tightens `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-useless-length-check` rules, flagging 7 pre-existing lint errors + 2 warnings across `downloader/src/{discord,lib,main,musicbrainz}.ts` (5 errors/2 warnings auto-fixable, 2 need manual fix). Docker build failure for downloader is a downstream consequence of the same lint failure (build step runs lint). Fixed via `eslint --fix` + manual fixes for the 2 non-auto-fixable rules (verified locally against eslint-config 1.16.67), NOT bumping the dependency itself. Fix PR: https://github.com/tomacheese/fetch-youtube-bgm/pull/3031 — waiting on its CI.
+- detail: Two independent root causes, both fixed in the same PR. (1) `@book000/eslint-config` bump to 1.16.67 tightens `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-useless-length-check` rules, flagging 7 pre-existing lint errors + 2 warnings across `downloader/src/{discord,lib,main,musicbrainz}.ts` — fixed via `eslint --fix` + manual fixes, NOT bumping the dependency itself (verified locally against eslint-config 1.16.67). (2) Independently, and already failing on #3021 before any lint fix: the `echogen-builder` Docker stage's `buildpack-deps:bullseye` base image can no longer `apt-get install libtag1-dev` (404 from `deb.debian.org/debian-security` — bullseye's security-support window ended, old point-release `.deb` pruned from the mirror, reproduced locally against the live mirror) — bumped to `buildpack-deps:bookworm` (matches the `node:24` runtime stage's own Debian 12 base), verified with a full local `docker build`. Fix PR: https://github.com/tomacheese/fetch-youtube-bgm/pull/3031 — all 4 originally-failing checks (`Node CI / node-ci (downloader)`, `Node CI / Check finished Node CI`, `Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64)`, `Docker CI / Check finished Docker CI`) confirmed passing on the fix PR's own CI.
 
 ### tomacheese/twitter-bookmark-hub#545
 
