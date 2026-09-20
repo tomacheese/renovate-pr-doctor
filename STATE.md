@@ -23,29 +23,23 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
-### tomacheese/discord-crosspost-auto-translate#2694
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/event.ts:148` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: converted the `if (!reply) return` / `return await reply.delete()...` pair into a single ternary return (eslint --fix + prettier --write), no behavior change. Did not bump eslint-config in this PR — master still on 1.16.66, fix is independent of the version bump. Had push access — pushed branch directly, no fork needed. Verified locally: lint (prettier/eslint/tsc) clean, tests 19/19 passing. Fix PR: https://github.com/tomacheese/discord-crosspost-auto-translate/pull/2699 — CI confirmed green: both originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed; no unrelated new failures (all 11 non-skipped checks passed, incl. Docker CI and CodeQL).
-
 ### tomacheese/misskey-list-eyes#2630
 
 - checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/utils.ts:74-77` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, hand-converted the `if` block to a ternary (not eslint auto-fixable). Have push access; pushed branch `fix/eslint-unicorn-prefer-ternary` directly. Verified locally: `pnpm run lint` clean, `pnpm test` 14/14 passing. Fix PR: https://github.com/tomacheese/misskey-list-eyes/pull/2635 — CI confirmed green: both originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed; no unrelated new failures (all 10 non-skipped checks passed).
 
-### tomacheese/watch-quicpay#2492
-
-- checkpoint: completed
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, bumped to 12.5.1 in fix PR.
-- detail: Renovate bumps `packageManager` from `pnpm@11.27.0` to `pnpm@12.4.2` in `package.json` only. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm-v11-only setting; pnpm v12 rejects it with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `pnpm install --frozen-lockfile` in `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and in both `Docker CI / Docker build` matrix jobs. `renovate/artifacts` also failed for the same reason (Renovate's own artifact-update step couldn't run pnpm 12 either). Fix: removed `confirmModulesPurge` from `pnpm-workspace.yaml`, bumped `packageManager` to latest `pnpm@12.5.1`, regenerated `pnpm-lock.yaml` (adds pnpm's own `packageManagerDependencies` section, no dependency changes). Had push access — pushed branch `fix/pnpm-12-workspace-settings` directly (no fork needed). Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2530 — CI confirmed green: `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` matrix jobs, and `Docker CI / Check finished Docker CI` all passed; no unrelated new failures.
-
 ### tomacheese/watch-bsky-likes#1410
 
 - checkpoint: root-cause-identified
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`. The eslint-config bump newly flags 4 pre-existing `unicorn/prefer-ternary` violations (`src/bsky.test.ts:105,153`, `src/bsky.ts:248,423`). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: convert the 4 `if` statements to ternaries.
+
+### tomacheese/watch-jcb#1667
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/watch-bsky-likes#1410`. The eslint-config bump newly flags a pre-existing `unicorn/prefer-early-return` violation in `src/discord.ts:104`. `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: refactor the flagged function to an early return.
 
 ## Queue
 
@@ -63,11 +57,10 @@ in-flight:
   - slot: investigator-tomacheese-booth-purchased-items-manager-1191
     target: tomacheese/booth-purchased-items-manager#1191
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-discord-crosspost-auto-translate-2694
-    target: tomacheese/discord-crosspost-auto-translate#2694
+  - slot: investigator-tomacheese-watch-jcb-1667
+    target: tomacheese/watch-jcb#1667
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/watch-jcb#1667 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/lock-move-channel#2692 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/get-twitter-birthdays#308 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/samechan-crawler#3468 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -96,7 +89,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 48 (fixed=48 skipped=0 blocked=0)
+done this sweep: 49 (fixed=49 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
