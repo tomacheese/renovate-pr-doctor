@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### tomacheese/pixiv-public-to-private#3289
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
-- detail: PR bumps pnpm 11.27.0 → 12.4.2 and pins it via `packageManager` in package.json. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting. With `packageManager` pinned, pnpm 12 treats an unrecognized workspace setting as a hard error (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`) rather than a warning, failing `pnpm install --frozen-lockfile` in both Node CI and Docker CI (same install step, both platforms). Confident fix: remove `confirmModulesPurge` from `pnpm-workspace.yaml`, bump `packageManager`/lockfile to pnpm 12.5.1 (latest), regenerate `pnpm-lock.yaml`. Verified locally: `pnpm install --frozen-lockfile` succeeds, lint passes, Docker image builds successfully.
+- detail: PR bumps pnpm 11.27.0 → 12.4.2 and pins it via `packageManager` in package.json. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting. With `packageManager` pinned, pnpm 12 treats an unrecognized workspace setting as a hard error (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`) rather than a warning, failing `pnpm install --frozen-lockfile` in both Node CI and Docker CI (same install step, both platforms). Fix: removed `confirmModulesPurge` from `pnpm-workspace.yaml`, bumped `packageManager`/lockfile to pnpm 12.5.1 (latest), regenerated `pnpm-lock.yaml`. Local verification passed (`pnpm install --frozen-lockfile`, lint, `docker build`). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/pixiv-public-to-private/pull/3326 — waiting on its own CI to confirm before marking completed.
 
 ### tomacheese/tomachi-emojis-sync-perms#2543
 
