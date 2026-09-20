@@ -29,6 +29,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-bsky-likes#1410`/`tomacheese/watch-jcb#1667`. The eslint-config bump newly flags 2 pre-existing `unicorn/prefer-ternary` violations (`src/discord.ts:161,171`). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (both auto-fixed). Had push access — pushed branch `fix/eslint-prefer-ternary` directly. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean. Fix PR: https://github.com/tomacheese/lock-move-channel/pull/2697 — awaiting CI confirmation.
 
+### tomacheese/samechan-crawler#3468
+
+- checkpoint: fix-pr-opened
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/lock-move-channel#2692`/`tomacheese/watch-bsky-likes#1410`/`tomacheese/watch-jcb#1667`. The eslint-config bump pulls in `eslint-plugin-unicorn` v75, which newly flags 1 pre-existing violation: `src/main.ts:126` `unicorn/no-immediate-mutation` (mutating the `options` object right after creating it). Fix: included the eslint-config 1.16.67 bump, rewrote the conditional property assignment as a conditional spread (`...(proxy && { proxy })`, per eslint's own suggested fix for `unicorn/consistent-conditional-object-spread`, which fires once the mutation is removed). Had push access — pushed branch `fix/eslint-no-immediate-mutation` directly. Verified locally: `pnpm run lint` clean. Fix PR: https://github.com/tomacheese/samechan-crawler/pull/3473 — awaiting CI confirmation.
+
 ### tomacheese/get-twitter-birthdays#308
 
 - checkpoint: root-cause-identified
