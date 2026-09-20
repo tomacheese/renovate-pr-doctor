@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### jaoafa/ChatWatcher#392
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `actions/setup-java` proposed v6.0.1, latest v6.0.1 — current, no special handling.
-- detail: `.github/workflows/ci.yml` uses `distribution: adopt` with `java-version: 25`. `actions/setup-java` v6 removed legacy `adopt`/`adopt-openj9` distributions (upstream PR actions/setup-java#1185, "Remove legacy Adopt distributions in v6"), so after the Renovate bump both `build` matrix jobs (Node 25 setup step) fail immediately with `No supported distribution was found for input adopt`. Fix: change `distribution: adopt` to `distribution: temurin` in `ci.yml` (Temurin is the actively-maintained successor recommended by setup-java's own docs, and already supports JDK 25).
+- detail: `.github/workflows/ci.yml` uses `distribution: adopt` with `java-version: 25`. `actions/setup-java` v6 removed legacy `adopt`/`adopt-openj9` distributions (upstream PR actions/setup-java#1185, "Remove legacy Adopt distributions in v6"), so after the Renovate bump both `build` matrix jobs (Node 25 setup step) fail immediately with `No supported distribution was found for input adopt`. Fix: changed `distribution: adopt` to `distribution: temurin` in `ci.yml` (against `master`, not #392's own branch — Java-only workflow-file diff, no application code affected). Had push access (ADMIN) — pushed branch directly, no fork needed. Fix PR: https://github.com/jaoafa/ChatWatcher/pull/398 — waiting on CI.
 
 ### tomacheese/collect-points#758
 
