@@ -29,6 +29,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: The eslint-config bump (1.16.66 → 1.16.67) newly enables `unicorn/prefer-continue`, which flags the pre-existing `if (!initMode) { ... }` block wrapping the rest of the notification loop body in `src/main.ts:97`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: rewrote the block as an early `continue` when `initMode` is true; no logic change. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean. No push access to `book000/niconico-mylist-video-checker` — forked to `akubiusa/niconico-mylist-video-checker`, pushed there. Fix PR: https://github.com/book000/niconico-mylist-video-checker/pull/2720 — waiting on CI.
 
+### book000/twitter-auto-spam-crawler#637
+
+- checkpoint: root-cause-identified
+- dependency currency: `jest`/`jest-environment-jsdom` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor for both. Will bump to 30.5.2 in the fix PR.
+- detail: PR bumps jest/jest-environment-jsdom 30.4.x → 30.5.1, which pulls in a new transitive dependency `@parcel/watcher@2.6.0` (via jsdom/jest-environment-jsdom chain). pnpm's supply-chain build-script policy in `pnpm-workspace.yaml` (`allowBuilds:`) doesn't list it, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: add `'@parcel/watcher': true` to `allowBuilds` in `pnpm-workspace.yaml`, alongside bumping jest/jest-environment-jsdom to 30.5.2.
+
 ### book000/kindle-booklog#2510
 
 - checkpoint: completed
