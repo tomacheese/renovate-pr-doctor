@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### book000/templates#488
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `actions/setup-java` proposed v6.0.1, latest v6.0.1 — current, no special handling.
-- detail: Same root-cause pattern as `jaoafa/ChatWatcher#392`. `.github/workflows/reusable-maven.yml`'s "Set up JDK 17" step hardcodes `distribution: adopt` (the `jdk-distribution` workflow_call input is declared but never actually wired into this step — pre-existing latent dead input, out of scope to fix here). `actions/setup-java` v6 removed the legacy `adopt`/`adopt-openj9` distributions, so `Test reusable-maven / Maven build` fails immediately with `No supported distribution was found for input adopt`, cascading to `Test reusable-maven / Check finished Maven build` and `Test Summary Finished`. Fix: bumped `actions/setup-java` to v6.0.1 (same version #488 proposes) and changed `distribution: adopt` to `distribution: temurin` in `reusable-maven.yml`, against `master` (not #488's own branch). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/book000/templates/pull/511 — waiting on CI.
+- detail: Same root-cause pattern as `jaoafa/ChatWatcher#392`. `.github/workflows/reusable-maven.yml`'s "Set up JDK 17" step hardcodes `distribution: adopt` (the `jdk-distribution` workflow_call input is declared but never actually wired into this step — pre-existing latent dead input, out of scope to fix here). `actions/setup-java` v6 removed the legacy `adopt`/`adopt-openj9` distributions, so `Test reusable-maven / Maven build` fails immediately with `No supported distribution was found for input adopt`, cascading to `Test reusable-maven / Check finished Maven build` and `Test Summary Finished`. Fix: bumped `actions/setup-java` to v6.0.1 (same version #488 proposes) and changed `distribution: adopt` to `distribution: temurin` in `reusable-maven.yml`, against `master` (not #488's own branch). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/book000/templates/pull/511 — CI confirmed green: all 3 originally-failing checks (`Test reusable-maven / Maven build`, `Test reusable-maven / Check finished Maven build`, `Test Summary Finished`) passed, no unrelated new failures across the full rollup.
 
 ### tomacheese/watch-vrchat-user#530
 
