@@ -61,7 +61,10 @@ done this sweep: 78 (fixed=76 skipped=2 blocked=0)
 
 ## Conflict-fixer queue
 
-in-flight: (none)
+in-flight:
+  - slot: conflict-fixer-tomacheese-pex-crawler-2207
+    target: tomacheese/pex-crawler#2207 (fix PR, base repo tomacheese/pex-crawler)
+    detected: mergeable=CONFLICTING mergeStateStatus=DIRTY (2026-09-20)
 pending: (none)
 
 ### tomacheese/sync-claude-folder#153
@@ -80,6 +83,11 @@ pending: (none)
 
 - checkpoint: fix-pr-rebased
 - conflict-fixer note: fix PR #679 (`@book000/eslint-config` 1.16.66→1.16.67 bump + resulting unicorn lint fixes across `src/pages/tweet-page.ts`, `src/services/queue-service.ts`/`state-service.ts`/`version-service.ts`, `src/utils/dom.ts`/`error.ts`/`page-error-handler.ts`/`scroll.ts`, `webpack.config.js`, test files) went CONFLICTING/DIRTY after other Renovate PRs merged to `master`. Rebased `fix/renovate-pr-675-eslint-lint-fixes` onto current `origin/master`; only conflict was in `pnpm-lock.yaml` (`package.json` auto-merged cleanly, keeping the 1.16.67 bump), resolved by taking master's lockfile and regenerating with `pnpm install --lockfile-only` to reapply the eslint-config 1.16.67 bump — resulting diff matches the PR's original intended change exactly. Verified locally: `pnpm run lint` clean (ESLint/prettier/tsc via run-z), `pnpm run test` 257/272 passing (15 skipped, 0 failed). Force-pushed rebased branch. CI re-ran green on all checks (11+6 passed, 0 failed); PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`. Unrelated already-merged fix PR #678 (root cause `jest-parcel-watcher-pnpm-ignored-builds`, for separate Renovate PR #637) untouched.
+
+### tomacheese/pex-crawler#2170
+
+- checkpoint: fix-pr-rebased
+- conflict-fixer note: fix PR #2207 (removed obsolete `confirmModulesPurge` from `pnpm-workspace.yaml`, bumped `packageManager` to `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`) went CONFLICTING/DIRTY after other Renovate PRs merged to `master`. Rebased `fix/pnpm-workspace-confirmmodulespurge` onto current `origin/master`; only conflict was in `pnpm-workspace.yaml` (master had concurrently added `'@parcel/watcher': true` to `allowBuilds` — kept that, and dropped `confirmModulesPurge` per this fix's own intent); `package.json`/`pnpm-lock.yaml` auto-merged cleanly. Ran `pnpm install --lockfile-only` — no changes needed (lockfile already consistent). Verified locally: `pnpm run lint` clean (ESLint/prettier/tsc). Force-pushed rebased branch (unrelated already-merged fix PR #2206 for separate Renovate PR #2155, root cause `jest-parcel-watcher-pnpm-ignored-builds`, untouched). CI re-ran green on all non-skipped checks; PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`.
 
 ## Escalate-to-user policy
 
