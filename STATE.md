@@ -23,11 +23,11 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
-### tomacheese/watch-bsky-likes#1410
+### tomacheese/lock-move-channel#2692
 
-- checkpoint: completed
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`. The eslint-config bump newly flags 4 pre-existing `unicorn/prefer-ternary` violations (`src/bsky.test.ts:105,153`, `src/bsky.ts:248,423`). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` + `prettier --write` (all 4 auto-fixable). Had push access — pushed branch `fix/eslint-unicorn-prefer-ternary` directly. Verified locally: `pnpm run lint` clean, `pnpm run test` 7/7 passing. Fix PR: https://github.com/tomacheese/watch-bsky-likes/pull/1415 — CI confirmed green: all 12 non-skipped checks passed, no unrelated new failures.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-bsky-likes#1410`/`tomacheese/watch-jcb#1667`. The eslint-config bump newly flags 2 pre-existing `unicorn/prefer-ternary` violations (`src/discord.ts:161,171`). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (both auto-fixed). Had push access — pushed branch `fix/eslint-prefer-ternary` directly. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean. Fix PR: https://github.com/tomacheese/lock-move-channel/pull/2697 — awaiting CI confirmation.
 
 ### tomacheese/watch-jcb#1667
 
@@ -45,9 +45,9 @@ in-flight:
   - slot: investigator-tomacheese-lock-move-channel-2692
     target: tomacheese/lock-move-channel#2692
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-watch-bsky-likes-1410
-    target: tomacheese/watch-bsky-likes#1410
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-tomacheese-get-twitter-birthdays-308
+    target: tomacheese/get-twitter-birthdays#308
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI
   - slot: investigator-tomacheese-booth-purchased-items-manager-1191
     target: tomacheese/booth-purchased-items-manager#1191
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
@@ -55,7 +55,6 @@ in-flight:
     target: tomacheese/watch-jcb#1667
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/get-twitter-birthdays#308 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/samechan-crawler#3468 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/sync-claude-folder#150 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/watch-follow-follower#733 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -82,7 +81,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 50 (fixed=50 skipped=0 blocked=0)
+done this sweep: 51 (fixed=51 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
