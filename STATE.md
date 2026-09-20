@@ -23,23 +23,11 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
-### tomacheese/watch-pixiv-bookmarks#2186
-
-- checkpoint: completed
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`jaoafa/jaotan.ts#2268`/`tomacheese/watch-discord-dev-changes#2335`. Confirmed independently: Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in `@parcel/watcher@2.6.0`'s native postinstall script, not in `pnpm-workspace.yaml`'s `allowBuilds` allow-list, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` + `Check finished Node CI`. Docker CI (both amd64/arm64) fails the same way since Docker build also runs `pnpm install --frozen-lockfile`, failing `Docker CI / Docker build (watch-pixiv-bookmarks, ...)` + `Check finished Docker CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access (ADMIN) — pushed branch directly, no fork needed. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` clean, `pnpm run test` passes (no tests exist, `passWithNoTests`). Fix PR: https://github.com/tomacheese/watch-pixiv-bookmarks/pull/2239 — CI confirmed green: all 5 originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` matrix jobs, `Docker CI / Check finished Docker CI`); no unrelated new failures (12/12 non-skipped checks passed).
-
-### tomacheese/watch-discord-dev-changes#2335
-
-- checkpoint: completed
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Docker CI fails for the same reason (Docker build also runs `pnpm install --frozen-lockfile`), failing both `Docker CI / Docker build` matrix jobs and downstream `Check finished Docker CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` clean, `pnpm run test` 16/16 passing. Fix PR: https://github.com/tomacheese/watch-discord-dev-changes/pull/2386 — CI confirmed green: all 5 originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` matrix jobs, `Docker CI / Check finished Docker CI`); no unrelated new failures (12/12 non-skipped checks passed).
-
 ### jaoafa/ChatWatcher#392
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `actions/setup-java` proposed v6.0.1, latest v6.0.1 — current, no special handling.
-- detail: `.github/workflows/ci.yml` uses `distribution: adopt` with `java-version: 25`. `actions/setup-java` v6 removed legacy `adopt`/`adopt-openj9` distributions (upstream PR actions/setup-java#1185, "Remove legacy Adopt distributions in v6"), so after the Renovate bump both `build` matrix jobs (Node 25 setup step) fail immediately with `No supported distribution was found for input adopt`. Fix: changed `distribution: adopt` to `distribution: temurin` in `ci.yml` (against `master`, not #392's own branch — Java-only workflow-file diff, no application code affected). Had push access (ADMIN) — pushed branch directly, no fork needed. Fix PR: https://github.com/jaoafa/ChatWatcher/pull/398 — waiting on CI.
+- detail: `.github/workflows/ci.yml` uses `distribution: adopt` with `java-version: 25`. `actions/setup-java` v6 removed legacy `adopt`/`adopt-openj9` distributions (upstream PR actions/setup-java#1185, "Remove legacy Adopt distributions in v6"), so after the Renovate bump both `build` matrix jobs (Node 25 setup step) fail immediately with `No supported distribution was found for input adopt`. Fix: changed `distribution: adopt` to `distribution: temurin` in `ci.yml` (against `master`, not #392's own branch — Java-only workflow-file diff, no application code affected). Had push access (ADMIN) — pushed branch directly, no fork needed. Fix PR: https://github.com/jaoafa/ChatWatcher/pull/398 — CI confirmed green: both `build` matrix jobs passed, plus Analyze (actions/java-kotlin/python) and CodeQL, no unrelated new failures (8/8 checks passed).
 
 ### tomacheese/collect-points#758
 
@@ -63,9 +51,9 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-tomacheese-watch-pixiv-bookmarks-2186
-    target: tomacheese/watch-pixiv-bookmarks#2186
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-pixiv-bookmarks, linux/amd64),Docker CI / Docker build (watch-pixiv-bookmarks, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-book000-templates-488
+    target: book000/templates#488
+    checks: Test reusable-maven / Maven build,Test reusable-maven / Check finished Maven build,Test Summary Finished
   - slot: investigator-jaoafa-chatwatcher-392
     target: jaoafa/ChatWatcher#392
     checks: build,build
@@ -73,7 +61,6 @@ in-flight:
     target: tomacheese/collect-points#758
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/templates#488 [checks: Test reusable-maven / Maven build,Test reusable-maven / Check finished Maven build,Test Summary Finished]
   - tomacheese/watch-vrchat-user#530 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/pixiv-public-to-private#3322 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/fetch-youtube-bgm#3023 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
@@ -113,7 +100,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 37 (fixed=37 skipped=0 blocked=0)
+done this sweep: 38 (fixed=38 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
