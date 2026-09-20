@@ -43,9 +43,9 @@ slots; refill loop in progress.
 
 ### book000/node-utils#1685
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`book000/kindle-booklog#2572`. The eslint-config bump newly flags 6 pre-existing lint violations (6 errors, 2 warnings, 3 auto-fixable) in `src/discord.ts` and `src/logger.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/no-immediate-mutation`), plus 2 now-unused eslint-disable directives in `src/__tests__/discord.test.ts` and `src/logger.ts`. `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Tests all pass (110/110). Fixing with `eslint --fix` plus manual conversion of the remaining early-return/no-immediate-mutation cases.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`book000/kindle-booklog#2572`. The eslint-config bump newly flags 6 pre-existing lint violations (6 errors, 2 warnings, 3 auto-fixable) in `src/discord.ts` and `src/logger.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/no-immediate-mutation`), plus 2 now-unused eslint-disable directives in `src/__tests__/discord.test.ts` and `src/logger.ts`. `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (auto-removed the 2 unused disables), converted `editBot`/`editWebhook` in `src/discord.ts` from wrapping-if to early-return, replaced `transports.push(...)` in `src/logger.ts` with a conditional spread, then re-ran `prettier --write` (eslint --fix left one line unformatted). Had push access — pushed branch `fix/eslint-config-1-16-67` directly. Verified locally: `eslint` clean, `prettier --check` clean, `tsc --noEmit` clean, `jest` 110/110 passing. Fix PR: https://github.com/book000/node-utils/pull/1689
 
 ## Queue
 
