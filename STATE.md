@@ -19,23 +19,23 @@ slots; refill loop in progress.
 
 ### book000/web-session-tracer#148
 
-- checkpoint: fix-pr-opened
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump pulls in a newer `eslint-plugin-unicorn` that newly flags 4 pre-existing lint violations: `src/tracer/page-tracer.ts` (2x `unicorn/prefer-early-return` at lines 127/325, 1x `unicorn/no-immediate-mutation` at line 259) and `src/tracer/session-manager.ts` (1x `unicorn/prefer-early-return` at line 103). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, rewrote the `prefer-early-return` sites as guard-clause early returns (2 auto-fixed by `eslint --fix`, 1 identical by hand), and the `no-immediate-mutation` site as a conditional-spread object literal instead of post-construction property assignment. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean; no test suite exists in this repo). Fix PR: https://github.com/book000/web-session-tracer/pull/150 — waiting on CI.
-
-### jaoafa/watch-guilds#2312
-
 - checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 8 pre-existing `unicorn/prefer-ternary` violations across `src/commands/remove-channel.ts`, `src/commands/set-channel.ts`, `src/emojis-caches.ts`, `src/events/sticker-update.ts` (x2), `src/list-emojis.ts` (x3). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (all 8 auto-fixable) then `prettier --write` for formatting. No test script exists in this repo; verified locally with `pnpm run lint` (prettier+eslint+tsc, clean). Had push access (ADMIN) — pushed branch directly, no fork needed. Fix PR: https://github.com/jaoafa/watch-guilds/pull/2315 — CI confirmed green (both previously-failing Node CI jobs pass; all 11 non-skipped checks green, no unrelated failures).
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump pulls in a newer `eslint-plugin-unicorn` that newly flags 4 pre-existing lint violations: `src/tracer/page-tracer.ts` (2x `unicorn/prefer-early-return` at lines 127/325, 1x `unicorn/no-immediate-mutation` at line 259) and `src/tracer/session-manager.ts` (1x `unicorn/prefer-early-return` at line 103). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, rewrote the `prefer-early-return` sites as guard-clause early returns (2 auto-fixed by `eslint --fix`, 1 identical by hand), and the `no-immediate-mutation` site as a conditional-spread object literal instead of post-construction property assignment. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean; no test suite exists in this repo). Fix PR: https://github.com/book000/web-session-tracer/pull/150 — CI confirmed green (8/8 non-skipped checks passed, including both previously-failing Node CI jobs; Docker CI also passed, no unrelated new failures).
+
+### jaoafa/jaotan.ts#2268
+
+- checkpoint: root-cause-identified
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, will bump to 30.5.2 in fix PR.
+- detail: Renovate bumps `jest` 30.4.2 -> 30.5.1. This pulls in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (used by jest's internal file watching), which ships a native build/postinstall script. The repo's `pnpm-lock.yaml`/`package.json` have no `pnpm.onlyBuiltDependencies`/`ignoredBuiltDependencies` allow-list, so pnpm (strict-by-default on new build scripts) fails install with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0` — this is why `Node CI / node-ci (.)` (and its downstream `Check finished Node CI`) fail; Docker CI fails for the same reason (its build also runs `pnpm install`).
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-jaoafa-watch-guilds-2312
-    target: jaoafa/watch-guilds#2312
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-tomacheese-vrcx-web-server-1203
+    target: tomacheese/vrcx-web-server#1203
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
@@ -49,7 +49,6 @@ in-flight:
     target: book000/node-utils#1646
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/vrcx-web-server#1203 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/pex-crawler#2155 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pex-crawler, linux/amd64),Docker CI / Docker build (pex-crawler, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/watch-discord-dev-changes#2335 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-discord-dev-changes, linux/amd64),Docker CI / Docker build (watch-discord-dev-changes, linux/arm64),Docker CI / Check finished Docker CI]
   - book000/fixdevcontainer#361 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -97,7 +96,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 29 (fixed=29 skipped=0 blocked=0)
+done this sweep: 30 (fixed=30 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
