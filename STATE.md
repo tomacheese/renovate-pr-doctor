@@ -11,6 +11,14 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
+### jaoafa/jaotan.ts#2321
+
+- checkpoint: root-cause-identified
+- dependency currency: `emoji-regex` proposed 11.0.0, latest 11.0.0 — current, no special handling.
+- detail: Renovate's own artifact update failed (`renovate/artifacts` check: "Artifact file update failure") — the PR bumped `package.json`'s `emoji-regex` 10.6.0 -> 11.0.0 but never regenerated `pnpm-lock.yaml`, so `pnpm install --frozen-lockfile` hard-fails with a specifier mismatch, failing `Node CI / node-ci (.)` and (via the same install step in the Dockerfile) both `Docker CI / Docker build` matrix jobs. Additionally, `emoji-regex@11.0.0` itself dropped its CJS build entirely (`"main": "index.mjs"`, pure ESM, no `require()`-compatible export) — a real breaking change on top of the missing lockfile update. The project's `tsx`-based runtime (`pnpm start`, used by the Dockerfile `ENTRYPOINT`) tolerates this fine since esbuild handles ESM/CJS interop transparently, but `ts-jest`'s CommonJS-targeted compile of the existing static `import emojiRegex from 'emoji-regex'` breaks Jest at test time (`SyntaxError: Unexpected token 'export'`).
+- fix: regenerated `pnpm-lock.yaml` (minimal surgical edit: added the `emoji-regex@11.0.0` package/snapshot entries, kept the still-used `emoji-regex@10.6.0` entry consumed transitively by `string-width@7.2.0`); left production source untouched (static import works at runtime via `tsx`); fixed only the Jest gap by adding `babel-jest` + `@babel/plugin-transform-modules-commonjs` (already-transitively-available `babel-jest`, one new small official Babel devDependency) scoped via `transformIgnorePatterns`/`transform` to transform just `node_modules/**/emoji-regex/*.mjs` into CommonJS for the test environment, with a `babel.config.cjs` enabling that one plugin. Verified locally: `pnpm run test` 44/44 passing, `pnpm run lint` clean, `pnpm run lint:tsc` clean, and a full local `docker build` + `docker run` of the Dockerfile confirms `pnpm install --frozen-lockfile --offline` and `pnpm start` (tsx) both work with no ESM/import errors (container exits only on missing `/data/config.json`, expected without a real config mounted).
+- fix PR: (pending — opening next)
+
 ### book000/pixivts#1928
 
 - checkpoint: fix-pr-opened
@@ -21,7 +29,7 @@ slots; refill loop in progress.
 
 - checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/pixivts#1928` (not the pnpm-v12 workspace-settings issue seen in `tomacheese/watch-vrchat-user#308` — different failure mode entirely). The eslint-config 1.16.67 bump newly flags 8 pre-existing lint violations (unicorn/prefer-early-return, unicorn/prefer-ternary x4, unicorn/prefer-smaller-scope, unicorn/no-immediate-mutation) across `src/core/calendar-sync.ts`, `src/core/following.ts`, `src/core/output.ts`, `src/infra/cycletls.ts`, `src/infra/storage.ts`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`.
+- detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/pixivts#1928` (not the pnpm-v12 workspace-settings issue seen in `tomacheese/watch-vrchat-user#308` — different failure mode entirely). The eslint-config 1.16.67 bump newly flags 8 pre-existing lint violations (unicorn/prefer-early-return, unicorn/prefer-ternary x4, unicorn/prefer-smaller-scope, unicorn/no-immediate-mutation) across `src/core/calendar-sync.ts`, `src/core/following.ts`, `src/core/output.ts`, `src/infra/cycletls.ts`, `src/infra/storage.ts`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint . --fix` (7/8 auto-fixed) and hand-fixed the remaining `unicorn/no-immediate-mutation` case in `cycletls.ts` (replaced post-hoc mutation with a conditional spread `...(proxy && { proxy })`, per `unicorn/consistent-conditional-object-spread`'s default logical style). Had push access — pushed directly. Verified locally: `eslint`/`tsc`/`prettier --check` all clean, `pnpm run test` passes (no tests found, passWithNoTests). Fix PR: https://github.com/tomacheese/get-twitter-birthdays/pull/337 — awaiting fix PR's own CI.
 
 ### tomacheese/watch-quicpay#2525
 
