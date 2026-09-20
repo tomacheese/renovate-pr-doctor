@@ -19,9 +19,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-vrchat-user#531
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/node-utils` proposed 1.25.110, latest 1.25.110 — current, no special handling.
-- detail: Same pre-existing `master`-level root cause as sibling `#529`/`#530` (unmerged fix PRs #538/#539): `pnpm-lock.yaml`/`pnpm-workspace.yaml` still reference `vrchat@2.22.8` (patch file + `patchedDependencies` key) even though `package.json` already requires `vrchat@2.22.9`, and `allowBuilds` omits `@parcel/watcher` (Jest transitive build script) — `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE`, failing Node CI and both Docker CI matrix builds (and is also why `renovate/artifacts` fails). Unrelated to this PR's own `@book000/node-utils` 1.25.87→1.25.110 bump.
+- detail: Same pre-existing `master`-level root cause as sibling `#529`/`#530` (unmerged fix PRs #538/#539): `pnpm-lock.yaml`/`pnpm-workspace.yaml` still reference `vrchat@2.22.8` (patch file + `patchedDependencies` key) even though `package.json` already requires `vrchat@2.22.9`, and `allowBuilds` omits `@parcel/watcher` (Jest transitive build script) — `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE`, failing Node CI and both Docker CI matrix builds (and is also why `renovate/artifacts` fails). Unrelated to this PR's own `@book000/node-utils` 1.25.87→1.25.110 bump. Unlike `#529`, no lint fallout since eslint-config isn't touched. Fix: same lockfile/patch/allowBuilds fix as `#538`/`#539`, plus this PR's node-utils bump. Had push access — pushed directly. Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm test` 13/13 suites (78/78 tests) passing, `docker build .` succeeds. Fix PR: https://github.com/tomacheese/watch-vrchat-user/pull/540 — note this duplicates part of #538/#539's diff since neither sibling fix has merged yet.
 
 ### book000/fixdevcontainer#361
 
