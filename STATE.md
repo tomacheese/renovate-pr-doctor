@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### tomacheese/discord-crosspost-auto-translate#2694
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/event.ts:148` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: converted the `if (!reply) return` / `return await reply.delete()...` pair into a single ternary return (eslint --fix + prettier --write), no behavior change. Did not bump eslint-config in this PR — master still on 1.16.66, fix is independent of the version bump. Had push access — pushed branch directly, no fork needed. Verified locally: lint (prettier/eslint/tsc) clean, tests 19/19 passing. Fix PR: https://github.com/tomacheese/discord-crosspost-auto-translate/pull/2699 — waiting on fix PR's own CI to confirm before marking completed.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/event.ts:148` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: converted the `if (!reply) return` / `return await reply.delete()...` pair into a single ternary return (eslint --fix + prettier --write), no behavior change. Did not bump eslint-config in this PR — master still on 1.16.66, fix is independent of the version bump. Had push access — pushed branch directly, no fork needed. Verified locally: lint (prettier/eslint/tsc) clean, tests 19/19 passing. Fix PR: https://github.com/tomacheese/discord-crosspost-auto-translate/pull/2699 — CI confirmed green: both originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed; no unrelated new failures (all 11 non-skipped checks passed, incl. Docker CI and CodeQL).
 
 ### tomacheese/misskey-list-eyes#2630
 
@@ -40,6 +40,12 @@ slots; refill loop in progress.
 - checkpoint: completed
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, bumped to 12.5.1 in fix PR.
 - detail: Renovate bumps `packageManager` from `pnpm@11.27.0` to `pnpm@12.4.2` in `package.json` only. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm-v11-only setting; pnpm v12 rejects it with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `pnpm install --frozen-lockfile` in `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and in both `Docker CI / Docker build` matrix jobs. `renovate/artifacts` also failed for the same reason (Renovate's own artifact-update step couldn't run pnpm 12 either). Fix: removed `confirmModulesPurge` from `pnpm-workspace.yaml`, bumped `packageManager` to latest `pnpm@12.5.1`, regenerated `pnpm-lock.yaml` (adds pnpm's own `packageManagerDependencies` section, no dependency changes). Had push access — pushed branch `fix/pnpm-12-workspace-settings` directly (no fork needed). Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2530 — CI confirmed green: `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` matrix jobs, and `Docker CI / Check finished Docker CI` all passed; no unrelated new failures.
+
+### tomacheese/watch-bsky-likes#1410
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`. The eslint-config bump newly flags 4 pre-existing `unicorn/prefer-ternary` violations (`src/bsky.test.ts:105,153`, `src/bsky.ts:248,423`). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: convert the 4 `if` statements to ternaries.
 
 ## Queue
 
