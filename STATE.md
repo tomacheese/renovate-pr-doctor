@@ -35,9 +35,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-follow-follower#733
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 16 pre-existing lint violations (16 errors) across `src/core/normalize.ts`, `src/infra/auth.ts`, `src/infra/cycletls.ts`, `src/infra/remote-config-fetch.ts`, `src/main.ts`, `src/presentation/discord.ts` (`unicorn/prefer-ternary`, `unicorn/no-immediate-mutation`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 16 pre-existing lint violations (16 errors) across `src/core/normalize.ts`, `src/infra/auth.ts`, `src/infra/cycletls.ts`, `src/infra/remote-config-fetch.ts`, `src/main.ts`, `src/presentation/discord.ts` (`unicorn/prefer-ternary`, `unicorn/no-immediate-mutation`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (13/16 auto-fixed), hand-fixed the remaining 3 (`unicorn/no-immediate-mutation` in `src/infra/cycletls.ts` and `src/presentation/discord.ts`, `unicorn/prefer-early-return` in `src/presentation/discord.ts`), re-ran `prettier --write`. Had push access — pushed branch `fix/renovate-pr-733-eslint-lint-fixes` directly. Verified locally: `pnpm run lint` (prettier/eslint/tsc) all pass, `npx depcheck` clean; no automated test suite exists in this repo (per its CLAUDE.md). Fix PR: https://github.com/tomacheese/watch-follow-follower/pull/737
 
 ### tomacheese/booth-purchased-items-manager#1191
 
