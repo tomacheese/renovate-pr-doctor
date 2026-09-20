@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### tomacheese/discord-crosspost-auto-translate#2644
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
-- detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and downstream `Check finished Node CI`/Docker CI gates (Docker build also runs `pnpm install`). Same root cause pattern as `tomacheese/watch-vrchat-user#529` and `tomacheese/auto-update-web-scrobbler#2310`. Plan: add `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bump jest to 30.5.2, regenerate lockfile.
+- checkpoint: fix-pr-opened
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
+- detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and downstream `Check finished Node CI`/Docker CI gates (Docker build also runs `pnpm install`). Same root cause pattern as `tomacheese/watch-vrchat-user#529` and `tomacheese/auto-update-web-scrobbler#2310`. Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install --frozen-lockfile`, `pnpm run lint`, `pnpm run test` all pass. Fix PR: https://github.com/tomacheese/discord-crosspost-auto-translate/pull/2698 — waiting on its CI.
 
 ### tomacheese/watch-quicpay#2478
 
