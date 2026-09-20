@@ -11,12 +11,6 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
-### tomacheese/fauxcord#314
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 131 pre-existing lint violations across many `src/` files (`unicorn/no-immediate-mutation`, `unicorn/prefer-ternary`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (auto-fixed most `prefer-ternary`), then manually restructured the remaining ~19 `no-immediate-mutation`/`prefer-early-return`/`prefer-nullish-coalescing` sites (conditional-property spread instead of post-construction mutation; early returns). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (tsc+eslint+prettier, clean), `pnpm test` (1027/1027 pass). Fix PR: https://github.com/tomacheese/fauxcord/pull/317 — CI confirmed green (28/28 checks passed, including the previously-failing Node CI jobs).
-
 ### book000/pixivts#1928
 
 - checkpoint: fix-pr-opened
@@ -28,6 +22,12 @@ slots; refill loop in progress.
 - checkpoint: root-cause-identified
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump pulls in a newer `eslint-plugin-unicorn` that newly flags 4 pre-existing lint violations in `src/tracer/session-manager.ts` (3x `unicorn/prefer-early-return` at lines 103/127/325, 1x `unicorn/no-immediate-mutation` at line 259). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`.
+
+### book000/create-ts#221
+
+- checkpoint: fix-pr-opened
+- dependency currency: `vitest` proposed 5.0.1, latest 5.0.1 — current, no special handling.
+- detail: Renovate bumps vitest `4.1.11` → `5.0.1`, which pulls in `tinybench@6.1.4` as a new transitive dependency. `tinybench`'s `dist/index.d.ts` references `DOMHighResTimeStamp` (a DOM-lib type), but this project's `tsconfig.json` only has `"lib": ["ESNext"]` (no DOM lib), so `tsc` fails type-checking that third-party declaration file with `TS2304: Cannot find name 'DOMHighResTimeStamp'`. This fails `lint:tsc`, which fails `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: added `"skipLibCheck": true` to `tsconfig.json` (standard mitigation for errors originating inside third-party `.d.ts` files, not project source) — targeted at `main`, independent of the vitest bump itself, so it lands ahead of PR #221's rebase. Had push access — pushed branch directly, no fork needed. Verified locally: on `main` (vitest 4.1.11, unaffected) `lint`+`test` still pass; on PR #221's branch (vitest 5.0.1) with the same change cherry-picked, `tsc` passes cleanly. Fix PR: https://github.com/book000/create-ts/pull/275 — waiting on CI.
 
 ### jaoafa/watch-guilds#2312
 
