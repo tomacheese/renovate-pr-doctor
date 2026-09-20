@@ -11,6 +11,11 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
+### tomacheese/sync-claude-folder#150
+
+- checkpoint: root-cause-identified
+- detail: dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — classification `current`, no special handling. CI fails only on lint (`Node CI / node-ci (.)`): the eslint-config bump pulls in `eslint-plugin-unicorn` v75, which flags 3 pre-existing violations (`unicorn/prefer-continue` in `src/chezmoi-name.ts:167`, `unicorn/prefer-ternary` in `src/fsutil.ts:19` and `src/main.ts:128`). Same pattern as book000/chrome-mcp-router#115. Confident fix: rewrite the 3 flagged spots (or `eslint --fix`).
+
 ### book000/pixivts#1928
 
 - checkpoint: fix-pr-opened
@@ -23,11 +28,11 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
-### tomacheese/get-twitter-birthdays#308
+### tomacheese/watch-follow-follower#733
 
-- checkpoint: completed
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, bumped to 12.5.1 in fix PR.
-- detail: PR bumps `packageManager` pnpm 11.27.0 -> 12.4.2 (a Rust-rewrite major of pnpm) but leaves `pnpm-workspace.yaml`'s `confirmModulesPurge: false` in place. Confirmed via pnpm 12.4.2's own CHANGELOG.md that `confirmModulesPurge` is a pnpm-v11-only setting with no v12 replacement, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI` (Docker CI failures are downstream of the same broken install). Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped pnpm to latest 12.5.1 instead of the proposed 12.4.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch `fix/pnpm-12-workspace-settings` directly. Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` (prettier+eslint+tsc) clean, `pnpm run test` passes (no tests), `docker build .` succeeds. Fix PR: https://github.com/tomacheese/get-twitter-birthdays/pull/336 — CI confirmed green: all 12 non-skipped checks passed, including both originally-failing `Node CI / node-ci (.)`/`Node CI / Check finished Node CI` and both Docker CI matrix jobs; no unrelated new failures.
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 16 pre-existing lint violations (16 errors) across `src/core/normalize.ts`, `src/infra/auth.ts`, `src/infra/cycletls.ts`, `src/infra/remote-config-fetch.ts`, `src/main.ts`, `src/presentation/discord.ts` (`unicorn/prefer-ternary`, `unicorn/no-immediate-mutation`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`.
 
 ## Queue
 
@@ -39,9 +44,9 @@ in-flight:
   - slot: investigator-tomacheese-sync-claude-folder-150
     target: tomacheese/sync-claude-folder#150
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-get-twitter-birthdays-308
-    target: tomacheese/get-twitter-birthdays#308
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-book000-rss-deliver-2793
+    target: book000/rss-deliver#2793
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-tomacheese-booth-purchased-items-manager-1191
     target: tomacheese/booth-purchased-items-manager#1191
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
@@ -49,7 +54,6 @@ in-flight:
     target: tomacheese/watch-follow-follower#733
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/rss-deliver#2793 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/kindle-booklog#2572 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/twitter-auto-spam-crawler#675 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/create-ts#269 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -72,7 +76,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 54 (fixed=54 skipped=0 blocked=0)
+done this sweep: 55 (fixed=55 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
