@@ -29,6 +29,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 131 pre-existing lint violations across `src/services/*.ts` and `src/validators/*.ts` (`unicorn/no-immediate-mutation`, `unicorn/prefer-ternary`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Confident fix: apply eslint `--fix` (112/131 auto-fixable) and manually fix the remaining ~19.
 
+### tomacheese/samechan-crawler#3429
+
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — will bump to 12.5.1 in fix PR.
+- detail: PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting that pnpm 12 no longer recognizes; `pnpm install --frozen-lockfile` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing both `Node CI / node-ci (.)` and `Docker CI / Docker build`. Confirmed via pnpm 12.4.2's own CHANGELOG.md (no replacement setting was introduced — the option was simply dropped). Confident fix: remove the obsolete `confirmModulesPurge: false` line from `pnpm-workspace.yaml`, bump `packageManager` to `pnpm@12.5.1` per currency check.
+
 ### tomacheese/sync-claude-folder#116
 
 - checkpoint: root-cause-identified
