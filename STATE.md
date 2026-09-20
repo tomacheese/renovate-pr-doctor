@@ -19,11 +19,21 @@ slots; refill loop in progress.
 
 
 
-### tomacheese/fetch-youtube-bgm#3028
+
+### tomacheese/telcheck#2635
 
 - checkpoint: completed
-- dependency currency: not checked (script skipped — proceeded straight to CI investigation per no-block rule; same root cause as siblings makes it moot).
-- detail: Same root-cause pattern as sibling PRs #3021/#3023/#3024/#3025/#3026/#3027 — `downloader/Dockerfile`'s `echogen-builder` stage base image `buildpack-deps:bullseye` had apt-get install failures due to Debian-security EOL 404s. Fix already merged to master via #3031. Re-checked CI fresh: `gh pr checks 3028` now shows 12/12 passing, 0 failed — self-resolved automatically once the PR picked up fixed master, same as #3026/#3027. No new fix PR opened (would be a duplicate of #3031/#3033). Marked `completed` rather than `skipped` since CI is actually green now.
+- fix-PR-terminal note: fix PR #2640 confirmed MERGED via `gh pr view` (2026-09-20T13:44:30Z), per fix-PR conflict/terminal monitor event. No duplicate-fix-PR or conflict situation.
+
+### tomacheese/samechan-crawler#3429
+
+- checkpoint: completed
+- fix-PR-terminal note: fix PR #3472 confirmed MERGED via `gh pr view` (2026-09-20T13:47:01Z), per fix-PR conflict/terminal monitor event. No duplicate-fix-PR or conflict situation.
+
+### tomacheese/watch-follow-follower#703
+
+- checkpoint: completed
+- fix-PR-terminal note: fix PR #736 confirmed MERGED via `gh pr view` (2026-09-20T13:48:58Z), per fix-PR conflict/terminal monitor event. No duplicate-fix-PR or conflict situation.
 
 ### book000/fixdevcontainer#361
 
@@ -31,13 +41,6 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
-
-
-### tomacheese/watch-vrchat-user#537
-
-- checkpoint: completed
-- dependency currency: `vrchat` proposed 2.23.0, latest 2.24.0 — stale-unexplained-minor, bumped to 2.24.0 in fix PR.
-- detail: NOT the same master-drift root cause as sibling PRs #529/#530/#531/#532/#534/#535/#536 (already fixed by merged #538). This PR's own `renovate/artifacts` check failed ("Artifact file update failure"): Renovate bumped `vrchat` to v2.23.0 in `package.json` but never regenerated `pnpm-lock.yaml`, which still pinned v2.22.9, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE` (failing `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, and both `Docker CI / Docker build` jobs which run the same install). Since v2.23.0 was itself already stale-unexplained-minor (latest 2.24.0), fix bumps directly to v2.24.0 in a new PR against master: regenerated `pnpm-lock.yaml`, re-applied/regenerated the vrchat type-declaration patch (`var version` -> `declare const version` in `dist/index.d.ts`, still needed upstream in 2.24.0) via `pnpm patch`/`pnpm patch-commit`, and added `vrchat@2.24.0` to `minimumReleaseAgeExclude` (required — pnpm's supply-chain policy check rejected the very-recently-published 2.24.0 otherwise). Had push access (SSH push succeeded directly, no fork needed). Verified locally: `pnpm install --frozen-lockfile` passes, `pnpm run lint` clean (tsc/eslint/prettier), `pnpm run test` 13/13 suites, 78/78 tests passing. Fix PR: https://github.com/tomacheese/watch-vrchat-user/pull/542 — CI confirmed green: all 4 originally-failing checks pass (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` amd64/arm64) plus `Docker CI / Check finished Docker CI`; no unrelated new failures (12/12 non-skipped checks passed). Once merged, Renovate should detect vrchat is already >= proposed and close/self-resolve #537 (same pattern as the #538 siblings).
 
 
 
@@ -48,13 +51,14 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-tomacheese-watch-vrchat-user-537
-    target: tomacheese/watch-vrchat-user#537
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
-pending (not yet dispatched, in order):
-  - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3028)
-  - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3028)
-done this sweep: 74 (fixed=72 skipped=2 blocked=0)
+  - slot: investigator-tomacheese-fetch-youtube-bgm-3029
+    target: tomacheese/fetch-youtube-bgm#3029
+    checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-fetch-youtube-bgm-3030
+    target: tomacheese/fetch-youtube-bgm#3030
+    checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
+pending (not yet dispatched, in order): (none)
+done this sweep: 76 (fixed=74 skipped=2 blocked=0)
 
 ## Conflict-fixer queue
 
@@ -65,6 +69,16 @@ pending: (none)
 
 - checkpoint: fix-pr-rebased
 - conflict-fixer note: fix PR #153 (`@book000/eslint-config` 1.16.66→1.16.67 bump + resulting unicorn lint fixes in `src/chezmoi-name.ts`/`src/fsutil.ts`/`src/main.ts`) went CONFLICTING/DIRTY after other Renovate PRs merged to `master`. Rebased `fix/eslint-config-unicorn-lint` onto current `origin/master`; only conflict was in `pnpm-lock.yaml` (`package.json` auto-merged cleanly, keeping the 1.16.67 bump), resolved by taking master's lockfile and regenerating with `pnpm install --lockfile-only` to reapply the eslint-config 1.16.67 bump — resulting diff matches the PR's original intended change exactly. Verified locally: `pnpm run lint` clean, `pnpm run test` 36/36 passing. Force-pushed rebased branch. CI re-ran green on all checks (21+12 passed, 0 failed); PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`.
+
+### tomacheese/fetch-youtube-bgm#3029
+
+- checkpoint: completed
+- detail: Sibling of #3021/#3023/#3024/#3025/#3026/#3027/#3028 — root cause was `downloader/Dockerfile`'s `echogen-builder` stage base image `buildpack-deps:bullseye` hitting Debian-security EOL 404s during apt-get install. Already fixed and merged to master via https://github.com/tomacheese/fetch-youtube-bgm/pull/3031. Re-checked #3029's live CI fresh (`gh pr checks 3029`) rather than re-investigating: self-resolved — all 16 checks passing, 0 failed, including the previously-failing `Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64)` and `Docker CI / Check finished Docker CI`. No new fix PR opened (would duplicate #3031). No dependency-currency check run (self-resolved before it was needed).
+
+### tomacheese/fetch-youtube-bgm#3030
+
+- checkpoint: completed
+- detail: Sibling of #3021/#3023/#3024/#3025/#3026/#3027/#3028/#3029 — root cause was `downloader/Dockerfile`'s `echogen-builder` stage base image `buildpack-deps:bullseye` hitting Debian-security EOL 404s during apt-get install. Already fixed and merged to master via https://github.com/tomacheese/fetch-youtube-bgm/pull/3031. Re-checked #3030's live CI fresh (`gh pr checks 3030`) rather than re-investigating: self-resolved — all 16 checks passing, 0 failed, including the previously-failing `Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64)` and `Docker CI / Check finished Docker CI`. No new fix PR opened (would duplicate #3031). No dependency-currency check run (self-resolved before it was needed).
 
 ### tomacheese/watch-quicpay#2525
 
