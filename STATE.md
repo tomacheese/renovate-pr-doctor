@@ -31,9 +31,9 @@ slots; refill loop in progress.
 
 ### tomacheese/booth-purchased-items-manager#1137
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest`/`@jest/globals` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
-- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm 12's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Fix: add `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`.
+- checkpoint: fix-pr-opened
+- dependency currency: `jest`/`@jest/globals` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
+- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm 12's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Fix: added `@parcel/watcher: true` to `allowBuilds`, bumped jest/@jest/globals to 30.5.2, regenerated lockfile. Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/booth-purchased-items-manager/pull/1195 — waiting on its CI.
 
 ### tomacheese/watch-jcb#1609
 
