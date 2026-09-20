@@ -41,6 +41,12 @@ slots; refill loop in progress.
 - dependency currency: `actions/setup-java` proposed v6.0.1, latest v6.0.1 — current, no special handling.
 - detail: Same root-cause pattern as `jaoafa/ChatWatcher#392`. `.github/workflows/reusable-maven.yml`'s "Set up JDK 17" step hardcodes `distribution: adopt` (the `jdk-distribution` workflow_call input is declared but never actually wired into this step — pre-existing latent dead input, out of scope to fix here). `actions/setup-java` v6 removed the legacy `adopt`/`adopt-openj9` distributions, so `Test reusable-maven / Maven build` fails immediately with `No supported distribution was found for input adopt`, cascading to `Test reusable-maven / Check finished Maven build` and `Test Summary Finished`. Fix: bumped `actions/setup-java` to v6.0.1 (same version #488 proposes) and changed `distribution: adopt` to `distribution: temurin` in `reusable-maven.yml`, against `master` (not #488's own branch). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/book000/templates/pull/511 — waiting on CI.
 
+### tomacheese/watch-vrchat-user#530
+
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, will bump to 12.5.1 in fix PR.
+- detail: Different root cause from the sibling jest/@parcel/watcher pattern this sweep — verified independently, does not match. Renovate bumps `pnpm` (packageManager) 12.3.2 -> 12.4.2, which changes pnpm's own `packageManagerDependencies`, but `pnpm-lock.yaml` was not regenerated for the new pnpm version. `pnpm install --frozen-lockfile --prefer-frozen-lockfile` fails with `ERR_PNPM_FROZEN_LOCKFILE_WITH_OUTDATED_LOCKFILE: Cannot update packageManagerDependencies with "frozen-lockfile" because the lockfile is not up to date`, failing `Node CI / node-ci (.)` + `Node CI / Check finished Node CI`; Docker CI builds fail identically (also run `pnpm install --frozen-lockfile`). Fix: regenerate `pnpm-lock.yaml` with pnpm 12.5.1 (bumping per dependency-currency rule), in a separate fix PR against default branch. Likely recurs identically across sibling `watch-vrchat-user` PRs #531/#532/#534-537 if they carry the same/similar pnpm bump — only fixing #530 here, per instructions.
+
 ## Queue
 
 concurrency: 5
