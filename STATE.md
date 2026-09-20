@@ -15,7 +15,7 @@ slots; refill loop in progress.
 
 - checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — waiting on CI.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — CI's `node-ci` job has been stuck in GitHub's `waiting` status (not `pending`/running) since ~11:03 UTC: the repo's workflow requires manual Environment approval (`fork-pr-build`) for any PR whose head repo differs from `book000/pixivts`, which is exactly the case here since I had no push access and opened from a fork. Only a `book000/pixivts` maintainer can click Approve on the Actions run; this is a normal, expected gate for external/fork PRs, not a code defect. Still `fix-pr-opened`, not `completed` — CI hasn't actually executed the lint fix yet.
 
 ### book000/fixdevcontainer#361
 
@@ -35,12 +35,6 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` 1.16.67 and `@book000/node-utils` 1.25.110 current; `fastify` 5.12.5 and `undici` 8.10.2 current. `@types/node` proposed 25.9.7, latest 26.6.2 — stale-unexplained-major. `node` (engines) proposed 24.21.0, latest 26.9.0 — stale-unexplained-major. `eslint`/`jest`/`pnpm`/`prettier`/`tsx` also stale-unexplained-minor — per priority rule, major-package presence takes precedence, so fix PR targets the Renovate PR's currently-proposed versions unchanged and majors are escalated separately (see below).
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`jaoafa/jaotan.ts#2268`/`tomacheese/watch-discord-dev-changes#2335`/`tomacheese/watch-pixiv-bookmarks#2186` — verified independently. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in `@parcel/watcher@2.6.0`'s native postinstall script, not in `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `better-sqlite3`, `esbuild`, `unrs-resolver`), so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` + `Node CI / Check finished Node CI`. `Docker CI / Docker build (api.tomacheese.com, linux/amd64)` + `Docker CI / Check finished Docker CI` fail the same way (Docker build also runs `pnpm install --frozen-lockfile`). Fix: add `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, regenerate `pnpm-lock.yaml` (no version bumps, since 2 stale-unexplained-major packages are present — leaving proposed versions unchanged per priority rule), in a separate fix PR against `master`. Will ALSO escalate `@types/node` and `node` (stale-unexplained-major) via NEEDS_ARBITER once fix PR is opened.
 
-### book000/templates#488
-
-- checkpoint: completed
-- dependency currency: `actions/setup-java` proposed v6.0.1, latest v6.0.1 — current, no special handling.
-- detail: Same root-cause pattern as `jaoafa/ChatWatcher#392`. `.github/workflows/reusable-maven.yml`'s "Set up JDK 17" step hardcodes `distribution: adopt` (the `jdk-distribution` workflow_call input is declared but never actually wired into this step — pre-existing latent dead input, out of scope to fix here). `actions/setup-java` v6 removed the legacy `adopt`/`adopt-openj9` distributions, so `Test reusable-maven / Maven build` fails immediately with `No supported distribution was found for input adopt`, cascading to `Test reusable-maven / Check finished Maven build` and `Test Summary Finished`. Fix: bumped `actions/setup-java` to v6.0.1 (same version #488 proposes) and changed `distribution: adopt` to `distribution: temurin` in `reusable-maven.yml`, against `master` (not #488's own branch). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/book000/templates/pull/511 — CI confirmed green: all 3 originally-failing checks (`Test reusable-maven / Maven build`, `Test reusable-maven / Check finished Maven build`, `Test Summary Finished`) passed, no unrelated new failures across the full rollup.
-
 ### tomacheese/watch-vrchat-user#530
 
 - checkpoint: root-cause-identified
@@ -57,9 +51,9 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-book000-templates-488
-    target: book000/templates#488
-    checks: Test reusable-maven / Maven build,Test reusable-maven / Check finished Maven build,Test Summary Finished
+  - slot: investigator-tomacheese-pixiv-public-to-private-3322
+    target: tomacheese/pixiv-public-to-private#3322
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-tomacheese-watch-vrchat-user-530
     target: tomacheese/watch-vrchat-user#530
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
@@ -67,7 +61,6 @@ in-flight:
     target: tomacheese/collect-points#758
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/pixiv-public-to-private#3322 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/fetch-youtube-bgm#3023 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/tomachi-emojis-sync-perms#2594 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/misskey-list-eyes#2630 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -105,7 +98,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 39 (fixed=39 skipped=0 blocked=0)
+done this sweep: 40 (fixed=40 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
