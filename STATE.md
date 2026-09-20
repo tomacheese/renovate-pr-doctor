@@ -23,25 +23,25 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `jaoafa/jaotan.ts#2268`/`tomacheese/tomachi-emojis-sync-perms#2543` and several sibling PRs this run. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (confirmed absent from `origin/master`'s `pnpm-lock.yaml`, present in the PR branch's), which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0` in Node CI and (downstream, same root cause since Docker build also runs `pnpm install`) both Docker CI matrix jobs (linux/amd64, linux/arm64). Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` clean, `pnpm run test` 4/4 passing. Fix PR: https://github.com/tomacheese/pex-crawler/pull/2206 — CI confirmed green: all 5 originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` matrix jobs, `Docker CI / Check finished Docker CI`); no unrelated new failures (12/12 non-skipped checks passed).
 
-### tomacheese/vrcx-web-server#1203
-
-- checkpoint: completed
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, bumped to 12.5.1 in fix PR.
-- detail: Renovate bumps `packageManager` pnpm 11.x -> 12.4.2. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting removed in v12. Since `packageManager` pins the exact pnpm version, pnpm hard-errors (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, not just a warning) on any install, failing `Node CI / node-ci (.)` and (same `pnpm install` step) `Docker CI / Docker build (vrcx-web-server, linux/amd64)`, plus their downstream "Check finished" jobs. Fix: removed `confirmModulesPurge` from `pnpm-workspace.yaml` (its purpose — confirm before purging node_modules — has no v12 equivalent setting, so no replacement needed), kept `allowBuilds`/`minimumReleaseAgeExclude` as-is (still recognized by v12), bumped `packageManager` to `pnpm@12.5.1` (per dependency-currency check), regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install --frozen-lockfile` (same command CI runs) succeeds, `pnpm run lint` (prettier+eslint+tsc) clean; no test suite in this repo. Fix PR: https://github.com/tomacheese/vrcx-web-server/pull/1241 — CI confirmed green: all 4 targeted checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, `Docker CI / Docker build (vrcx-web-server, linux/amd64)`, `Docker CI / Check finished Docker CI`); no unrelated new failures (10/10 non-skipped checks passed).
-
 ### book000/node-utils#1646
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `jaoafa/jaotan.ts#2268`/`tomacheese/pex-crawler#2155`/`tomacheese/tomachi-emojis-sync-perms#2543` and several sibling PRs this run. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (jest-haste-map's watchman replacement per the 30.5.0 changelog), which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, and the reusable CI workflow (`book000/templates`'s `reusable-nodejs-ci-pnpm.yml`) additionally hard-fails the job on any "Ignored build scripts" line in the install log, failing both `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. (Local repro was masked by this machine's own global `~/.config/pnpm/config.yaml` having `dangerouslyAllowAllBuilds: true`, which bypasses the exact check CI enforces — confirmed root cause from the actual failing run's logs instead, and did not touch that global user setting.) Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run compile` succeeds, `pnpm run test` 110/110 passing. Fix PR: https://github.com/book000/node-utils/pull/1688 — waiting on CI.
+- detail: Same root-cause pattern as `jaoafa/jaotan.ts#2268`/`tomacheese/pex-crawler#2155`/`tomacheese/tomachi-emojis-sync-perms#2543` and several sibling PRs this run. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (jest-haste-map's watchman replacement per the 30.5.0 changelog), which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, and the reusable CI workflow (`book000/templates`'s `reusable-nodejs-ci-pnpm.yml`) additionally hard-fails the job on any "Ignored build scripts" line in the install log, failing both `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. (Local repro was masked by this machine's own global `~/.config/pnpm/config.yaml` having `dangerouslyAllowAllBuilds: true`, which bypasses the exact check CI enforces — confirmed root cause from the actual failing run's logs instead, and did not touch that global user setting.) Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run compile` succeeds, `pnpm run test` 110/110 passing. Fix PR: https://github.com/book000/node-utils/pull/1688 — CI confirmed green: all 6 non-skipped checks passed, including both originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures.
+
+### tomacheese/watch-discord-dev-changes#2335
+
+- checkpoint: root-cause-identified
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, will bump to 30.5.2 in fix PR.
+- detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Docker CI fails for the same reason (Docker build also runs `pnpm install --frozen-lockfile`), failing both `Docker CI / Docker build` matrix jobs and downstream `Check finished Docker CI`.
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-tomacheese-vrcx-web-server-1203
-    target: tomacheese/vrcx-web-server#1203
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI
+  - slot: investigator-book000-fixdevcontainer-361
+    target: book000/fixdevcontainer#361
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
@@ -55,7 +55,6 @@ in-flight:
     target: book000/node-utils#1646
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/fixdevcontainer#361 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/watch-pixiv-bookmarks#2186 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-pixiv-bookmarks, linux/amd64),Docker CI / Docker build (watch-pixiv-bookmarks, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/collect-points#758 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/api.tomacheese.com#512 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (api.tomacheese.com, linux/amd64),Docker CI / Check finished Docker CI]
@@ -100,7 +99,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 32 (fixed=32 skipped=0 blocked=0)
+done this sweep: 33 (fixed=33 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
