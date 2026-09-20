@@ -19,15 +19,21 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-vrchat-user#529
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: two stacked, pre-existing-on-master root causes, both independent of the eslint-config bump itself. (1) `pnpm-lock.yaml` on `master` is already out of sync with `package.json` (`vrchat` pinned 2.22.9 in manifest vs 2.22.8 in lockfile, left behind by PR #521), and `pnpm-workspace.yaml`'s `patchedDependencies` still points at `patches/vrchat@2.22.8.patch` for a version no longer in the manifest — this is exactly why Renovate's own `pnpm install --lockfile-only` (the `renovate/artifacts` check) also failed, and why `pnpm install --frozen-lockfile` fails in both Node CI and Docker CI regardless of this PR's own eslint-config change. (2) `pnpm-workspace.yaml`'s `allowBuilds` list omits `@parcel/watcher` (a Jest transitive postinstall build script), which now hard-fails `pnpm fetch`/install with `ERR_PNPM_IGNORED_BUILDS` — reproduced identically on unmodified `origin/master`, so also pre-existing and unrelated to this PR's diff. The eslint-config 1.16.67 bump itself additionally tightens `unicorn/prefer-ternary`/`unicorn/prefer-early-return`, flagging 10 pre-existing violations across `src/state/user-state-reducer.ts`, `src/state/user-state.ts`, `src/vrchat/pipeline-event-router.ts`, `src/vrchat/pipeline-supervisor.ts` (all autofixable via `eslint --fix` + `prettier --write`).
+- detail: two stacked, pre-existing-on-master root causes, both independent of the eslint-config bump itself. (1) `pnpm-lock.yaml` on `master` is already out of sync with `package.json` (`vrchat` pinned 2.22.9 in manifest vs 2.22.8 in lockfile, left behind by PR #521), and `pnpm-workspace.yaml`'s `patchedDependencies` still points at `patches/vrchat@2.22.8.patch` for a version no longer in the manifest — this is exactly why Renovate's own `pnpm install --lockfile-only` (the `renovate/artifacts` check) also failed, and why `pnpm install --frozen-lockfile` fails in both Node CI and Docker CI regardless of this PR's own eslint-config change. (2) `pnpm-workspace.yaml`'s `allowBuilds` list omits `@parcel/watcher` (a Jest transitive postinstall build script), which now hard-fails `pnpm fetch`/install with `ERR_PNPM_IGNORED_BUILDS` — reproduced identically on unmodified `origin/master`, so also pre-existing and unrelated to this PR's diff. The eslint-config 1.16.67 bump itself additionally tightens `unicorn/prefer-ternary`/`unicorn/prefer-early-return`, flagging 10 pre-existing violations across `src/state/user-state-reducer.ts`, `src/state/user-state.ts`, `src/vrchat/pipeline-event-router.ts`, `src/vrchat/pipeline-supervisor.ts` (all autofixable via `eslint --fix` + `prettier --write`). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/watch-vrchat-user/pull/538 — waiting on its CI.
 
 ### tomacheese/misskey-list-eyes#2594
 
 - checkpoint: root-cause-identified
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — will bump to 12.5.1 in fix PR.
 - detail: same root cause as tomacheese/pixiv-public-to-private#3289. PR bumps pnpm 11.27.0 → 12.4.2 via `packageManager` in package.json, but `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting no longer recognized by v12. With `packageManager` pinned, pnpm 12 hard-errors (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`) instead of warning, failing `pnpm install --frozen-lockfile` in both Node CI and Docker CI (same install step, both platforms/archs). Fix: remove `confirmModulesPurge` from `pnpm-workspace.yaml`, bump `packageManager`/lockfile to pnpm 12.5.1 (latest), regenerate `pnpm-lock.yaml`.
+
+### tomacheese/twitter-bookmark-hub#545
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: `@book000/eslint-config` 1.16.67 bump pulls in `eslint-plugin-unicorn` v75, tightening `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`. This flags 39 pre-existing lint errors across all 4 npm workspaces (`crawler` 11, `viewer/backend` 8, `viewer/frontend` 19, `analyzer` 1), which is why all 4 `node-ci` matrix jobs fail identically at the `lint:eslint` step. Fix: `eslint --fix` per workspace + manual fixes for the handful of non-auto-fixable violations, verified locally against eslint-config 1.16.67, not bumping the dependency itself.
 
 ## Queue
 
