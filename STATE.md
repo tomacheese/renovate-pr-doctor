@@ -31,15 +31,15 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-quicpay#2478
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumping to 30.5.2 in fix PR.
-- detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing `node-ci (.)`, `Check finished Node CI`, and (as a downstream consequence, since Docker build also runs `pnpm install`) both Docker CI jobs. Identical root cause pattern to `tomacheese/auto-update-web-scrobbler#2310` and `tomacheese/watch-vrchat-user#529`. Fix: adding `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumping jest to 30.5.2 (latest), regenerating `pnpm-lock.yaml`. Verified locally: `pnpm install`, `pnpm run lint`, `pnpm run test` all pass.
+- checkpoint: fix-pr-opened
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
+- detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing `node-ci (.)`, `Check finished Node CI`, and (as a downstream consequence, since Docker build also runs `pnpm install`) both Docker CI jobs. Identical root cause pattern to `tomacheese/auto-update-web-scrobbler#2310` and `tomacheese/watch-vrchat-user#529`. Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2 (latest), regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install`, `pnpm run lint`, `pnpm run test` all pass. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2529 — waiting on its CI.
 
 ### tomacheese/cmcutter#2810
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: `@book000/eslint-config` 1.16.67 bump tightens `unicorn/prefer-ternary`, flagging 1 pre-existing lint error in `src/lib/utlis.ts:87` (an `if` statement replaceable by a ternary). This is the sole cause of both `node-ci (.)` and downstream `Check finished Node CI` failures. Same pattern as `tomacheese/fetch-youtube-bgm#3021` and `tomacheese/twitter-bookmark-hub#545`. Fix: rewrite the `if` as a ternary, not bumping the dependency itself.
+- detail: `@book000/eslint-config` 1.16.67 bump tightens `unicorn/prefer-ternary`, flagging 1 pre-existing lint error in `src/lib/utlis.ts:87` (an `if` statement replaceable by a ternary). This is the sole cause of both `node-ci (.)` and downstream `Check finished Node CI` failures. Same pattern as `tomacheese/fetch-youtube-bgm#3021` and `tomacheese/twitter-bookmark-hub#545`. Fixed by rewriting the `if` as a ternary, not bumping the dependency itself. Had push access. Fix PR: https://github.com/tomacheese/cmcutter/pull/2814 — waiting on its CI.
 
 ## Queue
 
