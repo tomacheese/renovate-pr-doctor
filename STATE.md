@@ -17,6 +17,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest lookup-failed — no special handling, proceed with proposed version.
 - detail: `@book000/eslint-config` bump to 1.16.67 tightens `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-useless-length-check` rules, flagging 7 pre-existing lint errors + 2 warnings across `downloader/src/{discord,lib,main,musicbrainz}.ts` (5 errors/2 warnings auto-fixable, 2 need manual fix). Docker build failure for downloader is a downstream consequence of the same lint failure (build step runs lint). Fixed via `eslint --fix` + manual fixes for the 2 non-auto-fixable rules (verified locally against eslint-config 1.16.67), NOT bumping the dependency itself. Fix PR: https://github.com/tomacheese/fetch-youtube-bgm/pull/3031 — waiting on its CI.
 
+### tomacheese/watch-vrchat-user#529
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: two stacked, pre-existing-on-master root causes, both independent of the eslint-config bump itself. (1) `pnpm-lock.yaml` on `master` is already out of sync with `package.json` (`vrchat` pinned 2.22.9 in manifest vs 2.22.8 in lockfile, left behind by PR #521), and `pnpm-workspace.yaml`'s `patchedDependencies` still points at `patches/vrchat@2.22.8.patch` for a version no longer in the manifest — this is exactly why Renovate's own `pnpm install --lockfile-only` (the `renovate/artifacts` check) also failed, and why `pnpm install --frozen-lockfile` fails in both Node CI and Docker CI regardless of this PR's own eslint-config change. (2) `pnpm-workspace.yaml`'s `allowBuilds` list omits `@parcel/watcher` (a Jest transitive postinstall build script), which now hard-fails `pnpm fetch`/install with `ERR_PNPM_IGNORED_BUILDS` — reproduced identically on unmodified `origin/master`, so also pre-existing and unrelated to this PR's diff. The eslint-config 1.16.67 bump itself additionally tightens `unicorn/prefer-ternary` in `src/state/user-state-reducer.ts` (1 pre-existing violation, autofixable).
+
 ### tomacheese/pixiv-public-to-private#3289
 
 - checkpoint: completed
