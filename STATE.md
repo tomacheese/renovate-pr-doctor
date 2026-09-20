@@ -35,6 +35,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: `@book000/eslint-config` 1.16.67 bump pulls in `eslint-plugin-unicorn` v75, tightening `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`. This flags 39 pre-existing lint errors across all 4 npm workspaces (`crawler` 11, `viewer/backend` 8, `viewer/frontend` 19, `analyzer` 1), which is why all 4 `node-ci` matrix jobs fail identically at the `lint:eslint` step. Fix: `eslint --fix` per workspace + manual fixes for the handful of non-auto-fixable violations, verified locally against eslint-config 1.16.67, not bumping the dependency itself.
 
+### tomacheese/auto-update-web-scrobbler#2310
+
+- checkpoint: root-cause-identified
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
+- detail: jest 30.5.0 replaced its file watcher (`NodeWatcher`/`FSEventsWatcher`) with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and the downstream `Check finished Node CI` gate. Same root cause pattern as `tomacheese/watch-vrchat-user#529`. Fix: add `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bump jest to 30.5.2 (latest), regenerate `pnpm-lock.yaml`.
+
 ## Queue
 
 concurrency: 5
