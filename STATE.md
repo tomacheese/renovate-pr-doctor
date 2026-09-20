@@ -11,60 +11,38 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
-### tomacheese/twitter-bookmark-hub#545
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: `@book000/eslint-config` 1.16.67 bump pulls in `eslint-plugin-unicorn` v75, tightening `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`. Confirmed these 39 errors do NOT reproduce under `master`'s current 1.16.66 (verified via temporary side-by-side install) — newly introduced by the bump, not pre-existing. Flags across all 4 npm workspaces (`crawler` 11, `viewer/backend` 8, `viewer/frontend` 19, `analyzer` 1), why all 4 `node-ci` matrix jobs fail identically at the `lint:eslint` step. Fixed via `eslint --fix` + manual rewrites for non-auto-fixable violations (including a `eslint-plugin-vue`/typescript-eslint parsing quirk on `--fix` for `.vue` files that required hand-editing those instead), verified locally against eslint-config 1.16.67, not bumping the dependency itself in the fix PR (fix lands on `master` first so #545 passes once rebased). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/twitter-bookmark-hub/pull/549 — all 23 checks passed (5 target Node CI checks + Docker CI/CodeQL/etc., none in scope failed).
-
-### tomacheese/lock-move-channel#2659
-
-- checkpoint: completed
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
-- detail: PR bumps `packageManager` pnpm 11.27.0 → 12.4.2. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting pnpm v12 refuses to recognize (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`), which fails `pnpm install` immediately in Node CI (and correspondingly Docker CI, which also runs pnpm install). Also explains the `renovate/artifacts` failure. Same root-cause pattern as `tomacheese/watch-bsky-likes#1383`, `tomacheese/pixiv-public-to-private#3289`, `tomacheese/misskey-list-eyes#2594`. Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped packageManager to pnpm@12.5.1, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install`, `pnpm run lint` pass. Fix PR: https://github.com/tomacheese/lock-move-channel/pull/2696 — all 12 checks passed on CI, no unrelated failures.
-
-### tomacheese/booth-purchased-items-manager#1137
-
-- checkpoint: completed
-- dependency currency: `jest`/`@jest/globals` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm 12's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Fix: added `@parcel/watcher: true` to `allowBuilds`, bumped jest/@jest/globals to 30.5.2, regenerated lockfile. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (clean), `pnpm test` (7/7 suites, 97 passed). Fix PR: https://github.com/tomacheese/booth-purchased-items-manager/pull/1195 — all 12 checks passed on CI, no unrelated failures.
-
 ### tomacheese/get-twitter-birthdays#299
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
-- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137` and `tomacheese/watch-jcb#1609`. Fix: add `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bump `jest` to 30.5.2, regenerate `pnpm-lock.yaml`.
-
-### tomacheese/watch-jcb#1609
-
-- checkpoint: completed
+- checkpoint: fix-pr-opened
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (clean), `pnpm run test` (1/1 passed). Fix PR: https://github.com/tomacheese/watch-jcb/pull/1671 — all 16 real checks passed on CI (Node CI setup/node-ci/Check finished, Docker CI both arch builds/Check finished/Calculate next version, hadolint, Analyze x2, CodeQL, Approval gate, add-reviewer), no unrelated failures.
+- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137` and `tomacheese/watch-jcb#1609`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (no test files, passWithNoTests). Fix PR: https://github.com/tomacheese/get-twitter-birthdays/pull/335 — waiting on its CI.
+
+### tomacheese/telcheck#2635
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 7 pre-existing `if` statements (in `src/main.ts`, `src/utils/nvr510.ts`, `src/utils/search-number.ts`, `src/utils/web-push.ts`) under `unicorn/prefer-ternary`. `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Confident fix: convert the flagged `if` statements to ternary expressions (eslint reports 6/7 auto-fixable).
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-tomacheese-watch-jcb-1609
-    target: tomacheese/watch-jcb#1609
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-jcb, linux/amd64),Docker CI / Docker build (watch-jcb, linux/arm64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-lock-move-channel-2659
-    target: tomacheese/lock-move-channel#2659
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (lock-move-channel, linux/amd64),Docker CI / Docker build (lock-move-channel, linux/arm64),Docker CI / Check finished Docker CI
   - slot: investigator-tomacheese-get-twitter-birthdays-299
     target: tomacheese/get-twitter-birthdays#299
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-twitter-bookmark-hub-545
-    target: tomacheese/twitter-bookmark-hub#545
-    checks: Node CI / node-ci (crawler),Node CI / node-ci (viewer/backend),Node CI / node-ci (viewer/frontend),Node CI / node-ci (analyzer),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-booth-purchased-items-manager-1137
-    target: tomacheese/booth-purchased-items-manager#1137
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (booth-purchased-items-manager, linux/amd64),Docker CI / Docker build (booth-purchased-items-manager, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-samechan-crawler-3429
+    target: tomacheese/samechan-crawler#3429
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (samechan-crawler, linux/amd64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-sync-claude-folder-116
+    target: tomacheese/sync-claude-folder#116
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-tomacheese-telcheck-2635
+    target: tomacheese/telcheck#2635
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-tomacheese-fauxcord-314
+    target: tomacheese/fauxcord#314
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/samechan-crawler#3429 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (samechan-crawler, linux/amd64),Docker CI / Check finished Docker CI]
-  - tomacheese/sync-claude-folder#116 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
-  - tomacheese/telcheck#2635 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
-  - tomacheese/fauxcord#314 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/watch-follow-follower#703 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-follow-follower, linux/amd64),Docker CI / Docker build (watch-follow-follower, linux/arm64),Docker CI / Check finished Docker CI]
   - book000/pixivts#1928 [checks: node-ci,Check finished Node CI]
   - book000/twitter-rss#3770 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -127,7 +105,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 11 (fixed=11 skipped=0 blocked=0)
+done this sweep: 15 (fixed=15 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
