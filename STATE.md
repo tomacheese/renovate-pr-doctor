@@ -13,8 +13,8 @@ slots; refill loop in progress.
 
 ### book000/rss-deliver#2793
 
-- checkpoint: fix-pr-opened
-- detail: dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — classification `current`, no special handling. CI fails only on lint (`Node CI / node-ci (.)`, cascading to `Check finished Node CI`): the eslint-config bump newly flags 5 pre-existing lint violations (`unicorn/prefer-early-return` in `src/services/fish-4koma.ts:84`, `unicorn/prefer-ternary` in `src/services/github-events.ts:23` and `src/services/pop-team-epic.ts:199,758,768`). Same pattern as book000/pixivts#1928/chrome-mcp-router#115. Fixed via bumping `@book000/eslint-config` to 1.16.67 and hand-converting the newly-flagged violations (early-return in fish-4koma.ts, ternary in github-events.ts and pop-team-epic.ts x3), then `prettier --write` to restore no-semicolon style. Had push access, pushed branch directly. Verified locally: `pnpm run lint` (prettier + eslint + tsc) clean. Fix PR: https://github.com/book000/rss-deliver/pull/2797
+- checkpoint: completed
+- detail: dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — classification `current`, no special handling. CI fails only on lint (`Node CI / node-ci (.)`, cascading to `Check finished Node CI`): the eslint-config bump newly flags 5 pre-existing lint violations (`unicorn/prefer-early-return` in `src/services/fish-4koma.ts:84`, `unicorn/prefer-ternary` in `src/services/github-events.ts:23` and `src/services/pop-team-epic.ts:199,758,768`). Same pattern as book000/pixivts#1928/chrome-mcp-router#115. Fixed via bumping `@book000/eslint-config` to 1.16.67 and hand-converting the newly-flagged violations (early-return in fish-4koma.ts, ternary in github-events.ts and pop-team-epic.ts x3), then `prettier --write` to restore no-semicolon style. Had push access, pushed branch directly. Verified locally: `pnpm run lint` (prettier + eslint + tsc) clean. Fix PR: https://github.com/book000/rss-deliver/pull/2797 — CI confirmed green: all 6 checks passed (Node CI / node-ci, Node CI / Check finished Node CI, Node CI / setup, Analyze x2, CodeQL); no unrelated failures.
 
 ### tomacheese/sync-claude-folder#150
 
@@ -52,8 +52,8 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-tomacheese-sync-claude-folder-150
-    target: tomacheese/sync-claude-folder#150
+  - slot: investigator-book000-kindle-booklog-2572
+    target: book000/kindle-booklog#2572
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-book000-rss-deliver-2793
     target: book000/rss-deliver#2793
@@ -65,7 +65,6 @@ in-flight:
     target: tomacheese/watch-follow-follower#733
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/kindle-booklog#2572 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/twitter-auto-spam-crawler#675 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/create-ts#269 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/node-utils#1685 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -87,7 +86,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 55 (fixed=55 skipped=0 blocked=0)
+done this sweep: 56 (fixed=56 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
