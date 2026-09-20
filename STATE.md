@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### book000/twitter-auto-spam-crawler#637
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest`/`jest-environment-jsdom` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor for both. Will bump to 30.5.2 in the fix PR.
-- detail: PR bumps jest/jest-environment-jsdom 30.4.x → 30.5.1, which pulls in a new transitive dependency `@parcel/watcher@2.6.0` (via jsdom/jest-environment-jsdom chain). pnpm's supply-chain build-script policy in `pnpm-workspace.yaml` (`allowBuilds:`) doesn't list it, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: add `'@parcel/watcher': true` to `allowBuilds` in `pnpm-workspace.yaml`, alongside bumping jest/jest-environment-jsdom to 30.5.2.
+- checkpoint: fix-pr-opened
+- dependency currency: `jest`/`jest-environment-jsdom` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor for both. Bumped to 30.5.2 in the fix PR.
+- detail: PR bumps jest/jest-environment-jsdom 30.4.x → 30.5.1, which pulls in a new transitive dependency `@parcel/watcher@2.6.0` (via jsdom/jest-environment-jsdom chain). pnpm's supply-chain build-script policy in `pnpm-workspace.yaml` (`allowBuilds:`) doesn't list it, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Same root-cause pattern as `tomacheese/tomachi-emojis-sync-perms#2543` and several other sibling PRs this run. Fix: added `'@parcel/watcher': true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped jest/jest-environment-jsdom to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm run test` 257/257 passing (15 skipped). Fix PR: https://github.com/book000/twitter-auto-spam-crawler/pull/678 — waiting on CI.
 
 ### book000/moneyforward-collector#2672
 
