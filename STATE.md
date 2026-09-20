@@ -19,15 +19,9 @@ slots; refill loop in progress.
 
 ### book000/pixivts#1928
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Confident fix: apply eslint `--fix` (38/41 auto-fixable) and manually fix the remaining ~3.
-
-### book000/twitter-rss#3770
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 2 pre-existing lint violations in `src/main.ts` (`unicorn/no-immediate-mutation` at line 145, `unicorn/prefer-ternary` at line 248). `yarn lint:eslint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: `eslint --fix` auto-fixes the ternary; manually rewrote the immediate-mutation to a conditional spread (`...(proxy && { proxy })`). Push access confirmed (no fork needed). Fix PR: https://github.com/book000/twitter-rss/pull/3774 — all 6 checks passed, no unrelated failures.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — waiting on CI.
 
 ### book000/kindle-booklog#2510
 
@@ -51,8 +45,8 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-book000-twitter-rss-3770
-    target: book000/twitter-rss#3770
+  - slot: investigator-book000-niconico-mylist-video-checker-2716
+    target: book000/niconico-mylist-video-checker#2716
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-book000-rss-deliver-2787
     target: book000/rss-deliver#2787
@@ -61,7 +55,6 @@ in-flight:
     target: tomacheese/fauxcord#314
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/niconico-mylist-video-checker#2716 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/twitter-auto-spam-crawler#637 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/moneyforward-collector#2672 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/chrome-response-recorder#583 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -118,7 +111,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 20 (fixed=20 skipped=0 blocked=0)
+done this sweep: 21 (fixed=21 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
