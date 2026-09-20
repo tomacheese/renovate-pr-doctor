@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### tomacheese/get-twitter-birthdays#308
 
-- checkpoint: root-cause-identified
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, will bump to 12.5.1 in fix PR.
-- detail: PR bumps `packageManager` pnpm 11.27.0 -> 12.4.2 (a Rust-rewrite major of pnpm) but leaves `pnpm-workspace.yaml`'s `confirmModulesPurge: false` in place. Confirmed via pnpm 12.4.2's own CHANGELOG.md that `confirmModulesPurge` is a pnpm-v11-only setting with no v12 replacement, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI` (Docker CI failures are downstream of the same broken install). Fix: remove `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bump pnpm to latest 12.5.1 instead of the proposed 12.4.2.
+- checkpoint: fix-pr-opened
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, bumped to 12.5.1 in fix PR.
+- detail: PR bumps `packageManager` pnpm 11.27.0 -> 12.4.2 (a Rust-rewrite major of pnpm) but leaves `pnpm-workspace.yaml`'s `confirmModulesPurge: false` in place. Confirmed via pnpm 12.4.2's own CHANGELOG.md that `confirmModulesPurge` is a pnpm-v11-only setting with no v12 replacement, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI` (Docker CI failures are downstream of the same broken install). Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped pnpm to latest 12.5.1 instead of the proposed 12.4.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch `fix/pnpm-12-workspace-settings` directly. Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` (prettier+eslint+tsc) clean, `pnpm run test` passes (no tests), `docker build .` succeeds. Fix PR: https://github.com/tomacheese/get-twitter-birthdays/pull/336 — awaiting CI confirmation.
 
 ## Queue
 
