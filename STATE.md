@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-quicpay#2525
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Different root cause than the earlier `tomacheese/watch-quicpay#2492` (pnpm-v12 workspace-settings issue). The eslint-config 1.16.67 bump pulls in `eslint-plugin-unicorn` 74.0.0 -> 75.0.0, which newly flags a pre-existing `unicorn/prefer-early-return` violation in `src/discord.ts` (the `if (token && channel_id) { ...rest of function... }` block). `pnpm run lint` fails, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: converted to an early return, included the eslint-config 1.16.67 bump. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` clean, `pnpm run test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2531
+- detail: Different root cause than the earlier `tomacheese/watch-quicpay#2492` (pnpm-v12 workspace-settings issue). The eslint-config 1.16.67 bump pulls in `eslint-plugin-unicorn` 74.0.0 -> 75.0.0, which newly flags a pre-existing `unicorn/prefer-early-return` violation in `src/discord.ts` (the `if (token && channel_id) { ...rest of function... }` block). `pnpm run lint` fails, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: converted to an early return, included the eslint-config 1.16.67 bump. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` clean, `pnpm run test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2531 — CI confirmed green, all 11 checks passed, no unrelated failures.
 
 ### book000/fixdevcontainer#361
 
