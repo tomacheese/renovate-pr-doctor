@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### tomacheese/pixiv-public-to-private#3322
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same class of issue as `book000/pixivts#1928`/`tomacheese/collect-points#758` (eslint-config bump exposing latent unicorn violations), but a much smaller instance — verified independently, does not match the jest/@parcel/watcher sibling pattern. The `@book000/eslint-config` 1.16.67 bump newly flags exactly 2 pre-existing `unicorn/prefer-ternary` violations (`scripts/check-pr-language.mjs:26`, `src/main.ts:20`), unrelated to this PR's own diff (`package.json`/`pnpm-lock.yaml` only). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Confident mechanical fix, no escalation needed.
+- detail: Same class of issue as `book000/pixivts#1928`/`tomacheese/collect-points#758` (eslint-config bump exposing latent unicorn violations), but a much smaller instance — verified independently, does not match the jest/@parcel/watcher sibling pattern. The `@book000/eslint-config` 1.16.67 bump newly flags exactly 2 pre-existing `unicorn/prefer-ternary` violations (`scripts/check-pr-language.mjs:26`, `src/main.ts:20`), unrelated to this PR's own diff (`package.json`/`pnpm-lock.yaml` only). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: merged the eslint-config 1.16.67 bump, ran `eslint . --fix` (converts both `if`/`return` blocks to ternaries) then `prettier --write` (eslint's autofix added semicolons violating this repo's no-semicolon prettier style; prettier normalized them). Had push access — pushed branch `fix/eslint-unicorn-prefer-ternary` directly to `tomacheese/pixiv-public-to-private`. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean. Fix PR: https://github.com/tomacheese/pixiv-public-to-private/pull/3327 — waiting on CI.
 
 ### tomacheese/watch-vrchat-user#530
 
