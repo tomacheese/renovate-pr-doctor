@@ -23,29 +23,17 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`tomacheese/watch-discord-dev-changes#2335`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently only `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. No push access to `book000/fixdevcontainer` — forked to `akubiusa/fixdevcontainer`, pushed there. Verified locally: `pnpm install --frozen-lockfile` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm test` 6/6 passing. Fix PR: https://github.com/book000/fixdevcontainer/pull/375 — CI confirmed green: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`); no unrelated new failures (all 4 non-skipped checks passed).
 
-### book000/twitter-auto-spam-crawler#675
+### tomacheese/pex-crawler#2170
 
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 19 pre-existing lint violations (19 errors) across `src/__tests__/pages/example-pages.test.ts`, `src/__tests__/pages/home-page.test.ts`, `src/pages/tweet-page.ts`, `src/services/queue-service.ts`, `src/services/state-service.ts`, `src/services/version-service.ts`, `src/utils/dom.ts`, `src/utils/error.ts`, `src/utils/page-error-handler.ts`, `src/utils/scroll.ts`, `webpack.config.js` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (17/19 auto-fixed), hand-fixed the remaining 2 `unicorn/prefer-early-return` cases (`src/pages/tweet-page.ts`, `src/utils/error.ts` — the latter's negation then needed one more auto-fix pass for `unicorn/no-negated-array-predicate`). Had push access — pushed branch `fix/renovate-pr-675-eslint-lint-fixes` directly. First push's CI run still failed `prettier --check` (eslint's auto-fix reformatted 8 files in a way prettier didn't like since I'd only run `prettier --write` on the 2 hand-edited files, not the whole `src` tree); fixed by running `prettier --write src` and pushing a follow-up commit. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean, `pnpm test` 257/257 passing (15 skipped, 272 total). Fix PR: https://github.com/book000/twitter-auto-spam-crawler/pull/679 — CI confirmed green: all checks passing (13 passed after the fix-up push, no unrelated new failures).
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor. Fix does not itself touch the pnpm version (see detail), so no version bump applied in this fix PR.
+- detail: `pnpm-workspace.yaml` has `confirmModulesPurge: false`, a pnpm v11-only setting. Renovate's PR bumps `packageManager` to pnpm 12.4.2; pnpm 12 dropped that setting entirely, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and, by the same root cause, `Docker CI`'s build jobs (which also run `pnpm install`). Fix: remove the obsolete `confirmModulesPurge` line from `pnpm-workspace.yaml` on `master` (harmless under pnpm v11 too, since it's just an interactive-purge-confirmation toggle that CI's non-interactive frozen-lockfile install never exercises).
 
-### tomacheese/booth-purchased-items-manager#1191
+### tomacheese/watch-discord-dev-changes#2349
 
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`tomacheese/fauxcord#314`. The eslint-config bump newly flags 26 pre-existing lint violations (26 errors, 16 auto-fixable) across `src/booth.ts`, `src/booth.test.ts`, `src/generate-linked-list.test.ts`, `src/main.ts`, `src/main.test.ts`, `src/pagecache.ts`, `src/vpm-converter.ts`, `src/vpm-converter.test.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (16/26 auto-fixed) and hand-fixed the remaining 10 (early-return/continue guard clauses, ternary conversions, one `no-immediate-mutation` rewritten as conditional array spread), plus a follow-up `prettier --write` on 3 files that `eslint --fix` had reformatted with tabs/semicolons not matching the project's no-semi/2-space style (caught by the fix PR's own CI, not local testing — local `pnpm run lint`'s `run-z` parallel output had masked the prettier failure the first time). Had push access, pushed branch directly. Fix PR: https://github.com/tomacheese/booth-purchased-items-manager/pull/1196 — CI confirmed green after the prettier follow-up commit: both originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`), no unrelated failures (all 15 non-skipped checks passed).
-
-### book000/create-ts#269
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`book000/node-utils#1685`/`book000/twitter-auto-spam-crawler#675` (NOT the previously-ledgered `book000/create-ts#65` rolldown-plugin-dts/@volar type-leak signature — verified the actual current failure differs). The eslint-config bump newly flags 9 pre-existing lint violations (9 errors, 7 auto-fixable) in `src/index.ts`, `src/prompts.ts`, `src/validate.ts` (`unicorn/prefer-ternary`, `unicorn/no-immediate-mutation`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump in root `package.json` and all `templates/nodejs/*` variant package.jsons (each regenerated its own `pnpm-lock.yaml`), ran `eslint . --fix` (7/9 auto-fixed), hand-fixed the remaining 2 `unicorn/no-immediate-mutation` cases in `src/index.ts` (rewrote as conditional array spread). `templates/**` itself is excluded from this repo's own lint (per its CLAUDE.md), so no template-file edits were needed there. Had push access, pushed branch directly. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean, `pnpm test` 39/39 passing. Fix PR: https://github.com/book000/create-ts/pull/276 — CI confirmed green: all 3 checks passed (`Node CI / setup`, `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`), no unrelated new failures.
-
-### book000/node-utils#1685
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`book000/kindle-booklog#2572`. The eslint-config bump newly flags 6 pre-existing lint violations (6 errors, 2 warnings, 3 auto-fixable) in `src/discord.ts` and `src/logger.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/no-immediate-mutation`), plus 2 now-unused eslint-disable directives in `src/__tests__/discord.test.ts` and `src/logger.ts`. `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (auto-removed the 2 unused disables), converted `editBot`/`editWebhook` in `src/discord.ts` from wrapping-if to early-return, replaced `transports.push(...)` in `src/logger.ts` with a conditional spread, then re-ran `prettier --write` (eslint --fix left one line unformatted). Had push access — pushed branch `fix/eslint-config-1-16-67` directly. Verified locally: `eslint` clean, `prettier --check` clean, `tsc --noEmit` clean, `jest` 110/110 passing. Fix PR: https://github.com/book000/node-utils/pull/1689 — CI confirmed green: all 6 non-skipped checks passed (both originally-failing `Node CI / node-ci (.)` and `Node CI / Check finished Node CI`), no unrelated new failures.
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor. Will bump to 12.5.1 in the fix PR per rule (this repo's fix does touch the pnpm version, unlike the pex-crawler sibling).
+- detail: Same root-cause pattern as `tomacheese/pex-crawler#2170` and several other sibling PRs. `pnpm-workspace.yaml` has `confirmModulesPurge: false`, a pnpm v11-only setting. Renovate's PR bumps `packageManager` to pnpm 12.4.2; pnpm 12 dropped that setting, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` (+ `Check finished Node CI`) and `Docker CI`'s build jobs (which also run `pnpm install`). Fix: remove the obsolete `confirmModulesPurge` line from `pnpm-workspace.yaml` and bump `packageManager` to pnpm 12.5.1 (latest) on a new branch off `master`.
 
 ## Queue
 
@@ -54,23 +42,19 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-book000-create-ts-269
-    target: book000/create-ts#269
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-book000-twitter-auto-spam-crawler-675
-    target: book000/twitter-auto-spam-crawler#675
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-booth-purchased-items-manager-1191
-    target: tomacheese/booth-purchased-items-manager#1191
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-book000-node-utils-1685
-    target: book000/node-utils#1685
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-jaoafa-jaotan-ts-2321
+    target: jaoafa/jaotan.ts#2321
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-pex-crawler-2170
+    target: tomacheese/pex-crawler#2170
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pex-crawler, linux/amd64),Docker CI / Docker build (pex-crawler, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-watch-discord-dev-changes-2349
+    target: tomacheese/watch-discord-dev-changes#2349
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-discord-dev-changes, linux/amd64),Docker CI / Docker build (watch-discord-dev-changes, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-watch-vrchat-user-531
+    target: tomacheese/watch-vrchat-user#531
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order):
-  - jaoafa/jaotan.ts#2321 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI]
-  - tomacheese/pex-crawler#2170 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pex-crawler, linux/amd64),Docker CI / Docker build (pex-crawler, linux/arm64),Docker CI / Check finished Docker CI]
-  - tomacheese/watch-discord-dev-changes#2349 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-discord-dev-changes, linux/amd64),Docker CI / Docker build (watch-discord-dev-changes, linux/arm64),Docker CI / Check finished Docker CI]
-  - tomacheese/watch-vrchat-user#531 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3024 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/watch-quicpay#2525 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/get-twitter-birthdays#332 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -85,7 +69,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 59 (fixed=59 skipped=0 blocked=0)
+done this sweep: 60 (fixed=60 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
