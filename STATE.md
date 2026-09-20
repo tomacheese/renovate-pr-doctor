@@ -31,9 +31,9 @@ slots; refill loop in progress.
 
 ### tomacheese/misskey-list-eyes#2630
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/utils.ts:74` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/utils.ts:74-77` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, hand-converted the `if` block to a ternary (not eslint auto-fixable). Have push access; pushed branch `fix/eslint-unicorn-prefer-ternary` directly. Verified locally: `pnpm run lint` clean, `pnpm test` 14/14 passing. Fix PR: https://github.com/tomacheese/misskey-list-eyes/pull/2635
 
 ### tomacheese/auto-update-web-scrobbler#2360
 
