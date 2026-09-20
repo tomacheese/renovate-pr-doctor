@@ -19,6 +19,12 @@ slots; refill loop in progress.
 
 
 
+### tomacheese/fetch-youtube-bgm#3028
+
+- checkpoint: completed
+- dependency currency: not checked (script skipped — proceeded straight to CI investigation per no-block rule; same root cause as siblings makes it moot).
+- detail: Same root-cause pattern as sibling PRs #3021/#3023/#3024/#3025/#3026/#3027 — `downloader/Dockerfile`'s `echogen-builder` stage base image `buildpack-deps:bullseye` had apt-get install failures due to Debian-security EOL 404s. Fix already merged to master via #3031. Re-checked CI fresh: `gh pr checks 3028` now shows 12/12 passing, 0 failed — self-resolved automatically once the PR picked up fixed master, same as #3026/#3027. No new fix PR opened (would be a duplicate of #3031/#3033). Marked `completed` rather than `skipped` since CI is actually green now.
+
 ### book000/fixdevcontainer#361
 
 - checkpoint: completed
@@ -27,6 +33,11 @@ slots; refill loop in progress.
 
 
 
+### tomacheese/watch-vrchat-user#537
+
+- checkpoint: fix-pr-opened
+- dependency currency: `vrchat` proposed 2.23.0, latest 2.24.0 — stale-unexplained-minor, bumped to 2.24.0 in fix PR.
+- detail: NOT the same master-drift root cause as sibling PRs #529/#530/#531/#532/#534/#535/#536 (already fixed by merged #538). This PR's own `renovate/artifacts` check failed ("Artifact file update failure"): Renovate bumped `vrchat` to v2.23.0 in `package.json` but never regenerated `pnpm-lock.yaml`, which still pinned v2.22.9, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE` (failing `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, and both `Docker CI / Docker build` jobs which run the same install). Since v2.23.0 was itself already stale-unexplained-minor (latest 2.24.0), fix bumps directly to v2.24.0 in a new PR against master: regenerated `pnpm-lock.yaml`, re-applied/regenerated the vrchat type-declaration patch (`var version` -> `declare const version` in `dist/index.d.ts`, still needed upstream in 2.24.0) via `pnpm patch`/`pnpm patch-commit`, and added `vrchat@2.24.0` to `minimumReleaseAgeExclude` (required — pnpm's supply-chain policy check rejected the very-recently-published 2.24.0 otherwise). Had push access (SSH push succeeded directly, no fork needed). Verified locally: `pnpm install --frozen-lockfile` passes, `pnpm run lint` clean (tsc/eslint/prettier), `pnpm run test` 13/13 suites, 78/78 tests passing. Fix PR: https://github.com/tomacheese/watch-vrchat-user/pull/542 — waiting on its own CI before marking `completed`. Once merged, Renovate should detect vrchat is already >= proposed and close/self-resolve #537 (same pattern as the #538 siblings).
 
 
 
@@ -37,9 +48,6 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-tomacheese-fetch-youtube-bgm-3028
-    target: tomacheese/fetch-youtube-bgm#3028
-    checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
   - slot: investigator-tomacheese-watch-vrchat-user-537
     target: tomacheese/watch-vrchat-user#537
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
