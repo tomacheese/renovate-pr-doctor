@@ -29,17 +29,17 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
 - detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and downstream `Check finished Node CI`/Docker CI gates (Docker build also runs `pnpm install`). Same root cause pattern as `tomacheese/watch-vrchat-user#529` and `tomacheese/auto-update-web-scrobbler#2310`. Plan: add `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bump jest to 30.5.2, regenerate lockfile.
 
-### tomacheese/auto-update-web-scrobbler#2310
-
-- checkpoint: completed
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.5.0 replaced its file watcher (`NodeWatcher`/`FSEventsWatcher`) with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and the downstream `Check finished Node CI` gate. Same root cause pattern as `tomacheese/watch-vrchat-user#529`. Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2 (latest), regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install --frozen-lockfile`, `pnpm run lint`, `pnpm run test` all pass. Fix PR: https://github.com/tomacheese/auto-update-web-scrobbler/pull/2364 — all checks passed on CI (8/8, no failures/pending).
-
 ### tomacheese/watch-quicpay#2478
 
 - checkpoint: root-cause-identified
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumping to 30.5.2 in fix PR.
 - detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing `node-ci (.)`, `Check finished Node CI`, and (as a downstream consequence, since Docker build also runs `pnpm install`) both Docker CI jobs. Identical root cause pattern to `tomacheese/auto-update-web-scrobbler#2310` and `tomacheese/watch-vrchat-user#529`. Fix: adding `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumping jest to 30.5.2 (latest), regenerating `pnpm-lock.yaml`. Verified locally: `pnpm install`, `pnpm run lint`, `pnpm run test` all pass.
+
+### tomacheese/cmcutter#2810
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: `@book000/eslint-config` 1.16.67 bump tightens `unicorn/prefer-ternary`, flagging 1 pre-existing lint error in `src/lib/utlis.ts:87` (an `if` statement replaceable by a ternary). This is the sole cause of both `node-ci (.)` and downstream `Check finished Node CI` failures. Same pattern as `tomacheese/fetch-youtube-bgm#3021` and `tomacheese/twitter-bookmark-hub#545`. Fix: rewrite the `if` as a ternary, not bumping the dependency itself.
 
 ## Queue
 
@@ -48,8 +48,8 @@ in-flight:
   - slot: investigator-tomacheese-watch-quicpay-2478
     target: tomacheese/watch-quicpay#2478
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-quicpay, linux/amd64),Docker CI / Docker build (watch-quicpay, linux/arm64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-auto-update-web-scrobbler-2310
-    target: tomacheese/auto-update-web-scrobbler#2310
+  - slot: investigator-tomacheese-cmcutter-2810
+    target: tomacheese/cmcutter#2810
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-tomacheese-fetch-youtube-bgm-3021
     target: tomacheese/fetch-youtube-bgm#3021
@@ -61,7 +61,6 @@ in-flight:
     target: tomacheese/discord-crosspost-auto-translate#2644
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (discord-crosspost-auto-translate, linux/amd64),Docker CI / Docker build (discord-crosspost-auto-translate, linux/arm64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order):
-  - tomacheese/cmcutter#2810 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/watch-bsky-likes#1383 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-bsky-likes, linux/amd64),Docker CI / Docker build (watch-bsky-likes, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/booth-purchased-items-manager#1137 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (booth-purchased-items-manager, linux/amd64),Docker CI / Docker build (booth-purchased-items-manager, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/watch-jcb#1609 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-jcb, linux/amd64),Docker CI / Docker build (watch-jcb, linux/arm64),Docker CI / Check finished Docker CI]
@@ -133,7 +132,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 5 (fixed=5 skipped=0 blocked=0)
+done this sweep: 6 (fixed=6 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
