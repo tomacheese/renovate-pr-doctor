@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### book000/chrome-response-recorder#583
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 1 pre-existing lint violation: `src/main.ts:309` `unicorn/prefer-early-return`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: refactor that `if` block into an early return.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 1 pre-existing lint violation: `src/main.ts:309` `unicorn/prefer-early-return`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, regenerated `pnpm-lock.yaml`, rewrote `cleanupPage`'s outer `if` as an early return (no behavior change). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier/eslint/tsc) all clean; no automated test suite exists in this project. Fix PR: https://github.com/book000/chrome-response-recorder/pull/585 — waiting on CI.
 
 ### book000/twitter-auto-spam-crawler#637
 
