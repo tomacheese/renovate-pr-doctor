@@ -1,26 +1,118 @@
-# Current state (last updated: 2026-08-27)
+# Current state (last updated: 2026-09-20)
 
 ## Phase
 
-Last completed sweep: 2026-08-27, see `records/2026-08-27-run.md`.
-Currently idle.
+Sweep in progress: 2026-09-20. Discovery found 82 candidates (default:
+book000/tomacheese/jaoafa orgs, assignee=book000) — none matched an
+existing ledger row (all classified NEW). Filling initial 5 concurrency
+slots; refill loop in progress.
 
 ## Targets and their state
 
-(none — main sweep queue drained)
+(populated per-PR as Investigators/Arbiters/Executors report in)
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  (empty)
+  - slot: investigator-tomacheese-watch-vrchat-user-529
+    target: tomacheese/watch-vrchat-user#529
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-book000-chrome-mcp-router-115
+    target: book000/chrome-mcp-router#115
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-tomacheese-pixiv-public-to-private-3289
+    target: tomacheese/pixiv-public-to-private#3289
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pixiv-public-to-private, linux/amd64),Docker CI / Docker build (pixiv-public-to-private, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-fetch-youtube-bgm-3021
+    target: tomacheese/fetch-youtube-bgm#3021
+    checks: Node CI / node-ci (downloader),Node CI / Check finished Node CI,Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-tomachi-emojis-sync-perms-2543
+    target: tomacheese/tomachi-emojis-sync-perms#2543
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (tomachi-emojis-sync-perms, linux/amd64),Docker CI / Docker build (tomachi-emojis-sync-perms, linux/arm64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order):
-  (empty)
-done this sweep: 5 (fixed=0 skipped=1 blocked=4)
+  - tomacheese/twitter-bookmark-hub#545 [checks: Node CI / node-ci (crawler),Node CI / node-ci (viewer/backend),Node CI / node-ci (viewer/frontend),Node CI / node-ci (analyzer),Node CI / Check finished Node CI]
+  - tomacheese/misskey-list-eyes#2594 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (misskey-list-eyes, linux/amd64),Docker CI / Docker build (misskey-list-eyes, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/auto-update-web-scrobbler#2310 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-quicpay#2478 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-quicpay, linux/amd64),Docker CI / Docker build (watch-quicpay, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/discord-crosspost-auto-translate#2644 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (discord-crosspost-auto-translate, linux/amd64),Docker CI / Docker build (discord-crosspost-auto-translate, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/cmcutter#2810 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-bsky-likes#1383 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-bsky-likes, linux/amd64),Docker CI / Docker build (watch-bsky-likes, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/booth-purchased-items-manager#1137 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (booth-purchased-items-manager, linux/amd64),Docker CI / Docker build (booth-purchased-items-manager, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-jcb#1609 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-jcb, linux/amd64),Docker CI / Docker build (watch-jcb, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/lock-move-channel#2659 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (lock-move-channel, linux/amd64),Docker CI / Docker build (lock-move-channel, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/get-twitter-birthdays#299 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/samechan-crawler#3429 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (samechan-crawler, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/sync-claude-folder#116 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/telcheck#2635 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/fauxcord#314 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-follow-follower#703 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-follow-follower, linux/amd64),Docker CI / Docker build (watch-follow-follower, linux/arm64),Docker CI / Check finished Docker CI]
+  - book000/pixivts#1928 [checks: node-ci,Check finished Node CI]
+  - book000/twitter-rss#3770 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/rss-deliver#2787 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/kindle-booklog#2510 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/niconico-mylist-video-checker#2716 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/twitter-auto-spam-crawler#637 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/moneyforward-collector#2672 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/chrome-response-recorder#583 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/create-ts#221 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - jaoafa/watch-guilds#2312 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/web-session-tracer#148 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/node-utils#1646 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - jaoafa/jaotan.ts#2268 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/vrcx-web-server#1203 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/pex-crawler#2155 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pex-crawler, linux/amd64),Docker CI / Docker build (pex-crawler, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-discord-dev-changes#2335 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-discord-dev-changes, linux/amd64),Docker CI / Docker build (watch-discord-dev-changes, linux/arm64),Docker CI / Check finished Docker CI]
+  - book000/fixdevcontainer#361 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-pixiv-bookmarks#2186 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-pixiv-bookmarks, linux/amd64),Docker CI / Docker build (watch-pixiv-bookmarks, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/collect-points#758 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/api.tomacheese.com#512 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (api.tomacheese.com, linux/amd64),Docker CI / Check finished Docker CI]
+  - jaoafa/ChatWatcher#392 [checks: build,build]
+  - book000/templates#488 [checks: Test reusable-maven / Maven build,Test reusable-maven / Check finished Maven build,Test Summary Finished]
+  - tomacheese/watch-vrchat-user#530 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/pixiv-public-to-private#3322 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/fetch-youtube-bgm#3023 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/tomachi-emojis-sync-perms#2594 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/misskey-list-eyes#2630 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/auto-update-web-scrobbler#2360 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-quicpay#2492 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-quicpay, linux/amd64),Docker CI / Docker build (watch-quicpay, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/discord-crosspost-auto-translate#2694 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-bsky-likes#1410 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/booth-purchased-items-manager#1191 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-jcb#1667 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/lock-move-channel#2692 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/get-twitter-birthdays#308 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/samechan-crawler#3468 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/sync-claude-folder#150 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-follow-follower#733 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/rss-deliver#2793 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/kindle-booklog#2572 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/twitter-auto-spam-crawler#675 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/create-ts#269 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - book000/node-utils#1685 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - jaoafa/jaotan.ts#2321 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/pex-crawler#2170 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pex-crawler, linux/amd64),Docker CI / Docker build (pex-crawler, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-discord-dev-changes#2349 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-discord-dev-changes, linux/amd64),Docker CI / Docker build (watch-discord-dev-changes, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-vrchat-user#531 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/fetch-youtube-bgm#3024 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-quicpay#2525 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/get-twitter-birthdays#332 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
+  - tomacheese/watch-vrchat-user#532 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/fetch-youtube-bgm#3025 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-vrchat-user#534 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/fetch-youtube-bgm#3026 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-vrchat-user#535 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/fetch-youtube-bgm#3027 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-vrchat-user#536 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/fetch-youtube-bgm#3028 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
+  - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+  - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
+done this sweep: 0
 
 ## Conflict-fixer queue
 
-(empty — no fix PRs opened this sweep, so no conflict monitor was started.)
+(empty — no fix PRs opened yet this sweep.)
 
 ## Escalate-to-user policy
 
@@ -29,13 +121,18 @@ No standing override in effect. Default behavior applies: relay any
 
 ## Remaining broken Renovate PRs
 
+(carried from prior sweeps, unaffected by this sweep unless re-discovered)
+
 - book000/create-ts#65 — skipped: upstream rolldown-plugin-dts @volar/typescript type leak persists; owner previously declined special Renovate rule. Re-confirmed unchanged for 4 consecutive sweeps (2026-08-01, 2026-08-12, 2026-08-24, 2026-08-27).
-- tomacheese/comico-downloader#831, tomacheese/api.tomacheese.com#511, tomacheese/collect-points#757, tomacheese/collect-points#697 — blocked: account-wide `tomacheese` org GitHub Actions billing/spending-limit outage, ongoing since 2026-08-22 (5+ days as of this sweep), affecting every workflow run in the org, not just Renovate PRs. No code fix possible.
+- tomacheese/comico-downloader#831, tomacheese/api.tomacheese.com#511, tomacheese/collect-points#757, tomacheese/collect-points#697 — blocked: account-wide `tomacheese` org GitHub Actions billing/spending-limit outage, ongoing since 2026-08-22. No code fix possible; status not re-verified this sweep (not re-discovered by today's TSV — recheck next sweep if it recurs).
 
 ## Cleanup
 
-Attempted removal of stale `scratchpad/renovate-fix-chrome-response-recorder-409` (matching ledger row confirms `fixed`, 2026-08-01); `dist/` subfiles remain root-owned and not removable without privilege escalation — unchanged from prior sweep.
+`scratchpad/renovate-fix-chrome-response-recorder-409` still root-owned/unremovable (unchanged, 2026-09-20 re-check).
 
 ## Next concrete action
 
-Recommend the user resolve the `tomacheese` org's GitHub Actions billing issue directly (blocking 4 PRs across 2+ repos for 5+ days) rather than waiting for it to self-resolve via future sweeps. create-ts#65 remains a durable skip unless upstream or owner policy changes.
+Drive the 2026-09-20 sweep's refill loop to completion (82 candidates
+queued, 5 in flight). Recommend the user resolve the `tomacheese` org's
+GitHub Actions billing issue directly if it recurs in this sweep's
+discovery.
