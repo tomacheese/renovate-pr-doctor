@@ -11,6 +11,11 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
+### book000/rss-deliver#2793
+
+- checkpoint: root-cause-identified
+- detail: dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — classification `current`, no special handling. CI fails only on lint (`Node CI / node-ci (.)`, cascading to `Check finished Node CI`): the eslint-config bump newly flags 5 pre-existing lint violations (`unicorn/prefer-early-return` in `src/services/fish-4koma.ts:84`, `unicorn/prefer-ternary` in `src/services/github-events.ts:23` and `src/services/pop-team-epic.ts:199,758,768`). Same pattern as book000/pixivts#1928/chrome-mcp-router#115. Confident fix: `eslint --fix` (4/5 auto-fixable) plus hand-convert the remaining `prefer-early-return` case.
+
 ### tomacheese/sync-claude-folder#150
 
 - checkpoint: root-cause-identified
