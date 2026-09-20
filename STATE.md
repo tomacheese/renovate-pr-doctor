@@ -13,9 +13,9 @@ slots; refill loop in progress.
 
 ### tomacheese/twitter-bookmark-hub#545
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: `@book000/eslint-config` 1.16.67 bump pulls in `eslint-plugin-unicorn` v75, tightening `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`. This flags 39 pre-existing lint errors across all 4 npm workspaces (`crawler` 11, `viewer/backend` 8, `viewer/frontend` 19, `analyzer` 1), which is why all 4 `node-ci` matrix jobs fail identically at the `lint:eslint` step. Fix: `eslint --fix` per workspace + manual fixes for the handful of non-auto-fixable violations, verified locally against eslint-config 1.16.67, not bumping the dependency itself.
+- detail: `@book000/eslint-config` 1.16.67 bump pulls in `eslint-plugin-unicorn` v75, tightening `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`. Confirmed these 39 errors do NOT reproduce under `master`'s current 1.16.66 (verified via temporary side-by-side install) — newly introduced by the bump, not pre-existing. Flags across all 4 npm workspaces (`crawler` 11, `viewer/backend` 8, `viewer/frontend` 19, `analyzer` 1), why all 4 `node-ci` matrix jobs fail identically at the `lint:eslint` step. Fixed via `eslint --fix` + manual rewrites for non-auto-fixable violations (including a `eslint-plugin-vue`/typescript-eslint parsing quirk on `--fix` for `.vue` files that required hand-editing those instead), verified locally against eslint-config 1.16.67, not bumping the dependency itself in the fix PR (fix lands on `master` first so #545 passes once rebased). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/twitter-bookmark-hub/pull/549 — waiting on its CI.
 
 ### tomacheese/watch-bsky-likes#1383
 
