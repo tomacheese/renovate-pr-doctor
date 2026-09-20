@@ -39,6 +39,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 16 pre-existing lint violations (16 errors) across `src/core/normalize.ts`, `src/infra/auth.ts`, `src/infra/cycletls.ts`, `src/infra/remote-config-fetch.ts`, `src/main.ts`, `src/presentation/discord.ts` (`unicorn/prefer-ternary`, `unicorn/no-immediate-mutation`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`.
 
+### tomacheese/booth-purchased-items-manager#1191
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`tomacheese/fauxcord#314`. The eslint-config bump newly flags 26 pre-existing lint violations (26 errors, 16 auto-fixable) across `src/booth.ts`, `src/booth.test.ts`, `src/generate-linked-list.test.ts`, `src/main.ts`, `src/main.test.ts`, `src/pagecache.ts`, `src/vpm-converter.ts`, `src/vpm-converter.test.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`.
+
 ## Queue
 
 concurrency: 5
