@@ -13,9 +13,9 @@ slots; refill loop in progress.
 
 ### tomacheese/telcheck#2635
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 7 pre-existing `if` statements (in `src/main.ts`, `src/utils/nvr510.ts`, `src/utils/search-number.ts`, `src/utils/web-push.ts`) under `unicorn/prefer-ternary`. `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, converted the 7 flagged `if` statements to ternary expressions (6/7 via `eslint --fix`, 1 by hand in `src/utils/nvr510.ts` due to an interleaved comment), reformatted with prettier. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean), `npx depcheck` (no issues). Fix PR: https://github.com/tomacheese/telcheck/pull/2640 — waiting on its CI.
+- detail: The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 7 pre-existing `if` statements (in `src/main.ts`, `src/utils/nvr510.ts`, `src/utils/search-number.ts`, `src/utils/web-push.ts`) under `unicorn/prefer-ternary`. `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, converted the 7 flagged `if` statements to ternary expressions (6/7 via `eslint --fix`, 1 by hand in `src/utils/nvr510.ts` due to an interleaved comment), reformatted with prettier. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean), `npx depcheck` (no issues). Fix PR: https://github.com/tomacheese/telcheck/pull/2640 — CI confirmed green, all 13 checks passed, no unrelated failures.
 
 ### tomacheese/fauxcord#314
 
@@ -23,23 +23,11 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 131 pre-existing lint violations across `src/services/*.ts` and `src/validators/*.ts` (`unicorn/no-immediate-mutation`, `unicorn/prefer-ternary`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Confident fix: apply eslint `--fix` (112/131 auto-fixable) and manually fix the remaining ~19.
 
-### tomacheese/samechan-crawler#3429
-
-- checkpoint: completed
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
-- detail: PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting that pnpm 12 no longer recognizes; `pnpm install --frozen-lockfile` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing both `Node CI / node-ci (.)` and `Docker CI / Docker build`. Confirmed via pnpm 12.4.2's own CHANGELOG.md (no replacement setting was introduced — the option was simply dropped). Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped `packageManager` to `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS), `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/tomacheese/samechan-crawler/pull/3472 — CI confirmed green, all checks passed, no unrelated failures.
-
 ### tomacheese/watch-follow-follower#703
 
 - checkpoint: fix-pr-opened
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/samechan-crawler#3429`. PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting pnpm 12 no longer recognizes; `pnpm install`/`pnpm fetch` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` and both `Docker CI / Docker build` matrix legs (amd64/arm64), and their downstream "Check finished" jobs. Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped `packageManager` to `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS), `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/tomacheese/watch-follow-follower/pull/736 — waiting on CI.
-
-### tomacheese/sync-claude-folder#116
-
-- checkpoint: completed
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `tomacheese/get-twitter-birthdays#299` / `tomacheese/booth-purchased-items-manager#1137` / `tomacheese/watch-jcb#1609`. jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS` in `Node CI / node-ci (.)`, which fails downstream `Node CI / Check finished Node CI`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (4 suites, 36 tests, all passed). Fix PR: https://github.com/tomacheese/sync-claude-folder/pull/152 — all 6 real checks passed on CI (Node CI setup/node-ci/Check finished, Analyze x2, CodeQL), no unrelated failures.
 
 ## Queue
 
@@ -48,11 +36,11 @@ in-flight:
   - slot: investigator-tomacheese-watch-follow-follower-703
     target: tomacheese/watch-follow-follower#703
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-follow-follower, linux/amd64),Docker CI / Docker build (watch-follow-follower, linux/arm64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-samechan-crawler-3429
-    target: tomacheese/samechan-crawler#3429
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (samechan-crawler, linux/amd64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-sync-claude-folder-116
-    target: tomacheese/sync-claude-folder#116
+  - slot: investigator-book000-pixivts-1928
+    target: book000/pixivts#1928
+    checks: node-ci,Check finished Node CI
+  - slot: investigator-book000-twitter-rss-3770
+    target: book000/twitter-rss#3770
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-tomacheese-telcheck-2635
     target: tomacheese/telcheck#2635
