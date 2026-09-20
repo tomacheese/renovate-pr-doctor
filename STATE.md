@@ -13,11 +13,11 @@ slots; refill loop in progress.
 
 ### jaoafa/jaotan.ts#2321
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `emoji-regex` proposed 11.0.0, latest 11.0.0 — current, no special handling.
 - detail: Renovate's own artifact update failed (`renovate/artifacts` check: "Artifact file update failure") — the PR bumped `package.json`'s `emoji-regex` 10.6.0 -> 11.0.0 but never regenerated `pnpm-lock.yaml`, so `pnpm install --frozen-lockfile` hard-fails with a specifier mismatch, failing `Node CI / node-ci (.)` and (via the same install step in the Dockerfile) both `Docker CI / Docker build` matrix jobs. Additionally, `emoji-regex@11.0.0` itself dropped its CJS build entirely (`"main": "index.mjs"`, pure ESM, no `require()`-compatible export) — a real breaking change on top of the missing lockfile update. The project's `tsx`-based runtime (`pnpm start`, used by the Dockerfile `ENTRYPOINT`) tolerates this fine since esbuild handles ESM/CJS interop transparently, but `ts-jest`'s CommonJS-targeted compile of the existing static `import emojiRegex from 'emoji-regex'` breaks Jest at test time (`SyntaxError: Unexpected token 'export'`).
 - fix: regenerated `pnpm-lock.yaml` (minimal surgical edit: added the `emoji-regex@11.0.0` package/snapshot entries, kept the still-used `emoji-regex@10.6.0` entry consumed transitively by `string-width@7.2.0`); left production source untouched (static import works at runtime via `tsx`); fixed only the Jest gap by adding `babel-jest` + `@babel/plugin-transform-modules-commonjs` (already-transitively-available `babel-jest`, one new small official Babel devDependency) scoped via `transformIgnorePatterns`/`transform` to transform just `node_modules/**/emoji-regex/*.mjs` into CommonJS for the test environment, with a `babel.config.cjs` enabling that one plugin. Verified locally: `pnpm run test` 44/44 passing, `pnpm run lint` clean, `pnpm run lint:tsc` clean, and a full local `docker build` + `docker run` of the Dockerfile confirms `pnpm install --frozen-lockfile --offline` and `pnpm start` (tsx) both work with no ESM/import errors (container exits only on missing `/data/config.json`, expected without a real config mounted).
-- fix PR: https://github.com/jaoafa/jaotan.ts/pull/2330 — awaiting fix PR's own CI.
+- fix PR: https://github.com/jaoafa/jaotan.ts/pull/2330 — CI confirmed green: all 5 originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, `Docker CI / Docker build` amd64+arm64, `Docker CI / Check finished Docker CI`) passed; no unrelated new failures across the other 15 non-skipped checks.
 
 ### book000/pixivts#1928
 
