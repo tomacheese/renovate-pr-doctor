@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-discord-dev-changes#2349
 
-- checkpoint: root-cause-identified
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor. Will bump to 12.5.1 in the fix PR per rule (this repo's fix does touch the pnpm version, unlike the pex-crawler sibling).
-- detail: Same root-cause pattern as `tomacheese/pex-crawler#2170` and several other sibling PRs. `pnpm-workspace.yaml` has `confirmModulesPurge: false`, a pnpm v11-only setting. Renovate's PR bumps `packageManager` to pnpm 12.4.2; pnpm 12 dropped that setting, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` (+ `Check finished Node CI`) and `Docker CI`'s build jobs (which also run `pnpm install`). Fix: remove the obsolete `confirmModulesPurge` line from `pnpm-workspace.yaml` and bump `packageManager` to pnpm 12.5.1 (latest) on a new branch off `master`.
+- checkpoint: fix-pr-opened
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor. Bumped to 12.5.1 in the fix PR per rule.
+- detail: Same root-cause pattern as `tomacheese/pex-crawler#2170` and several other sibling PRs. `pnpm-workspace.yaml` has `confirmModulesPurge: false`, a pnpm v11-only setting. Renovate's PR bumps `packageManager` to pnpm 12.4.2; pnpm 12 dropped that setting, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` (+ `Check finished Node CI`) and `Docker CI`'s build jobs (which also run `pnpm install`). Fix: removed the obsolete `confirmModulesPurge` line from `pnpm-workspace.yaml`, bumped `packageManager` to pnpm 12.5.1 (latest), regenerated `pnpm-lock.yaml`, on branch `fix/pnpm-v12-workspace-settings` off `master`. Had push access — pushed directly (via SSH remote). Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm run test` 16/16 passing. Fix PR: https://github.com/tomacheese/watch-discord-dev-changes/pull/2387 — awaiting fix PR's own CI before marking completed.
 
 ## Queue
 
