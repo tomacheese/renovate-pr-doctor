@@ -29,6 +29,12 @@ slots; refill loop in progress.
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
 - detail: PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting that pnpm 12 no longer recognizes; `pnpm install --frozen-lockfile` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing both `Node CI / node-ci (.)` and `Docker CI / Docker build`. Confirmed via pnpm 12.4.2's own CHANGELOG.md (no replacement setting was introduced — the option was simply dropped). Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped `packageManager` to `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS), `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/tomacheese/samechan-crawler/pull/3472 — waiting on CI.
 
+### tomacheese/watch-follow-follower#703
+
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — will bump to 12.5.1 in fix PR.
+- detail: Same root-cause pattern as `tomacheese/samechan-crawler#3429`. PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting pnpm 12 no longer recognizes; `pnpm install`/`pnpm fetch` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` and both `Docker CI / Docker build` matrix legs (amd64/arm64), and their downstream "Check finished" jobs. Confident fix: remove `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bump `packageManager` to `pnpm@12.5.1`, regenerate `pnpm-lock.yaml`.
+
 ### tomacheese/sync-claude-folder#116
 
 - checkpoint: fix-pr-opened
