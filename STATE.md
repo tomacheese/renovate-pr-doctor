@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### book000/moneyforward-collector#2672
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) newly flags 1 pre-existing lint violation: `src/main.ts:186` `unicorn/prefer-ternary`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: apply eslint `--fix` (auto-fixable).
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) newly flags 1 pre-existing lint violation: `src/main.ts:186` `unicorn/prefer-ternary` in `getYear()`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` + `prettier --write` to convert the if/return block to a ternary. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean; no test script in this repo. Fix PR: https://github.com/book000/moneyforward-collector/pull/2676 — waiting on CI.
 
 ## Queue
 
