@@ -35,6 +35,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`tomacheese/fauxcord#314`. The eslint-config bump newly flags 26 pre-existing lint violations (26 errors, 16 auto-fixable) across `src/booth.ts`, `src/booth.test.ts`, `src/generate-linked-list.test.ts`, `src/main.ts`, `src/main.test.ts`, `src/pagecache.ts`, `src/vpm-converter.ts`, `src/vpm-converter.test.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (16/26 auto-fixed) and hand-fixed the remaining 10 (early-return/continue guard clauses, ternary conversions, one `no-immediate-mutation` rewritten as conditional array spread). Had push access, pushed branch directly. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean, `pnpm test` 97/97 passing (7 skipped). Fix PR: https://github.com/tomacheese/booth-purchased-items-manager/pull/1196
 
+### book000/create-ts#269
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`book000/node-utils#1685`/`book000/twitter-auto-spam-crawler#675` (NOT the previously-ledgered `book000/create-ts#65` rolldown-plugin-dts/@volar type-leak signature — verified the actual current failure differs). The eslint-config bump newly flags 9 pre-existing lint violations (9 errors, 7 auto-fixable) in `src/index.ts`, `src/prompts.ts`, `src/validate.ts` (`unicorn/prefer-ternary`, `unicorn/no-immediate-mutation`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Tests pass (39/39). Fixing with `eslint --fix` plus manual conversion of the remaining early-return/no-immediate-mutation cases.
+
 ### book000/node-utils#1685
 
 - checkpoint: root-cause-identified
