@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### jaoafa/watch-guilds#2312
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 8 pre-existing `unicorn/prefer-ternary` violations across `src/commands/remove-channel.ts`, `src/commands/set-channel.ts`, `src/emojis-caches.ts`, `src/events/sticker-update.ts` (x2), `src/list-emojis.ts` (x3). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (all 8 auto-fixable) then `prettier --write` for formatting. No test script exists in this repo; verified locally with `pnpm run lint` (prettier+eslint+tsc, clean). Had push access (ADMIN) — pushed branch directly, no fork needed. Fix PR: https://github.com/jaoafa/watch-guilds/pull/2315 — waiting on CI.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 8 pre-existing `unicorn/prefer-ternary` violations across `src/commands/remove-channel.ts`, `src/commands/set-channel.ts`, `src/emojis-caches.ts`, `src/events/sticker-update.ts` (x2), `src/list-emojis.ts` (x3). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (all 8 auto-fixable) then `prettier --write` for formatting. No test script exists in this repo; verified locally with `pnpm run lint` (prettier+eslint+tsc, clean). Had push access (ADMIN) — pushed branch directly, no fork needed. Fix PR: https://github.com/jaoafa/watch-guilds/pull/2315 — CI confirmed green (both previously-failing Node CI jobs pass; all 11 non-skipped checks green, no unrelated failures).
 
 ## Queue
 
