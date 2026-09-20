@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-bsky-likes#1410
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`. The eslint-config bump newly flags 4 pre-existing `unicorn/prefer-ternary` violations (`src/bsky.test.ts:105,153`, `src/bsky.ts:248,423`). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` + `prettier --write` (all 4 auto-fixable). Had push access — pushed branch `fix/eslint-unicorn-prefer-ternary` directly. Verified locally: `pnpm run lint` clean, `pnpm run test` 7/7 passing. Fix PR: https://github.com/tomacheese/watch-bsky-likes/pull/1415 — waiting on fix PR's own CI to confirm before marking completed.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`. The eslint-config bump newly flags 4 pre-existing `unicorn/prefer-ternary` violations (`src/bsky.test.ts:105,153`, `src/bsky.ts:248,423`). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` + `prettier --write` (all 4 auto-fixable). Had push access — pushed branch `fix/eslint-unicorn-prefer-ternary` directly. Verified locally: `pnpm run lint` clean, `pnpm run test` 7/7 passing. Fix PR: https://github.com/tomacheese/watch-bsky-likes/pull/1415 — CI confirmed green: all 12 non-skipped checks passed, no unrelated new failures.
 
 ### tomacheese/watch-jcb#1667
 
