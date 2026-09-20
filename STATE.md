@@ -13,9 +13,9 @@ slots; refill loop in progress.
 
 ### book000/chrome-mcp-router#115
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: `@book000/eslint-config` bump to 1.16.67 enables/tightens `unicorn/prefer-ternary` and `unicorn/prefer-early-return` rules, flagging 6 pre-existing lint violations in `src/bridge.ts`, `src/config.ts`, `src/index.ts` (tests pass, depcheck passes). Note: repo has no `.prettierrc` — used manual style-matched fixes (no semicolons, single quotes) instead of `pnpm run format`, which uses prettier's own defaults and would have reformatted every file. Fix PR: https://github.com/book000/chrome-mcp-router/pull/116, branch `fix/eslint-config-1-16-67-lint-errors`. Waiting on fix PR's own CI before marking completed.
+- detail: `@book000/eslint-config` bump to 1.16.67 enables/tightens `unicorn/prefer-ternary` and `unicorn/prefer-early-return` rules, flagging 6 pre-existing lint violations in `src/bridge.ts`, `src/config.ts`, `src/index.ts` (tests pass, depcheck passes). Note: repo has no `.prettierrc` — used manual style-matched fixes (no semicolons, single quotes) instead of `pnpm run format`, which uses prettier's own defaults and would have reformatted every file. Fix PR: https://github.com/book000/chrome-mcp-router/pull/116, branch `fix/eslint-config-1-16-67-lint-errors` — all 3 checks (setup, node-ci, Check finished) passed on run 35504946870. Done.
 
 ### tomacheese/fetch-youtube-bgm#3021
 
@@ -31,9 +31,9 @@ slots; refill loop in progress.
 
 ### tomacheese/tomachi-emojis-sync-perms#2543
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.4.2 → 30.5.1 bump pulls in a new transitive dependency `@parcel/watcher@2.6.0` with a native postinstall build script; pnpm's default build-script allowlist blocks it (`ERR_PNPM_IGNORED_BUILDS`), failing `pnpm install --frozen-lockfile` in Node CI (and Docker CI, which runs the same install). Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2 (latest), regenerated lockfile. Local verification passed (install/test/compile/lint). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/tomachi-emojis-sync-perms/pull/2598 — waiting on its own CI to confirm before marking completed.
+- detail: jest 30.4.2 → 30.5.1 bump pulls in a new transitive dependency `@parcel/watcher@2.6.0` with a native postinstall build script; pnpm's default build-script allowlist blocks it (`ERR_PNPM_IGNORED_BUILDS`), failing `pnpm install --frozen-lockfile` in Node CI (and Docker CI, which runs the same install). Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2 (latest), regenerated lockfile. Local verification passed (install/test/compile/lint). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/tomachi-emojis-sync-perms/pull/2598 — CI confirmed green (all 5 originally-failing checks now pass: Node CI / node-ci (.), Node CI / Check finished Node CI, Docker CI / Docker build amd64+arm64, Docker CI / Check finished Docker CI; no new failures). Done.
 
 ## Queue
 
