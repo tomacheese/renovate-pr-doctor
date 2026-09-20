@@ -35,6 +35,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/utils.ts:74` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`.
 
+### tomacheese/watch-quicpay#2492
+
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 — stale-unexplained-minor, will bump to 12.5.1 in fix PR.
+- detail: Renovate bumps `packageManager` from `pnpm@11.27.0` to `pnpm@12.4.2` in `package.json` only. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm-v11-only setting; pnpm v12 rejects it with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `pnpm install --frozen-lockfile` in `Node CI / node-ci (.)` (and downstream `Check finished Node CI`) and in both `Docker CI / Docker build` matrix jobs. `renovate/artifacts` also failed for the same reason (Renovate's own artifact-update step couldn't run pnpm 12 either). Confident fix: remove `confirmModulesPurge` from `pnpm-workspace.yaml` and bump `packageManager` to `pnpm@12.5.1` (latest) in the fix PR.
+
 ## Queue
 
 concurrency: 5
