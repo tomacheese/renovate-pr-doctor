@@ -19,15 +19,21 @@ slots; refill loop in progress.
 
 ### tomacheese/lock-move-channel#2659
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
-- detail: PR bumps `packageManager` pnpm 11.27.0 → 12.4.2. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting pnpm v12 refuses to recognize (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`), which fails `pnpm install` immediately in Node CI (and correspondingly Docker CI, which also runs pnpm install). Also explains the `renovate/artifacts` failure. Same root-cause pattern as `tomacheese/watch-bsky-likes#1383`, `tomacheese/pixiv-public-to-private#3289`, `tomacheese/misskey-list-eyes#2594`. Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped packageManager to pnpm@12.5.1, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install`, `pnpm run lint` pass. Fix PR: https://github.com/tomacheese/lock-move-channel/pull/2696 — waiting on its CI.
+- detail: PR bumps `packageManager` pnpm 11.27.0 → 12.4.2. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting pnpm v12 refuses to recognize (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`), which fails `pnpm install` immediately in Node CI (and correspondingly Docker CI, which also runs pnpm install). Also explains the `renovate/artifacts` failure. Same root-cause pattern as `tomacheese/watch-bsky-likes#1383`, `tomacheese/pixiv-public-to-private#3289`, `tomacheese/misskey-list-eyes#2594`. Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped packageManager to pnpm@12.5.1, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install`, `pnpm run lint` pass. Fix PR: https://github.com/tomacheese/lock-move-channel/pull/2696 — all 12 checks passed on CI, no unrelated failures.
 
 ### tomacheese/booth-purchased-items-manager#1137
 
 - checkpoint: completed
 - dependency currency: `jest`/`@jest/globals` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
 - detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm 12's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Fix: added `@parcel/watcher: true` to `allowBuilds`, bumped jest/@jest/globals to 30.5.2, regenerated lockfile. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (clean), `pnpm test` (7/7 suites, 97 passed). Fix PR: https://github.com/tomacheese/booth-purchased-items-manager/pull/1195 — all 12 checks passed on CI, no unrelated failures.
+
+### tomacheese/get-twitter-birthdays#299
+
+- checkpoint: root-cause-identified
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
+- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137` and `tomacheese/watch-jcb#1609`. Fix: add `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bump `jest` to 30.5.2, regenerate `pnpm-lock.yaml`.
 
 ### tomacheese/watch-jcb#1609
 
