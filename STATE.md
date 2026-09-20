@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### tomacheese/auto-update-web-scrobbler#2360
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/main.ts:163` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: rewrote as a single ternary (non-negated branch first, to also satisfy `unicorn/no-negated-condition`). Had push access — pushed branch `fix/eslint-prefer-ternary-main-ts` directly. Verified locally against both eslint-config 1.16.66 and 1.16.67: eslint/tsc/prettier all clean. Fix PR: https://github.com/tomacheese/auto-update-web-scrobbler/pull/2365
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/main.ts:163` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: rewrote as a single ternary (non-negated branch first, to also satisfy `unicorn/no-negated-condition`). Had push access — pushed branch `fix/eslint-prefer-ternary-main-ts` directly. Verified locally against both eslint-config 1.16.66 and 1.16.67: eslint/tsc/prettier all clean. Fix PR: https://github.com/tomacheese/auto-update-web-scrobbler/pull/2365 — CI confirmed green: both originally-failing checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed; no unrelated new failures (all 8 non-skipped checks passed).
 
 ### tomacheese/watch-quicpay#2492
 
