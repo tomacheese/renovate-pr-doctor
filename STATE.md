@@ -37,9 +37,9 @@ slots; refill loop in progress.
 
 ### tomacheese/sync-claude-folder#116
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `tomacheese/get-twitter-birthdays#299` / `tomacheese/booth-purchased-items-manager#1137` / `tomacheese/watch-jcb#1609`. jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS` in `Node CI / node-ci (.)`, which fails downstream `Node CI / Check finished Node CI`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (4 suites, 36 tests, all passed). Fix PR: https://github.com/tomacheese/sync-claude-folder/pull/152 — waiting on its CI.
+- detail: Same root-cause pattern as `tomacheese/get-twitter-birthdays#299` / `tomacheese/booth-purchased-items-manager#1137` / `tomacheese/watch-jcb#1609`. jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS` in `Node CI / node-ci (.)`, which fails downstream `Node CI / Check finished Node CI`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (4 suites, 36 tests, all passed). Fix PR: https://github.com/tomacheese/sync-claude-folder/pull/152 — all 6 real checks passed on CI (Node CI setup/node-ci/Check finished, Analyze x2, CodeQL), no unrelated failures.
 
 ## Queue
 
