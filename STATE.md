@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### tomacheese/samechan-crawler#3429
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
-- detail: PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting that pnpm 12 no longer recognizes; `pnpm install --frozen-lockfile` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing both `Node CI / node-ci (.)` and `Docker CI / Docker build`. Confirmed via pnpm 12.4.2's own CHANGELOG.md (no replacement setting was introduced — the option was simply dropped). Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped `packageManager` to `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS), `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/tomacheese/samechan-crawler/pull/3472 — waiting on CI.
+- detail: PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting that pnpm 12 no longer recognizes; `pnpm install --frozen-lockfile` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing both `Node CI / node-ci (.)` and `Docker CI / Docker build`. Confirmed via pnpm 12.4.2's own CHANGELOG.md (no replacement setting was introduced — the option was simply dropped). Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped `packageManager` to `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS), `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/tomacheese/samechan-crawler/pull/3472 — CI confirmed green, all checks passed, no unrelated failures.
 
 ### tomacheese/watch-follow-follower#703
 
