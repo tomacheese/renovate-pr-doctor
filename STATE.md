@@ -35,6 +35,11 @@ slots; refill loop in progress.
 - checkpoint: completed
 - fix-PR-terminal note: fix PR #736 confirmed MERGED via `gh pr view` (2026-09-20T13:48:58Z), per fix-PR conflict/terminal monitor event. No duplicate-fix-PR or conflict situation.
 
+### book000/chrome-mcp-router#115
+
+- checkpoint: completed
+- fix-PR-terminal note: fix PR #116 confirmed MERGED via `gh pr view` (2026-09-20T13:18:01Z), per fix-PR conflict/terminal monitor event. No duplicate-fix-PR or conflict situation.
+
 ### book000/fixdevcontainer#361
 
 - checkpoint: completed
@@ -51,14 +56,8 @@ in-flight:
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-tomacheese-fetch-youtube-bgm-3029
-    target: tomacheese/fetch-youtube-bgm#3029
-    checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-fetch-youtube-bgm-3030
-    target: tomacheese/fetch-youtube-bgm#3030
-    checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order): (none)
-done this sweep: 76 (fixed=74 skipped=2 blocked=0)
+done this sweep: 78 (fixed=76 skipped=2 blocked=0)
 
 ## Conflict-fixer queue
 
@@ -70,20 +69,17 @@ pending: (none)
 - checkpoint: fix-pr-rebased
 - conflict-fixer note: fix PR #153 (`@book000/eslint-config` 1.16.66→1.16.67 bump + resulting unicorn lint fixes in `src/chezmoi-name.ts`/`src/fsutil.ts`/`src/main.ts`) went CONFLICTING/DIRTY after other Renovate PRs merged to `master`. Rebased `fix/eslint-config-unicorn-lint` onto current `origin/master`; only conflict was in `pnpm-lock.yaml` (`package.json` auto-merged cleanly, keeping the 1.16.67 bump), resolved by taking master's lockfile and regenerating with `pnpm install --lockfile-only` to reapply the eslint-config 1.16.67 bump — resulting diff matches the PR's original intended change exactly. Verified locally: `pnpm run lint` clean, `pnpm run test` 36/36 passing. Force-pushed rebased branch. CI re-ran green on all checks (21+12 passed, 0 failed); PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`.
 
-### tomacheese/fetch-youtube-bgm#3029
 
-- checkpoint: completed
-- detail: Sibling of #3021/#3023/#3024/#3025/#3026/#3027/#3028 — root cause was `downloader/Dockerfile`'s `echogen-builder` stage base image `buildpack-deps:bullseye` hitting Debian-security EOL 404s during apt-get install. Already fixed and merged to master via https://github.com/tomacheese/fetch-youtube-bgm/pull/3031. Re-checked #3029's live CI fresh (`gh pr checks 3029`) rather than re-investigating: self-resolved — all 16 checks passing, 0 failed, including the previously-failing `Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64)` and `Docker CI / Check finished Docker CI`. No new fix PR opened (would duplicate #3031). No dependency-currency check run (self-resolved before it was needed).
-
-### tomacheese/fetch-youtube-bgm#3030
-
-- checkpoint: completed
-- detail: Sibling of #3021/#3023/#3024/#3025/#3026/#3027/#3028/#3029 — root cause was `downloader/Dockerfile`'s `echogen-builder` stage base image `buildpack-deps:bullseye` hitting Debian-security EOL 404s during apt-get install. Already fixed and merged to master via https://github.com/tomacheese/fetch-youtube-bgm/pull/3031. Re-checked #3030's live CI fresh (`gh pr checks 3030`) rather than re-investigating: self-resolved — all 16 checks passing, 0 failed, including the previously-failing `Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64)` and `Docker CI / Check finished Docker CI`. No new fix PR opened (would duplicate #3031). No dependency-currency check run (self-resolved before it was needed).
 
 ### tomacheese/watch-quicpay#2525
 
 - checkpoint: fix-pr-rebased
 - conflict-fixer note: fix PR #2531 (eslint-config 1.16.67 bump + unicorn/prefer-early-return fix in src/discord.ts) went CONFLICTING/DIRTY after other Renovate PRs merged to `master` (incl. `@book000/node-utils` bumps). Rebased `fix/discord-early-return` onto current `origin/master`; only conflict was in `pnpm-lock.yaml` (package.json auto-merged cleanly), resolved by taking master's lockfile and regenerating with `pnpm install --lockfile-only` to reapply the eslint-config 1.16.67 bump — resulting diff matches the PR's original intended change exactly. Verified locally: `pnpm run lint` clean, `tsc` clean, `pnpm test` 1/1 passing. Force-pushed rebased branch. CI re-ran green on all non-skipped checks; PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`.
+
+### book000/twitter-auto-spam-crawler#675
+
+- checkpoint: fix-pr-rebased
+- conflict-fixer note: fix PR #679 (`@book000/eslint-config` 1.16.66→1.16.67 bump + resulting unicorn lint fixes across `src/pages/tweet-page.ts`, `src/services/queue-service.ts`/`state-service.ts`/`version-service.ts`, `src/utils/dom.ts`/`error.ts`/`page-error-handler.ts`/`scroll.ts`, `webpack.config.js`, test files) went CONFLICTING/DIRTY after other Renovate PRs merged to `master`. Rebased `fix/renovate-pr-675-eslint-lint-fixes` onto current `origin/master`; only conflict was in `pnpm-lock.yaml` (`package.json` auto-merged cleanly, keeping the 1.16.67 bump), resolved by taking master's lockfile and regenerating with `pnpm install --lockfile-only` to reapply the eslint-config 1.16.67 bump — resulting diff matches the PR's original intended change exactly. Verified locally: `pnpm run lint` clean (ESLint/prettier/tsc via run-z), `pnpm run test` 257/272 passing (15 skipped, 0 failed). Force-pushed rebased branch. CI re-ran green on all checks (11+6 passed, 0 failed); PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`. Unrelated already-merged fix PR #678 (root cause `jest-parcel-watcher-pnpm-ignored-builds`, for separate Renovate PR #637) untouched.
 
 ## Escalate-to-user policy
 
