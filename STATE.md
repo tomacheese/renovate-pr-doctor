@@ -23,6 +23,18 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest lookup-failed — no special handling, proceed with proposed version.
 - detail: `@book000/eslint-config` bump to 1.16.67 tightens `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-useless-length-check` rules, flagging 7 pre-existing lint errors + 2 warnings across `downloader/src/{discord,lib,main,musicbrainz}.ts` (5 errors/2 warnings auto-fixable, 2 need manual fix). Docker build failure for downloader is a downstream consequence of the same lint failure (build step runs lint). Confident fix: apply `eslint --fix` + manual fixes for the 2 non-auto-fixable rules, in a separate PR against default branch.
 
+### tomacheese/pixiv-public-to-private#3289
+
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
+- detail: PR bumps pnpm 11.27.0 → 12.4.2 and pins it via `packageManager` in package.json. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting. With `packageManager` pinned, pnpm 12 treats an unrecognized workspace setting as a hard error (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`) rather than a warning, failing `pnpm install --frozen-lockfile` in both Node CI and Docker CI (same install step, both platforms). Confident fix: remove `confirmModulesPurge` from `pnpm-workspace.yaml`, bump `packageManager`/lockfile to pnpm 12.5.1 (latest), regenerate `pnpm-lock.yaml`. Verified locally: `pnpm install --frozen-lockfile` succeeds, lint passes, Docker image builds successfully.
+
+### tomacheese/tomachi-emojis-sync-perms#2543
+
+- checkpoint: fix-pr-opened
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
+- detail: jest 30.4.2 → 30.5.1 bump pulls in a new transitive dependency `@parcel/watcher@2.6.0` with a native postinstall build script; pnpm's default build-script allowlist blocks it (`ERR_PNPM_IGNORED_BUILDS`), failing `pnpm install --frozen-lockfile` in Node CI (and Docker CI, which runs the same install). Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2 (latest), regenerated lockfile. Local verification passed (install/test/compile/lint). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/tomachi-emojis-sync-perms/pull/2598 — waiting on its own CI to confirm before marking completed.
+
 ## Queue
 
 concurrency: 5
