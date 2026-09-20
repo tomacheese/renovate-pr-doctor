@@ -41,6 +41,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`/`tomacheese/fauxcord#314`. The eslint-config bump newly flags 26 pre-existing lint violations (26 errors, 16 auto-fixable) across `src/booth.ts`, `src/booth.test.ts`, `src/generate-linked-list.test.ts`, `src/main.ts`, `src/main.test.ts`, `src/pagecache.ts`, `src/vpm-converter.ts`, `src/vpm-converter.test.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-immediate-mutation`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`.
 
+### book000/kindle-booklog#2572
+
+- checkpoint: fix-pr-opened
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/watch-follow-follower#733`. The eslint-config bump newly flags 5 pre-existing lint violations (5 errors, 4 auto-fixable) across `src/amazon.test.ts`, `src/booklog-update-book.ts`, `src/booklog.test.ts` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (4/5 auto-fixed), hand-converted the remaining `unicorn/prefer-early-return` case in `src/booklog-update-book.ts`'s `setReview`, re-ran `prettier --write` (eslint --fix changed ternary formatting that then conflicted with prettier). Had push access — pushed branch `fix/eslint-config-1-16-67` directly. Verified locally: `eslint` clean, `prettier --check` clean, `tsc --noEmit` clean, `pnpm run test` 17/17 passing. Fix PR: https://github.com/book000/kindle-booklog/pull/2577
+
 ## Queue
 
 concurrency: 5
