@@ -31,9 +31,9 @@ slots; refill loop in progress.
 
 ### jaoafa/watch-guilds#2312
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 8 pre-existing `unicorn/prefer-ternary` violations across `src/commands/remove-channel.ts`, `src/commands/set-channel.ts`, `src/emojis-caches.ts`, `src/events/sticker-update.ts` (x2), `src/list-emojis.ts` (x3). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bump `@book000/eslint-config` to 1.16.67, run `eslint --fix` (all 8 auto-fixable). In progress.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 8 pre-existing `unicorn/prefer-ternary` violations across `src/commands/remove-channel.ts`, `src/commands/set-channel.ts`, `src/emojis-caches.ts`, `src/events/sticker-update.ts` (x2), `src/list-emojis.ts` (x3). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (all 8 auto-fixable) then `prettier --write` for formatting. No test script exists in this repo; verified locally with `pnpm run lint` (prettier+eslint+tsc, clean). Had push access (ADMIN) — pushed branch directly, no fork needed. Fix PR: https://github.com/jaoafa/watch-guilds/pull/2315 — waiting on CI.
 
 ## Queue
 
@@ -51,11 +51,10 @@ in-flight:
   - slot: investigator-book000-create-ts-221
     target: book000/create-ts#221
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-fauxcord-314
-    target: tomacheese/fauxcord#314
+  - slot: investigator-book000-node-utils-1646
+    target: book000/node-utils#1646
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/node-utils#1646 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - jaoafa/jaotan.ts#2268 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/vrcx-web-server#1203 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/pex-crawler#2155 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pex-crawler, linux/amd64),Docker CI / Docker build (pex-crawler, linux/arm64),Docker CI / Check finished Docker CI]
@@ -105,7 +104,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 27 (fixed=27 skipped=0 blocked=0)
+done this sweep: 28 (fixed=28 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
