@@ -25,9 +25,9 @@ slots; refill loop in progress.
 
 ### tomacheese/discord-crosspost-auto-translate#2694
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/event.ts:148` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/event.ts:148` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: converted the `if (!reply) return` / `return await reply.delete()...` pair into a single ternary return (eslint --fix + prettier --write), no behavior change. Did not bump eslint-config in this PR — master still on 1.16.66, fix is independent of the version bump. Had push access — pushed branch directly, no fork needed. Verified locally: lint (prettier/eslint/tsc) clean, tests 19/19 passing. Fix PR: https://github.com/tomacheese/discord-crosspost-auto-translate/pull/2699 — waiting on fix PR's own CI to confirm before marking completed.
 
 ### tomacheese/misskey-list-eyes#2630
 
