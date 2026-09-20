@@ -13,11 +13,11 @@ slots; refill loop in progress.
 
 ### jaoafa/jaotan.ts#2321
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `emoji-regex` proposed 11.0.0, latest 11.0.0 — current, no special handling.
 - detail: Renovate's own artifact update failed (`renovate/artifacts` check: "Artifact file update failure") — the PR bumped `package.json`'s `emoji-regex` 10.6.0 -> 11.0.0 but never regenerated `pnpm-lock.yaml`, so `pnpm install --frozen-lockfile` hard-fails with a specifier mismatch, failing `Node CI / node-ci (.)` and (via the same install step in the Dockerfile) both `Docker CI / Docker build` matrix jobs. Additionally, `emoji-regex@11.0.0` itself dropped its CJS build entirely (`"main": "index.mjs"`, pure ESM, no `require()`-compatible export) — a real breaking change on top of the missing lockfile update. The project's `tsx`-based runtime (`pnpm start`, used by the Dockerfile `ENTRYPOINT`) tolerates this fine since esbuild handles ESM/CJS interop transparently, but `ts-jest`'s CommonJS-targeted compile of the existing static `import emojiRegex from 'emoji-regex'` breaks Jest at test time (`SyntaxError: Unexpected token 'export'`).
 - fix: regenerated `pnpm-lock.yaml` (minimal surgical edit: added the `emoji-regex@11.0.0` package/snapshot entries, kept the still-used `emoji-regex@10.6.0` entry consumed transitively by `string-width@7.2.0`); left production source untouched (static import works at runtime via `tsx`); fixed only the Jest gap by adding `babel-jest` + `@babel/plugin-transform-modules-commonjs` (already-transitively-available `babel-jest`, one new small official Babel devDependency) scoped via `transformIgnorePatterns`/`transform` to transform just `node_modules/**/emoji-regex/*.mjs` into CommonJS for the test environment, with a `babel.config.cjs` enabling that one plugin. Verified locally: `pnpm run test` 44/44 passing, `pnpm run lint` clean, `pnpm run lint:tsc` clean, and a full local `docker build` + `docker run` of the Dockerfile confirms `pnpm install --frozen-lockfile --offline` and `pnpm start` (tsx) both work with no ESM/import errors (container exits only on missing `/data/config.json`, expected without a real config mounted).
-- fix PR: (pending — opening next)
+- fix PR: https://github.com/jaoafa/jaotan.ts/pull/2330 — awaiting fix PR's own CI.
 
 ### book000/pixivts#1928
 
@@ -36,6 +36,12 @@ slots; refill loop in progress.
 - checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Different root cause than the earlier `tomacheese/watch-quicpay#2492` (pnpm-v12 workspace-settings issue). The eslint-config 1.16.67 bump pulls in `eslint-plugin-unicorn` 74.0.0 -> 75.0.0, which newly flags a pre-existing `unicorn/prefer-early-return` violation in `src/discord.ts` (the `if (token && channel_id) { ...rest of function... }` block). `pnpm run lint` fails, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Fix: converted to an early return, included the eslint-config 1.16.67 bump. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` clean, `pnpm run test` 1/1 passing. Fix PR: https://github.com/tomacheese/watch-quicpay/pull/2531 — CI confirmed green, all 11 checks passed, no unrelated failures.
+
+### tomacheese/fetch-youtube-bgm#3024
+
+- checkpoint: skipped
+- dependency currency: `sass` proposed 1.104.1 — lookup-failed, no special handling; proceeded with the version the Renovate PR proposes.
+- detail: Same root cause as sibling Renovate PRs `#3021`/`#3023` in this repo: `downloader/Dockerfile`'s `echogen-builder` stage's base image `buildpack-deps:bullseye` (Debian 11) fails `apt-get install libboost-dev libtag1-dev zlib1g-dev` with 404s from `deb.debian.org/debian-security` (`libtag1v5`/`libtag1-dev` `1.11.1+dfsg.1-3+deb11u1` pool files pruned) — unrelated to this PR's own `sass` bump. Fix PRs `#3031` (from `#3021`'s investigator, bundles a lint fix too) and `#3033` (from `#3023`'s investigator, Dockerfile-only bump to `buildpack-deps:bookworm`) already exist and target the exact same Dockerfile line. Per orchestrator instruction, not opening a fourth duplicate fix PR — deferring to `#3031`/`#3033`. No other `fetch-youtube-bgm` investigator concurrently in flight (checked STATE.md queue) besides this one, so no serialization violation. `#3024` will pass once one of `#3031`/`#3033` merges to master and `#3024` is rebased (or Renovate auto-rebases).
 
 ### book000/fixdevcontainer#361
 
