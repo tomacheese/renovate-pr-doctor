@@ -13,9 +13,9 @@ slots; refill loop in progress.
 
 ### tomacheese/get-twitter-birthdays#299
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137` and `tomacheese/watch-jcb#1609`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (no test files, passWithNoTests). Fix PR: https://github.com/tomacheese/get-twitter-birthdays/pull/335 — waiting on its CI.
+- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137` and `tomacheese/watch-jcb#1609`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (no test files, passWithNoTests). Fix PR: https://github.com/tomacheese/get-twitter-birthdays/pull/335 — all 12 real checks passed on CI (Node CI setup/node-ci/Check finished, Docker CI both arch builds/Check finished/Calculate next version, hadolint/Analyze x2/CodeQL, Approval gate, add-reviewer), no unrelated failures.
 
 ### tomacheese/telcheck#2635
 
@@ -28,6 +28,12 @@ slots; refill loop in progress.
 - checkpoint: root-cause-identified
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 131 pre-existing lint violations across `src/services/*.ts` and `src/validators/*.ts` (`unicorn/no-immediate-mutation`, `unicorn/prefer-ternary`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Confident fix: apply eslint `--fix` (112/131 auto-fixable) and manually fix the remaining ~19.
+
+### tomacheese/sync-claude-folder#116
+
+- checkpoint: root-cause-identified
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
+- detail: Same root-cause pattern as `tomacheese/get-twitter-birthdays#299` / `tomacheese/booth-purchased-items-manager#1137` / `tomacheese/watch-jcb#1609`. jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS` in `Node CI / node-ci (.)`, which fails downstream `Node CI / Check finished Node CI`. Fix: add `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bump `jest` to 30.5.2, regenerate `pnpm-lock.yaml`.
 
 ## Queue
 
