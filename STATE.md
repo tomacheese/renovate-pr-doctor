@@ -18,8 +18,8 @@ slots; refill loop in progress.
 
 ### tomacheese/sync-claude-folder#150
 
-- checkpoint: fix-pr-opened
-- detail: dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — classification `current`, no special handling. CI fails only on lint (`Node CI / node-ci (.)`): the eslint-config bump pulls in `eslint-plugin-unicorn` v75, which flags 3 pre-existing violations (`unicorn/prefer-continue` in `src/chezmoi-name.ts:167`, `unicorn/prefer-ternary` in `src/fsutil.ts:19` and `src/main.ts:128`). Same pattern as book000/chrome-mcp-router#115. Fixed via `eslint --fix` + `prettier --write` (no behavior change, style matches project). Had push access, pushed branch directly. Verified locally: lint clean, tests 36/36 passing. Fix PR: https://github.com/tomacheese/sync-claude-folder/pull/153
+- checkpoint: completed
+- detail: dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — classification `current`, no special handling. CI fails only on lint (`Node CI / node-ci (.)`): the eslint-config bump pulls in `eslint-plugin-unicorn` v75, which flags 3 pre-existing violations (`unicorn/prefer-continue` in `src/chezmoi-name.ts:167`, `unicorn/prefer-ternary` in `src/fsutil.ts:19` and `src/main.ts:128`). Same pattern as book000/chrome-mcp-router#115. Fixed via `eslint --fix` + `prettier --write` (no behavior change, style matches project). Had push access, pushed branch directly. Verified locally: lint clean, tests 36/36 passing. Fix PR: https://github.com/tomacheese/sync-claude-folder/pull/153 — CI confirmed green: all 6 checks passed (Node CI / node-ci, Node CI / Check finished Node CI, Node CI / setup, Analyze x2, CodeQL); no unrelated failures.
 
 ### book000/pixivts#1928
 
