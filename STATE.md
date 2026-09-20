@@ -13,27 +13,15 @@ slots; refill loop in progress.
 
 ### tomacheese/fauxcord#314
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 131 pre-existing lint violations across many `src/` files (`unicorn/no-immediate-mutation`, `unicorn/prefer-ternary`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (auto-fixed most `prefer-ternary`), then manually restructured the remaining ~19 `no-immediate-mutation`/`prefer-early-return`/`prefer-nullish-coalescing` sites (conditional-property spread instead of post-construction mutation; early returns). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (tsc+eslint+prettier, clean), `pnpm test` (1027/1027 pass). Fix PR: https://github.com/tomacheese/fauxcord/pull/317 — waiting on its CI.
+- detail: Same root-cause pattern as `tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 131 pre-existing lint violations across many `src/` files (`unicorn/no-immediate-mutation`, `unicorn/prefer-ternary`, `unicorn/prefer-early-return`). `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, ran `eslint --fix` (auto-fixed most `prefer-ternary`), then manually restructured the remaining ~19 `no-immediate-mutation`/`prefer-early-return`/`prefer-nullish-coalescing` sites (conditional-property spread instead of post-construction mutation; early returns). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (tsc+eslint+prettier, clean), `pnpm test` (1027/1027 pass). Fix PR: https://github.com/tomacheese/fauxcord/pull/317 — CI confirmed green (28/28 checks passed, including the previously-failing Node CI jobs).
 
 ### book000/pixivts#1928
 
 - checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — waiting on CI.
-
-### book000/chrome-response-recorder#583
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 1 pre-existing lint violation: `src/main.ts:309` `unicorn/prefer-early-return`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, regenerated `pnpm-lock.yaml`, rewrote `cleanupPage`'s outer `if` as an early return (no behavior change). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier/eslint/tsc) all clean; no automated test suite exists in this project. Fix PR: https://github.com/book000/chrome-response-recorder/pull/585 — all 7 checks passed on the fix PR's own CI, no unrelated failures.
-
-### book000/moneyforward-collector#2672
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) newly flags 1 pre-existing lint violation: `src/main.ts:186` `unicorn/prefer-ternary` in `getYear()`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` + `prettier --write` to convert the if/return block to a ternary. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean; no test script in this repo. Fix PR: https://github.com/book000/moneyforward-collector/pull/2676 — both target checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed on the fix PR's own CI; all other checks (Docker CI, CodeQL, Approval gate) pass too.
 
 ## Queue
 
