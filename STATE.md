@@ -17,12 +17,6 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — waiting on CI.
 
-### tomacheese/pex-crawler#2155
-
-- checkpoint: completed
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `jaoafa/jaotan.ts#2268`/`tomacheese/tomachi-emojis-sync-perms#2543` and several sibling PRs this run. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (confirmed absent from `origin/master`'s `pnpm-lock.yaml`, present in the PR branch's), which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0` in Node CI and (downstream, same root cause since Docker build also runs `pnpm install`) both Docker CI matrix jobs (linux/amd64, linux/arm64). Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` clean, `pnpm run test` 4/4 passing. Fix PR: https://github.com/tomacheese/pex-crawler/pull/2206 — CI confirmed green: all 5 originally-failing checks passed (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` matrix jobs, `Docker CI / Check finished Docker CI`); no unrelated new failures (12/12 non-skipped checks passed).
-
 ### book000/node-utils#1646
 
 - checkpoint: completed
@@ -37,9 +31,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-discord-dev-changes#2335
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, will bump to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Docker CI fails for the same reason (Docker build also runs `pnpm install --frozen-lockfile`), failing both `Docker CI / Docker build` matrix jobs and downstream `Check finished Docker CI`.
+- checkpoint: fix-pr-opened
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
+- detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/node-utils#1646`/`jaoafa/jaotan.ts#2268`. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0`, which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`. Docker CI fails for the same reason (Docker build also runs `pnpm install --frozen-lockfile`), failing both `Docker CI / Docker build` matrix jobs and downstream `Check finished Docker CI`. Fix: added `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` clean, `pnpm run test` 16/16 passing. Fix PR: https://github.com/tomacheese/watch-discord-dev-changes/pull/2386 — waiting on CI.
 
 ## Queue
 
