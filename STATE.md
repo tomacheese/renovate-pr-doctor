@@ -11,12 +11,6 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
-### tomacheese/fetch-youtube-bgm#3021
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest lookup-failed — no special handling, proceed with proposed version.
-- detail: Two independent root causes, both fixed in the same PR. (1) `@book000/eslint-config` bump to 1.16.67 tightens `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-useless-length-check` rules, flagging 7 pre-existing lint errors + 2 warnings across `downloader/src/{discord,lib,main,musicbrainz}.ts` — fixed via `eslint --fix` + manual fixes, NOT bumping the dependency itself (verified locally against eslint-config 1.16.67). (2) Independently, and already failing on #3021 before any lint fix: the `echogen-builder` Docker stage's `buildpack-deps:bullseye` base image can no longer `apt-get install libtag1-dev` (404 from `deb.debian.org/debian-security` — bullseye's security-support window ended, old point-release `.deb` pruned from the mirror, reproduced locally against the live mirror) — bumped to `buildpack-deps:bookworm` (matches the `node:24` runtime stage's own Debian 12 base), verified with a full local `docker build`. Fix PR: https://github.com/tomacheese/fetch-youtube-bgm/pull/3031 — all 4 originally-failing checks (`Node CI / node-ci (downloader)`, `Node CI / Check finished Node CI`, `Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64)`, `Docker CI / Check finished Docker CI`) confirmed passing on the fix PR's own CI.
-
 ### tomacheese/twitter-bookmark-hub#545
 
 - checkpoint: root-cause-identified
@@ -25,9 +19,9 @@ slots; refill loop in progress.
 
 ### tomacheese/discord-crosspost-auto-translate#2644
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and downstream `Check finished Node CI`/Docker CI gates (Docker build also runs `pnpm install`). Same root cause pattern as `tomacheese/watch-vrchat-user#529` and `tomacheese/auto-update-web-scrobbler#2310`. Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install --frozen-lockfile`, `pnpm run lint`, `pnpm run test` all pass. Fix PR: https://github.com/tomacheese/discord-crosspost-auto-translate/pull/2698 — waiting on its CI.
+- detail: jest 30.5.0 replaced its file watcher with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and downstream `Check finished Node CI`/Docker CI gates (Docker build also runs `pnpm install`). Same root cause pattern as `tomacheese/watch-vrchat-user#529` and `tomacheese/auto-update-web-scrobbler#2310`. Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install --frozen-lockfile`, `pnpm run lint`, `pnpm run test` all pass. Fix PR: https://github.com/tomacheese/discord-crosspost-auto-translate/pull/2698 — all checks passed on CI (11/11, no failures/pending).
 
 ### tomacheese/watch-quicpay#2478
 
@@ -51,9 +45,9 @@ in-flight:
   - slot: investigator-tomacheese-cmcutter-2810
     target: tomacheese/cmcutter#2810
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-tomacheese-fetch-youtube-bgm-3021
-    target: tomacheese/fetch-youtube-bgm#3021
-    checks: Node CI / node-ci (downloader),Node CI / Check finished Node CI,Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-watch-bsky-likes-1383
+    target: tomacheese/watch-bsky-likes#1383
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-bsky-likes, linux/amd64),Docker CI / Docker build (watch-bsky-likes, linux/arm64),Docker CI / Check finished Docker CI
   - slot: investigator-tomacheese-twitter-bookmark-hub-545
     target: tomacheese/twitter-bookmark-hub#545
     checks: Node CI / node-ci (crawler),Node CI / node-ci (viewer/backend),Node CI / node-ci (viewer/frontend),Node CI / node-ci (analyzer),Node CI / Check finished Node CI
