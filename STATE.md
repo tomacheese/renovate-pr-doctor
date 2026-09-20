@@ -21,7 +21,7 @@ slots; refill loop in progress.
 
 - checkpoint: root-cause-identified
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: two stacked, pre-existing-on-master root causes, both independent of the eslint-config bump itself. (1) `pnpm-lock.yaml` on `master` is already out of sync with `package.json` (`vrchat` pinned 2.22.9 in manifest vs 2.22.8 in lockfile, left behind by PR #521), and `pnpm-workspace.yaml`'s `patchedDependencies` still points at `patches/vrchat@2.22.8.patch` for a version no longer in the manifest — this is exactly why Renovate's own `pnpm install --lockfile-only` (the `renovate/artifacts` check) also failed, and why `pnpm install --frozen-lockfile` fails in both Node CI and Docker CI regardless of this PR's own eslint-config change. (2) `pnpm-workspace.yaml`'s `allowBuilds` list omits `@parcel/watcher` (a Jest transitive postinstall build script), which now hard-fails `pnpm fetch`/install with `ERR_PNPM_IGNORED_BUILDS` — reproduced identically on unmodified `origin/master`, so also pre-existing and unrelated to this PR's diff. The eslint-config 1.16.67 bump itself additionally tightens `unicorn/prefer-ternary` in `src/state/user-state-reducer.ts` (1 pre-existing violation, autofixable).
+- detail: two stacked, pre-existing-on-master root causes, both independent of the eslint-config bump itself. (1) `pnpm-lock.yaml` on `master` is already out of sync with `package.json` (`vrchat` pinned 2.22.9 in manifest vs 2.22.8 in lockfile, left behind by PR #521), and `pnpm-workspace.yaml`'s `patchedDependencies` still points at `patches/vrchat@2.22.8.patch` for a version no longer in the manifest — this is exactly why Renovate's own `pnpm install --lockfile-only` (the `renovate/artifacts` check) also failed, and why `pnpm install --frozen-lockfile` fails in both Node CI and Docker CI regardless of this PR's own eslint-config change. (2) `pnpm-workspace.yaml`'s `allowBuilds` list omits `@parcel/watcher` (a Jest transitive postinstall build script), which now hard-fails `pnpm fetch`/install with `ERR_PNPM_IGNORED_BUILDS` — reproduced identically on unmodified `origin/master`, so also pre-existing and unrelated to this PR's diff. The eslint-config 1.16.67 bump itself additionally tightens `unicorn/prefer-ternary`/`unicorn/prefer-early-return`, flagging 10 pre-existing violations across `src/state/user-state-reducer.ts`, `src/state/user-state.ts`, `src/vrchat/pipeline-event-router.ts`, `src/vrchat/pipeline-supervisor.ts` (all autofixable via `eslint --fix` + `prettier --write`).
 
 ### tomacheese/misskey-list-eyes#2594
 
@@ -49,7 +49,6 @@ in-flight:
     target: tomacheese/misskey-list-eyes#2594
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (misskey-list-eyes, linux/amd64),Docker CI / Docker build (misskey-list-eyes, linux/arm64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order):
-  - tomacheese/auto-update-web-scrobbler#2310 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/watch-quicpay#2478 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-quicpay, linux/amd64),Docker CI / Docker build (watch-quicpay, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/discord-crosspost-auto-translate#2644 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (discord-crosspost-auto-translate, linux/amd64),Docker CI / Docker build (discord-crosspost-auto-translate, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/cmcutter#2810 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -124,7 +123,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 2 (fixed=2 skipped=0 blocked=0)
+done this sweep: 3 (fixed=3 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
