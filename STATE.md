@@ -23,6 +23,12 @@ slots; refill loop in progress.
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, bumped to 30.5.2 in fix PR.
 - detail: Same root-cause pattern as `tomacheese/tomachi-emojis-sync-perms#2543` and several sibling PRs this run. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (used by jest's internal file watching), which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list doesn't include it, so `pnpm install` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0` in Node CI and (downstream, same root cause since Docker build also runs `pnpm install`) both Docker CI matrix jobs. Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml` allowBuilds, bumped `jest` to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` succeeds (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` clean, `pnpm run test` 44/44 passing. Fix PR: https://github.com/jaoafa/jaotan.ts/pull/2329 — waiting on CI.
 
+### tomacheese/pex-crawler#2155
+
+- checkpoint: root-cause-identified
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor, will bump to 30.5.2 in fix PR.
+- detail: Same root-cause pattern as `jaoafa/jaotan.ts#2268`/`tomacheese/tomachi-emojis-sync-perms#2543` and several sibling PRs this run. Renovate bumps `jest` 30.4.2 -> 30.5.1, pulling in a brand-new transitive dependency, `@parcel/watcher@2.6.0` (confirmed absent from `origin/master`'s `pnpm-lock.yaml`, present in the PR branch's), which ships a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allow-list (currently `esbuild`, `unrs-resolver`) doesn't include it, so `pnpm install` hard-fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0` in Node CI and (downstream, same root cause since Docker build also runs `pnpm install`) both Docker CI matrix jobs (linux/amd64, linux/arm64). Fix: add `'@parcel/watcher': true` to `pnpm-workspace.yaml` allowBuilds, bump `jest` to latest 30.5.2, regenerate `pnpm-lock.yaml`.
+
 ### tomacheese/vrcx-web-server#1203
 
 - checkpoint: root-cause-identified
