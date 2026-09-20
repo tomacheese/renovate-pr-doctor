@@ -17,12 +17,6 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest lookup-failed — no special handling, proceed with proposed version.
 - detail: `@book000/eslint-config` bump to 1.16.67 tightens `unicorn/prefer-ternary`, `unicorn/prefer-early-return`, `unicorn/prefer-continue`, `unicorn/no-useless-length-check` rules, flagging 7 pre-existing lint errors + 2 warnings across `downloader/src/{discord,lib,main,musicbrainz}.ts` (5 errors/2 warnings auto-fixable, 2 need manual fix). Docker build failure for downloader is a downstream consequence of the same lint failure (build step runs lint). Fixed via `eslint --fix` + manual fixes for the 2 non-auto-fixable rules (verified locally against eslint-config 1.16.67), NOT bumping the dependency itself. Fix PR: https://github.com/tomacheese/fetch-youtube-bgm/pull/3031 — waiting on its CI.
 
-### tomacheese/watch-vrchat-user#529
-
-- checkpoint: completed
-- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: two stacked, pre-existing-on-master root causes, both independent of the eslint-config bump itself. (1) `pnpm-lock.yaml` on `master` is already out of sync with `package.json` (`vrchat` pinned 2.22.9 in manifest vs 2.22.8 in lockfile, left behind by PR #521), and `pnpm-workspace.yaml`'s `patchedDependencies` still points at `patches/vrchat@2.22.8.patch` for a version no longer in the manifest — this is exactly why Renovate's own `pnpm install --lockfile-only` (the `renovate/artifacts` check) also failed, and why `pnpm install --frozen-lockfile` fails in both Node CI and Docker CI regardless of this PR's own eslint-config change. (2) `pnpm-workspace.yaml`'s `allowBuilds` list omits `@parcel/watcher` (a Jest transitive postinstall build script), which now hard-fails `pnpm fetch`/install with `ERR_PNPM_IGNORED_BUILDS` — reproduced identically on unmodified `origin/master`, so also pre-existing and unrelated to this PR's diff. The eslint-config 1.16.67 bump itself additionally tightens `unicorn/prefer-ternary`/`unicorn/prefer-early-return`, flagging 10 pre-existing violations across `src/state/user-state-reducer.ts`, `src/state/user-state.ts`, `src/vrchat/pipeline-event-router.ts`, `src/vrchat/pipeline-supervisor.ts` (all autofixable via `eslint --fix` + `prettier --write`). Had push access — pushed branch directly, no fork needed. Fix PR: https://github.com/tomacheese/watch-vrchat-user/pull/538 — its own CI confirmed all target checks pass (Node CI node-ci/Check finished, Docker CI build amd64+arm64/Check finished), no new failures introduced. Status: fixed.
-
 ### tomacheese/misskey-list-eyes#2594
 
 - checkpoint: fix-pr-opened
@@ -37,17 +31,17 @@ slots; refill loop in progress.
 
 ### tomacheese/auto-update-web-scrobbler#2310
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
-- detail: jest 30.5.0 replaced its file watcher (`NodeWatcher`/`FSEventsWatcher`) with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and the downstream `Check finished Node CI` gate. Same root cause pattern as `tomacheese/watch-vrchat-user#529`. Fix: add `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bump jest to 30.5.2 (latest), regenerate `pnpm-lock.yaml`.
+- checkpoint: fix-pr-opened
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
+- detail: jest 30.5.0 replaced its file watcher (`NodeWatcher`/`FSEventsWatcher`) with `@parcel/watcher`, a new transitive dependency with a native postinstall build script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist doesn't include `@parcel/watcher`, so `pnpm install --frozen-lockfile` hard-fails with `ERR_PNPM_IGNORED_BUILDS`, failing both `node-ci (.)` and the downstream `Check finished Node CI` gate. Same root cause pattern as `tomacheese/watch-vrchat-user#529`. Fix: added `@parcel/watcher: true` to `pnpm-workspace.yaml`'s `allowBuilds`, bumped jest to 30.5.2 (latest), regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install --frozen-lockfile`, `pnpm run lint`, `pnpm run test` all pass. Fix PR: https://github.com/tomacheese/auto-update-web-scrobbler/pull/2364 — waiting on its CI.
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-tomacheese-watch-vrchat-user-529
-    target: tomacheese/watch-vrchat-user#529
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-watch-quicpay-2478
+    target: tomacheese/watch-quicpay#2478
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-quicpay, linux/amd64),Docker CI / Docker build (watch-quicpay, linux/arm64),Docker CI / Check finished Docker CI
   - slot: investigator-tomacheese-auto-update-web-scrobbler-2310
     target: tomacheese/auto-update-web-scrobbler#2310
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
@@ -61,7 +55,6 @@ in-flight:
     target: tomacheese/misskey-list-eyes#2594
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (misskey-list-eyes, linux/amd64),Docker CI / Docker build (misskey-list-eyes, linux/arm64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order):
-  - tomacheese/watch-quicpay#2478 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-quicpay, linux/amd64),Docker CI / Docker build (watch-quicpay, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/discord-crosspost-auto-translate#2644 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (discord-crosspost-auto-translate, linux/amd64),Docker CI / Docker build (discord-crosspost-auto-translate, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/cmcutter#2810 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - tomacheese/watch-bsky-likes#1383 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-bsky-likes, linux/amd64),Docker CI / Docker build (watch-bsky-likes, linux/arm64),Docker CI / Check finished Docker CI]
@@ -135,7 +128,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 3 (fixed=3 skipped=0 blocked=0)
+done this sweep: 4 (fixed=4 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
