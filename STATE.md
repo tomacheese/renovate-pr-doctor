@@ -23,6 +23,12 @@ slots; refill loop in progress.
 - dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
 - detail: PR bumps `packageManager` pnpm 11.27.0 → 12.4.2. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting pnpm v12 refuses to recognize (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`), which fails `pnpm install --frozen-lockfile` immediately in Node CI (and correspondingly Docker CI, which also runs pnpm install). This also explains the `renovate/artifacts` failure — Renovate's own lockfile regeneration hit the same error. Same root-cause pattern as `tomacheese/pixiv-public-to-private#3289` and `tomacheese/misskey-list-eyes#2594`. Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped packageManager to pnpm@12.5.1, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly via SSH, no fork needed. Verified locally: `pnpm install`, `pnpm run lint`, `pnpm run test` all pass. Fix PR: https://github.com/tomacheese/watch-bsky-likes/pull/1414
 
+### tomacheese/lock-move-channel#2659
+
+- checkpoint: root-cause-identified
+- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — will bump to 12.5.1 in fix PR.
+- detail: PR bumps `packageManager` pnpm 11.27.0 → 12.4.2. `pnpm-workspace.yaml` still has `confirmModulesPurge: false`, a pnpm v11-only setting pnpm v12 refuses to recognize (`ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`), which fails `pnpm install` immediately in Node CI (and correspondingly Docker CI, which also runs pnpm install). Also explains the `renovate/artifacts` failure. Same root-cause pattern as `tomacheese/watch-bsky-likes#1383`, `tomacheese/pixiv-public-to-private#3289`, `tomacheese/misskey-list-eyes#2594`. Fix: remove `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bump packageManager to pnpm@12.5.1, regenerate `pnpm-lock.yaml`.
+
 ### tomacheese/booth-purchased-items-manager#1137
 
 - checkpoint: root-cause-identified
