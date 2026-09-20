@@ -58,11 +58,13 @@ done this sweep: 74 (fixed=72 skipped=2 blocked=0)
 
 ## Conflict-fixer queue
 
-in-flight:
-  - slot: conflict-fixer-tomacheese-sync-claude-folder-153
-    target: tomacheese/sync-claude-folder#153 (fix PR, base repo tomacheese/sync-claude-folder)
-    detected: mergeable=CONFLICTING mergeStateStatus=DIRTY (2026-09-20)
+in-flight: (none)
 pending: (none)
+
+### tomacheese/sync-claude-folder#153
+
+- checkpoint: fix-pr-rebased
+- conflict-fixer note: fix PR #153 (`@book000/eslint-config` 1.16.66→1.16.67 bump + resulting unicorn lint fixes in `src/chezmoi-name.ts`/`src/fsutil.ts`/`src/main.ts`) went CONFLICTING/DIRTY after other Renovate PRs merged to `master`. Rebased `fix/eslint-config-unicorn-lint` onto current `origin/master`; only conflict was in `pnpm-lock.yaml` (`package.json` auto-merged cleanly, keeping the 1.16.67 bump), resolved by taking master's lockfile and regenerating with `pnpm install --lockfile-only` to reapply the eslint-config 1.16.67 bump — resulting diff matches the PR's original intended change exactly. Verified locally: `pnpm run lint` clean, `pnpm run test` 36/36 passing. Force-pushed rebased branch. CI re-ran green on all checks (21+12 passed, 0 failed); PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`.
 
 ### tomacheese/watch-quicpay#2525
 
