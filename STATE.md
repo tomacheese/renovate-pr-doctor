@@ -35,6 +35,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/utils.ts:74` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`.
 
+### tomacheese/auto-update-web-scrobbler#2360
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `book000/pixivts#1928`/`tomacheese/misskey-list-eyes#2630`/`tomacheese/discord-crosspost-auto-translate#2694`/`tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags a pre-existing lint violation in `src/main.ts:163` (`unicorn/prefer-ternary` — an `if` statement that can be a ternary). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`.
+
 ### tomacheese/watch-quicpay#2492
 
 - checkpoint: root-cause-identified
