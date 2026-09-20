@@ -29,17 +29,11 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 1 pre-existing lint violation: `src/main.ts:309` `unicorn/prefer-early-return`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, regenerated `pnpm-lock.yaml`, rewrote `cleanupPage`'s outer `if` as an early return (no behavior change). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier/eslint/tsc) all clean; no automated test suite exists in this project. Fix PR: https://github.com/book000/chrome-response-recorder/pull/585 — waiting on CI.
 
-### book000/twitter-auto-spam-crawler#637
-
-- checkpoint: completed
-- dependency currency: `jest`/`jest-environment-jsdom` proposed 30.5.1, latest 30.5.2 — stale-unexplained-minor for both. Bumped to 30.5.2 in the fix PR.
-- detail: PR bumps jest/jest-environment-jsdom 30.4.x → 30.5.1, which pulls in a new transitive dependency `@parcel/watcher@2.6.0` (via jsdom/jest-environment-jsdom chain). pnpm's supply-chain build-script policy in `pnpm-workspace.yaml` (`allowBuilds:`) doesn't list it, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_IGNORED_BUILDS: Ignored build scripts: @parcel/watcher@2.6.0`, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Same root-cause pattern as `tomacheese/tomachi-emojis-sync-perms#2543` and several other sibling PRs this run. Fix: added `'@parcel/watcher': true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped jest/jest-environment-jsdom to latest 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install --frozen-lockfile` succeeds, `pnpm run lint` clean, `pnpm run test` 257/257 passing (15 skipped). Fix PR: https://github.com/book000/twitter-auto-spam-crawler/pull/678 — all checks (setup, node-ci, Check finished Node CI) passed on the fix PR's own CI run, no unrelated failures.
-
 ### book000/moneyforward-collector#2672
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) newly flags 1 pre-existing lint violation: `src/main.ts:186` `unicorn/prefer-ternary` in `getYear()`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` + `prettier --write` to convert the if/return block to a ternary. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean; no test script in this repo. Fix PR: https://github.com/book000/moneyforward-collector/pull/2676 — waiting on CI.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump (1.16.66 → 1.16.67) newly flags 1 pre-existing lint violation: `src/main.ts:186` `unicorn/prefer-ternary` in `getYear()`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` + `prettier --write` to convert the if/return block to a ternary. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean; no test script in this repo. Fix PR: https://github.com/book000/moneyforward-collector/pull/2676 — both target checks (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`) passed on the fix PR's own CI; all other checks (Docker CI, CodeQL, Approval gate) pass too.
 
 ## Queue
 
@@ -54,14 +48,13 @@ in-flight:
   - slot: investigator-book000-chrome-response-recorder-583
     target: book000/chrome-response-recorder#583
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-book000-twitter-auto-spam-crawler-637
-    target: book000/twitter-auto-spam-crawler#637
+  - slot: investigator-book000-create-ts-221
+    target: book000/create-ts#221
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-tomacheese-fauxcord-314
     target: tomacheese/fauxcord#314
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/create-ts#221 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - jaoafa/watch-guilds#2312 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/web-session-tracer#148 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/node-utils#1646 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -114,7 +107,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 24 (fixed=24 skipped=0 blocked=0)
+done this sweep: 25 (fixed=25 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
