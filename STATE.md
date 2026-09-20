@@ -23,17 +23,17 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — waiting on CI.
 
-### book000/kindle-booklog#2510
+### book000/niconico-mylist-video-checker#2716
 
 - checkpoint: fix-pr-opened
-- dependency currency: `tar-stream` proposed 3.2.1, latest 3.2.1 — current, no special handling.
-- detail: PR bumps `tar-stream` 3.2.0 → 3.2.1, which bumps its transitive `streamx` dependency to 2.28.1. streamx 2.28.1 tightens the `on()`/`EventHandler` typings to a contravariant `(data: unknown) => R`, so the existing `stream.on('data', (chunk: { toString: () => string }) => ...)` handler in `src/amazon.ts:350` no longer type-checks (`TS2345`). `pnpm run lint:tsc` fails, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `tar-stream` to 3.2.1 and retyped the handler param as `unknown`, cast to `Buffer` inside (chunks are Buffers at runtime; behavior unchanged). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/book000/kindle-booklog/pull/2576
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: The eslint-config bump (1.16.66 → 1.16.67) newly enables `unicorn/prefer-continue`, which flags the pre-existing `if (!initMode) { ... }` block wrapping the rest of the notification loop body in `src/main.ts:97`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: rewrote the block as an early `continue` when `initMode` is true; no logic change. Verified locally: `pnpm run lint` (prettier+eslint+tsc) clean. No push access to `book000/niconico-mylist-video-checker` — forked to `akubiusa/niconico-mylist-video-checker`, pushed there. Fix PR: https://github.com/book000/niconico-mylist-video-checker/pull/2720 — waiting on CI.
 
-### book000/rss-deliver#2787
+### book000/kindle-booklog#2510
 
 - checkpoint: completed
-- dependency currency: `node-ical` proposed 0.27.2, latest 0.27.2 — current, no special handling.
-- detail: PR only bumps `node-ical` to 0.27.2 in `package.json`, but `pnpm-lock.yaml` was not updated (`renovate/artifacts` check itself failed with "Artifact file update failure"). `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE` (specifier mismatch: lockfile 0.27.1 vs manifest 0.27.2), failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Repo also carries `patches/node-ical@0.27.1.patch` pinned via `pnpm-workspace.yaml`'s `patchedDependencies`; the same upstream type bug (`declare const` inside module block in `node-ical.d.ts`) exists in 0.27.2, so the patch still applies cleanly once renamed/repinned. Fix: renamed patch to `node-ical@0.27.2.patch`, repinned in `pnpm-workspace.yaml`, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install --frozen-lockfile` (clean), `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/book000/rss-deliver/pull/2796 — all 6 checks (Node CI setup/node-ci/Check finished, Analyze actions/javascript-typescript, CodeQL) passed on the fix PR's own CI run, no unrelated failures.
+- dependency currency: `tar-stream` proposed 3.2.1, latest 3.2.1 — current, no special handling.
+- detail: PR bumps `tar-stream` 3.2.0 → 3.2.1, which bumps its transitive `streamx` dependency to 2.28.1. streamx 2.28.1 tightens the `on()`/`EventHandler` typings to a contravariant `(data: unknown) => R`, so the existing `stream.on('data', (chunk: { toString: () => string }) => ...)` handler in `src/amazon.ts:350` no longer type-checks (`TS2345`). `pnpm run lint:tsc` fails, failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bumped `tar-stream` to 3.2.1 and retyped the handler param as `unknown`, cast to `Buffer` inside (chunks are Buffers at runtime; behavior unchanged). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/book000/kindle-booklog/pull/2576 — all checks (13/13) passed on the fix PR's own CI run, no unrelated failures.
 
 ## Queue
 
@@ -48,14 +48,13 @@ in-flight:
   - slot: investigator-book000-niconico-mylist-video-checker-2716
     target: book000/niconico-mylist-video-checker#2716
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-book000-rss-deliver-2787
-    target: book000/rss-deliver#2787
+  - slot: investigator-book000-twitter-auto-spam-crawler-637
+    target: book000/twitter-auto-spam-crawler#637
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-tomacheese-fauxcord-314
     target: tomacheese/fauxcord#314
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/twitter-auto-spam-crawler#637 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/moneyforward-collector#2672 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/chrome-response-recorder#583 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/create-ts#221 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -111,7 +110,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 21 (fixed=21 skipped=0 blocked=0)
+done this sweep: 22 (fixed=22 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
