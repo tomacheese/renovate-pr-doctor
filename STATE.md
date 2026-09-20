@@ -39,9 +39,9 @@ slots; refill loop in progress.
 
 ### tomacheese/tomachi-emojis-sync-perms#2594
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/collect-points#758`/`book000/pixivts#1928` etc. The `@book000/eslint-config` 1.16.67 bump enables `unicorn/prefer-continue`, newly flagging one pre-existing violation in `src/discord.ts:106` (an `if` wrapping the remainder of the `for` loop body). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`.
+- detail: Same root-cause pattern as `tomacheese/collect-points#758`/`book000/pixivts#1928` etc. The `@book000/eslint-config` 1.16.67 bump enables `unicorn/prefer-continue`, newly flagging one pre-existing violation in `src/discord.ts:106` (an `if` wrapping the remainder of the `for` loop body). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: inverted the condition and replaced the wrapping `if` with an early `continue` (no version bump included in this fix PR — confirmed with a local temporary bump that this exact change is what the new eslint-config rule requires, then reverted the bump). Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm lint` clean (both with old and temporarily-bumped eslint-config), `pnpm test` 14/14 passing. Fix PR: https://github.com/tomacheese/tomachi-emojis-sync-perms/pull/2599 — awaiting CI confirmation.
 
 ## Queue
 
