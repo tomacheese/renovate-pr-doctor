@@ -13,9 +13,9 @@ slots; refill loop in progress.
 
 ### tomacheese/telcheck#2635
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 7 pre-existing `if` statements (in `src/main.ts`, `src/utils/nvr510.ts`, `src/utils/search-number.ts`, `src/utils/web-push.ts`) under `unicorn/prefer-ternary`. `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Confident fix: convert the flagged `if` statements to ternary expressions (eslint reports 6/7 auto-fixable).
+- detail: The eslint-config bump (1.16.66 → 1.16.67) updates `eslint-plugin-unicorn` to v75, which newly flags 7 pre-existing `if` statements (in `src/main.ts`, `src/utils/nvr510.ts`, `src/utils/search-number.ts`, `src/utils/web-push.ts`) under `unicorn/prefer-ternary`. `pnpm run lint` (eslint step) fails, which fails both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, converted the 7 flagged `if` statements to ternary expressions (6/7 via `eslint --fix`, 1 by hand in `src/utils/nvr510.ts` due to an interleaved comment), reformatted with prettier. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean), `npx depcheck` (no issues). Fix PR: https://github.com/tomacheese/telcheck/pull/2640 — waiting on its CI.
 
 ### tomacheese/fauxcord#314
 
