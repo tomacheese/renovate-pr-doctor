@@ -23,6 +23,12 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/pex-crawler#2155`/`book000/pixivts#1928` (not the pnpm-v12 workspace-settings issue seen in `tomacheese/watch-vrchat-user#308` — different failure mode entirely). The eslint-config 1.16.67 bump newly flags 8 pre-existing lint violations (unicorn/prefer-early-return, unicorn/prefer-ternary x4, unicorn/prefer-smaller-scope, unicorn/no-immediate-mutation) across `src/core/calendar-sync.ts`, `src/core/following.ts`, `src/core/output.ts`, `src/infra/cycletls.ts`, `src/infra/storage.ts`. `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`.
 
+### tomacheese/watch-quicpay#2525
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Different root cause than the earlier `tomacheese/watch-quicpay#2492` (pnpm-v12 workspace-settings issue). The eslint-config 1.16.67 bump pulls in `eslint-plugin-unicorn` 74.0.0 -> 75.0.0, which newly flags a pre-existing `unicorn/prefer-early-return` violation in `src/discord.ts` (the `if (token && channel_id) { ...rest of function... }` block). `pnpm run lint` fails, failing `Node CI / node-ci (.)` and its downstream `Check finished Node CI`.
+
 ### book000/fixdevcontainer#361
 
 - checkpoint: completed
