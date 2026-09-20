@@ -19,15 +19,9 @@ slots; refill loop in progress.
 
 ### book000/web-session-tracer#148
 
-- checkpoint: root-cause-identified
+- checkpoint: fix-pr-opened
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
-- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump pulls in a newer `eslint-plugin-unicorn` that newly flags 4 pre-existing lint violations in `src/tracer/session-manager.ts` (3x `unicorn/prefer-early-return` at lines 103/127/325, 1x `unicorn/no-immediate-mutation` at line 259). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`.
-
-### book000/create-ts#221
-
-- checkpoint: completed
-- dependency currency: `vitest` proposed 5.0.1, latest 5.0.1 — current, no special handling.
-- detail: Renovate bumps vitest `4.1.11` → `5.0.1`, which pulls in `tinybench@6.1.4` as a new transitive dependency. `tinybench`'s `dist/index.d.ts` references `DOMHighResTimeStamp` (a DOM-lib type), but this project's `tsconfig.json` only has `"lib": ["ESNext"]` (no DOM lib), so `tsc` fails type-checking that third-party declaration file with `TS2304: Cannot find name 'DOMHighResTimeStamp'`. This fails `lint:tsc`, which fails `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: added `"skipLibCheck": true` to `tsconfig.json` (standard mitigation for errors originating inside third-party `.d.ts` files, not project source) — targeted at `main`, independent of the vitest bump itself, so it lands ahead of PR #221's rebase. Had push access — pushed branch directly, no fork needed. Verified locally: on `main` (vitest 4.1.11, unaffected) `lint`+`test` still pass; on PR #221's branch (vitest 5.0.1) with the same change cherry-picked, `tsc` passes cleanly. Fix PR: https://github.com/book000/create-ts/pull/275 — CI confirmed green (all 6 checks passed, no unrelated failures).
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump pulls in a newer `eslint-plugin-unicorn` that newly flags 4 pre-existing lint violations: `src/tracer/page-tracer.ts` (2x `unicorn/prefer-early-return` at lines 127/325, 1x `unicorn/no-immediate-mutation` at line 259) and `src/tracer/session-manager.ts` (1x `unicorn/prefer-early-return` at line 103). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`. Fix: bumped `@book000/eslint-config` to 1.16.67, rewrote the `prefer-early-return` sites as guard-clause early returns (2 auto-fixed by `eslint --fix`, 1 identical by hand), and the `no-immediate-mutation` site as a conditional-spread object literal instead of post-construction property assignment. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm run lint` (prettier+eslint+tsc, clean; no test suite exists in this repo). Fix PR: https://github.com/book000/web-session-tracer/pull/150 — waiting on CI.
 
 ### jaoafa/watch-guilds#2312
 
@@ -48,14 +42,13 @@ in-flight:
   - slot: investigator-book000-web-session-tracer-148
     target: book000/web-session-tracer#148
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
-  - slot: investigator-book000-create-ts-221
-    target: book000/create-ts#221
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
+  - slot: investigator-jaoafa-jaotan-ts-2268
+    target: jaoafa/jaotan.ts#2268
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI
   - slot: investigator-book000-node-utils-1646
     target: book000/node-utils#1646
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - jaoafa/jaotan.ts#2268 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/vrcx-web-server#1203 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/pex-crawler#2155 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (pex-crawler, linux/amd64),Docker CI / Docker build (pex-crawler, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/watch-discord-dev-changes#2335 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-discord-dev-changes, linux/amd64),Docker CI / Docker build (watch-discord-dev-changes, linux/arm64),Docker CI / Check finished Docker CI]
@@ -104,7 +97,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 28 (fixed=28 skipped=0 blocked=0)
+done this sweep: 29 (fixed=29 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
