@@ -23,19 +23,19 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Confident fix: apply eslint `--fix` (38/41 auto-fixable) and manually fix the remaining ~3.
 
-### tomacheese/watch-follow-follower#703
+### book000/rss-deliver#2787
 
-- checkpoint: completed
-- dependency currency: `pnpm` proposed 12.4.2, latest 12.5.1 (unexplained minor gap) — bumped to 12.5.1 in fix PR.
-- detail: Same root-cause pattern as `tomacheese/samechan-crawler#3429`. PR only bumps `packageManager` in `package.json` from `pnpm@11.27.0` to `pnpm@12.4.2`. Repo's `pnpm-workspace.yaml` still sets `confirmModulesPurge: false`, a pnpm-v11-only setting pnpm 12 no longer recognizes; `pnpm install`/`pnpm fetch` fails with `ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS`, failing `Node CI / node-ci (.)` and both `Docker CI / Docker build` matrix legs (amd64/arm64), and their downstream "Check finished" jobs. Fix: removed `confirmModulesPurge: false` from `pnpm-workspace.yaml`, bumped `packageManager` to `pnpm@12.5.1`, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_UNRECOGNIZED_WORKSPACE_SETTINGS), `pnpm run lint` (prettier+eslint+tsc, clean). Fix PR: https://github.com/tomacheese/watch-follow-follower/pull/736 — all checks passed on the fix PR's own CI run (Node CI, Docker CI amd64/arm64, hadolint, CodeQL).
+- checkpoint: root-cause-identified
+- dependency currency: `node-ical` proposed 0.27.2, latest 0.27.2 — current, no special handling.
+- detail: PR only bumps `node-ical` to 0.27.2 in `package.json`, but `pnpm-lock.yaml` was not updated (`renovate/artifacts` check itself failed with "Artifact file update failure"). `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE` (specifier mismatch: lockfile 0.27.1 vs manifest 0.27.2), failing `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Confident fix: regenerate `pnpm-lock.yaml` via `pnpm install --lockfile-only` (or plain `pnpm install`).
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-tomacheese-watch-follow-follower-703
-    target: tomacheese/watch-follow-follower#703
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-follow-follower, linux/amd64),Docker CI / Docker build (watch-follow-follower, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-book000-kindle-booklog-2510
+    target: book000/kindle-booklog#2510
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
@@ -49,7 +49,6 @@ in-flight:
     target: tomacheese/fauxcord#314
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - book000/kindle-booklog#2510 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/niconico-mylist-video-checker#2716 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/twitter-auto-spam-crawler#637 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/moneyforward-collector#2672 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -107,7 +106,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 19 (fixed=19 skipped=0 blocked=0)
+done this sweep: 20 (fixed=20 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
