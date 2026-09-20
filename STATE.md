@@ -23,18 +23,30 @@ slots; refill loop in progress.
 - dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — waiting on CI.
 
+### book000/web-session-tracer#148
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump pulls in a newer `eslint-plugin-unicorn` that newly flags 4 pre-existing lint violations in `src/tracer/session-manager.ts` (3x `unicorn/prefer-early-return` at lines 103/127/325, 1x `unicorn/no-immediate-mutation` at line 259). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and its downstream `Node CI / Check finished Node CI`.
+
+### jaoafa/watch-guilds#2312
+
+- checkpoint: root-cause-identified
+- dependency currency: `@book000/eslint-config` proposed 1.16.67, latest 1.16.67 — current, no special handling.
+- detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`book000/pixivts#1928`. The eslint-config bump newly flags 8 pre-existing `unicorn/prefer-ternary` violations across `src/commands/remove-channel.ts`, `src/commands/set-channel.ts`, `src/emojis-caches.ts`, `src/events/sticker-update.ts` (x2), `src/list-emojis.ts` (x3). `pnpm run lint` (eslint step) fails, failing both `Node CI / node-ci (.)` and downstream `Node CI / Check finished Node CI`. Fix: bump `@book000/eslint-config` to 1.16.67, run `eslint --fix` (all 8 auto-fixable). In progress.
+
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-book000-moneyforward-collector-2672
-    target: book000/moneyforward-collector#2672
+  - slot: investigator-jaoafa-watch-guilds-2312
+    target: jaoafa/watch-guilds#2312
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-book000-pixivts-1928
     target: book000/pixivts#1928
     checks: node-ci,Check finished Node CI
-  - slot: investigator-book000-chrome-response-recorder-583
-    target: book000/chrome-response-recorder#583
+  - slot: investigator-book000-web-session-tracer-148
+    target: book000/web-session-tracer#148
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
   - slot: investigator-book000-create-ts-221
     target: book000/create-ts#221
@@ -43,8 +55,6 @@ in-flight:
     target: tomacheese/fauxcord#314
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - jaoafa/watch-guilds#2312 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
-  - book000/web-session-tracer#148 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/node-utils#1646 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - jaoafa/jaotan.ts#2268 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (jaotan.ts, linux/amd64),Docker CI / Docker build (jaotan.ts, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/vrcx-web-server#1203 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (vrcx-web-server, linux/amd64),Docker CI / Check finished Docker CI]
@@ -95,7 +105,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 25 (fixed=25 skipped=0 blocked=0)
+done this sweep: 27 (fixed=27 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
