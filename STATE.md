@@ -35,9 +35,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-vrchat-user#537
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `vrchat` proposed 2.23.0, latest 2.24.0 — stale-unexplained-minor, bumped to 2.24.0 in fix PR.
-- detail: NOT the same master-drift root cause as sibling PRs #529/#530/#531/#532/#534/#535/#536 (already fixed by merged #538). This PR's own `renovate/artifacts` check failed ("Artifact file update failure"): Renovate bumped `vrchat` to v2.23.0 in `package.json` but never regenerated `pnpm-lock.yaml`, which still pinned v2.22.9, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE` (failing `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, and both `Docker CI / Docker build` jobs which run the same install). Since v2.23.0 was itself already stale-unexplained-minor (latest 2.24.0), fix bumps directly to v2.24.0 in a new PR against master: regenerated `pnpm-lock.yaml`, re-applied/regenerated the vrchat type-declaration patch (`var version` -> `declare const version` in `dist/index.d.ts`, still needed upstream in 2.24.0) via `pnpm patch`/`pnpm patch-commit`, and added `vrchat@2.24.0` to `minimumReleaseAgeExclude` (required — pnpm's supply-chain policy check rejected the very-recently-published 2.24.0 otherwise). Had push access (SSH push succeeded directly, no fork needed). Verified locally: `pnpm install --frozen-lockfile` passes, `pnpm run lint` clean (tsc/eslint/prettier), `pnpm run test` 13/13 suites, 78/78 tests passing. Fix PR: https://github.com/tomacheese/watch-vrchat-user/pull/542 — waiting on its own CI before marking `completed`. Once merged, Renovate should detect vrchat is already >= proposed and close/self-resolve #537 (same pattern as the #538 siblings).
+- detail: NOT the same master-drift root cause as sibling PRs #529/#530/#531/#532/#534/#535/#536 (already fixed by merged #538). This PR's own `renovate/artifacts` check failed ("Artifact file update failure"): Renovate bumped `vrchat` to v2.23.0 in `package.json` but never regenerated `pnpm-lock.yaml`, which still pinned v2.22.9, so `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE` (failing `Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, and both `Docker CI / Docker build` jobs which run the same install). Since v2.23.0 was itself already stale-unexplained-minor (latest 2.24.0), fix bumps directly to v2.24.0 in a new PR against master: regenerated `pnpm-lock.yaml`, re-applied/regenerated the vrchat type-declaration patch (`var version` -> `declare const version` in `dist/index.d.ts`, still needed upstream in 2.24.0) via `pnpm patch`/`pnpm patch-commit`, and added `vrchat@2.24.0` to `minimumReleaseAgeExclude` (required — pnpm's supply-chain policy check rejected the very-recently-published 2.24.0 otherwise). Had push access (SSH push succeeded directly, no fork needed). Verified locally: `pnpm install --frozen-lockfile` passes, `pnpm run lint` clean (tsc/eslint/prettier), `pnpm run test` 13/13 suites, 78/78 tests passing. Fix PR: https://github.com/tomacheese/watch-vrchat-user/pull/542 — CI confirmed green: all 4 originally-failing checks pass (`Node CI / node-ci (.)`, `Node CI / Check finished Node CI`, both `Docker CI / Docker build` amd64/arm64) plus `Docker CI / Check finished Docker CI`; no unrelated new failures (12/12 non-skipped checks passed). Once merged, Renovate should detect vrchat is already >= proposed and close/self-resolve #537 (same pattern as the #538 siblings).
 
 
 
@@ -58,7 +58,10 @@ done this sweep: 74 (fixed=72 skipped=2 blocked=0)
 
 ## Conflict-fixer queue
 
-in-flight: (none)
+in-flight:
+  - slot: conflict-fixer-tomacheese-sync-claude-folder-153
+    target: tomacheese/sync-claude-folder#153 (fix PR, base repo tomacheese/sync-claude-folder)
+    detected: mergeable=CONFLICTING mergeStateStatus=DIRTY (2026-09-20)
 pending: (none)
 
 ### tomacheese/watch-quicpay#2525
