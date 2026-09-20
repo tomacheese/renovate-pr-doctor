@@ -31,9 +31,9 @@ slots; refill loop in progress.
 
 ### tomacheese/watch-jcb#1609
 
-- checkpoint: fix-pr-opened
+- checkpoint: completed
 - dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (clean), `pnpm run test` (1/1 passed). Fix PR: https://github.com/tomacheese/watch-jcb/pull/1671 — waiting on its CI.
+- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (clean), `pnpm run test` (1/1 passed). Fix PR: https://github.com/tomacheese/watch-jcb/pull/1671 — all 16 real checks passed on CI (Node CI setup/node-ci/Check finished, Docker CI both arch builds/Check finished/Calculate next version, hadolint, Analyze x2, CodeQL, Approval gate, add-reviewer), no unrelated failures.
 
 ## Queue
 
