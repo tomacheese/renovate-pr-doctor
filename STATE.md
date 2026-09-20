@@ -11,12 +11,6 @@ slots; refill loop in progress.
 
 (populated per-PR as Investigators/Arbiters/Executors report in)
 
-### tomacheese/get-twitter-birthdays#299
-
-- checkpoint: completed
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
-- detail: jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so pnpm's strict build-script gating fails `pnpm install` with `ERR_PNPM_IGNORED_BUILDS` in both Node CI and Docker CI (both run `pnpm install`). Same root-cause pattern as `tomacheese/booth-purchased-items-manager#1137` and `tomacheese/watch-jcb#1609`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (no test files, passWithNoTests). Fix PR: https://github.com/tomacheese/get-twitter-birthdays/pull/335 — all 12 real checks passed on CI (Node CI setup/node-ci/Check finished, Docker CI both arch builds/Check finished/Calculate next version, hadolint/Analyze x2/CodeQL, Approval gate, add-reviewer), no unrelated failures.
-
 ### tomacheese/telcheck#2635
 
 - checkpoint: root-cause-identified
@@ -37,17 +31,17 @@ slots; refill loop in progress.
 
 ### tomacheese/sync-claude-folder#116
 
-- checkpoint: root-cause-identified
-- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — will bump to 30.5.2 in fix PR.
-- detail: Same root-cause pattern as `tomacheese/get-twitter-birthdays#299` / `tomacheese/booth-purchased-items-manager#1137` / `tomacheese/watch-jcb#1609`. jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS` in `Node CI / node-ci (.)`, which fails downstream `Node CI / Check finished Node CI`. Fix: add `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bump `jest` to 30.5.2, regenerate `pnpm-lock.yaml`.
+- checkpoint: fix-pr-opened
+- dependency currency: `jest` proposed 30.5.1, latest 30.5.2 (unexplained minor gap) — bumped to 30.5.2 in fix PR.
+- detail: Same root-cause pattern as `tomacheese/get-twitter-birthdays#299` / `tomacheese/booth-purchased-items-manager#1137` / `tomacheese/watch-jcb#1609`. jest 30.5.x pulls in a new transitive dep `@parcel/watcher@2.6.0` with a native build/postinstall script. `pnpm-workspace.yaml`'s `allowBuilds` allowlist only has `esbuild`/`unrs-resolver`, so `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS` in `Node CI / node-ci (.)`, which fails downstream `Node CI / Check finished Node CI`. Fix: added `@parcel/watcher: true` to `allowBuilds` in `pnpm-workspace.yaml`, bumped `jest` to 30.5.2, regenerated `pnpm-lock.yaml`. Had push access — pushed branch directly, no fork needed. Verified locally: `pnpm install` (no ERR_PNPM_IGNORED_BUILDS), `pnpm run lint` (prettier+eslint+tsc, clean), `pnpm test` (4 suites, 36 tests, all passed). Fix PR: https://github.com/tomacheese/sync-claude-folder/pull/152 — waiting on its CI.
 
 ## Queue
 
 concurrency: 5
 in-flight:
-  - slot: investigator-tomacheese-get-twitter-birthdays-299
-    target: tomacheese/get-twitter-birthdays#299
-    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (get-twitter-birthdays, linux/amd64),Docker CI / Docker build (get-twitter-birthdays, linux/arm64),Docker CI / Check finished Docker CI
+  - slot: investigator-tomacheese-watch-follow-follower-703
+    target: tomacheese/watch-follow-follower#703
+    checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-follow-follower, linux/amd64),Docker CI / Docker build (watch-follow-follower, linux/arm64),Docker CI / Check finished Docker CI
   - slot: investigator-tomacheese-samechan-crawler-3429
     target: tomacheese/samechan-crawler#3429
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (samechan-crawler, linux/amd64),Docker CI / Check finished Docker CI
@@ -61,7 +55,6 @@ in-flight:
     target: tomacheese/fauxcord#314
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI
 pending (not yet dispatched, in order):
-  - tomacheese/watch-follow-follower#703 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-follow-follower, linux/amd64),Docker CI / Docker build (watch-follow-follower, linux/arm64),Docker CI / Check finished Docker CI]
   - book000/pixivts#1928 [checks: node-ci,Check finished Node CI]
   - book000/twitter-rss#3770 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
   - book000/rss-deliver#2787 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI]
@@ -123,7 +116,7 @@ pending (not yet dispatched, in order):
   - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI]
-done this sweep: 15 (fixed=15 skipped=0 blocked=0)
+done this sweep: 16 (fixed=16 skipped=0 blocked=0)
 
 ## Conflict-fixer queue
 
