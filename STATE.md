@@ -18,11 +18,6 @@ slots; refill loop in progress.
 - detail: Same root-cause pattern as `tomacheese/fauxcord#314`/`tomacheese/telcheck#2635`. The eslint-config bump newly flags 42 pre-existing lint violations (41 errors, 1 warning) across `packages/core/src/*.ts`, `packages/core/tests/**`, `packages/db-mysql/tests/*.ts`, and `scripts/check-pr-language.mjs` (`unicorn/prefer-ternary`, `unicorn/prefer-early-return`, one unused eslint-disable directive). `pnpm run lint` (eslint step) fails, failing both `node-ci` and its downstream `Check finished Node CI`. Base branch is `develop` (not `main`). Fix: included the eslint-config 1.16.67 bump, ran `eslint . --fix` (38/41 auto-fixed) and hand-converted the remaining 3 `unicorn/prefer-early-return` cases (`novels.e2e.test.ts`, `illusts.test.ts`, `recorder.test.ts`). No push access to `book000/pixivts` — forked to `akubiusa/pixivts`, pushed there. Verified locally: `pnpm run lint` clean, `pnpm run test` 234/234 passing. Fix PR: https://github.com/book000/pixivts/pull/1931 — CI's `node-ci` job has been stuck in GitHub's `waiting` status (not `pending`/running) since ~11:03 UTC: the repo's workflow requires manual Environment approval (`fork-pr-build`) for any PR whose head repo differs from `book000/pixivts`, which is exactly the case here since I had no push access and opened from a fork. Only a `book000/pixivts` maintainer can click Approve on the Actions run; this is a normal, expected gate for external/fork PRs, not a code defect. Still `fix-pr-opened`, not `completed` — CI hasn't actually executed the lint fix yet.
 
 
-### tomacheese/watch-vrchat-user#536
-
-- checkpoint: completed
-- dependency currency: not run/blocking — same pre-existing master-level drift as siblings, unrelated to this PR's own bump (`renovate/prettier-3.x` branch).
-- detail: Same pre-existing `master`-level `pnpm-lock.yaml`/`allowBuilds` drift as siblings `#529`-`#535` (stale `vrchat@2.22.8` patch + missing `@parcel/watcher` in `allowBuilds`). No new fix PR opened (would have duplicated #538); on fresh check the PR had already picked up the fixed `master` (merged fix #538), all 14 checks passed, and the PR is already MERGED. No action needed.
 
 ### book000/fixdevcontainer#361
 
@@ -45,22 +40,23 @@ in-flight:
   - slot: investigator-tomacheese-fetch-youtube-bgm-3028
     target: tomacheese/fetch-youtube-bgm#3028
     checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI
-  - slot: investigator-tomacheese-watch-vrchat-user-536
-    target: tomacheese/watch-vrchat-user#536
+  - slot: investigator-tomacheese-watch-vrchat-user-537
+    target: tomacheese/watch-vrchat-user#537
     checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI
 pending (not yet dispatched, in order):
-  - tomacheese/watch-vrchat-user#537 [checks: Node CI / node-ci (.),Node CI / Check finished Node CI,Docker CI / Docker build (watch-vrchat-user, linux/amd64),Docker CI / Docker build (watch-vrchat-user, linux/arm64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #536)
   - tomacheese/fetch-youtube-bgm#3029 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3028)
   - tomacheese/fetch-youtube-bgm#3030 [checks: Docker CI / Docker build (fetch-youtube-bgm-downloader, linux/amd64),Docker CI / Check finished Docker CI] (held: same-repo serialization vs. in-flight #3028)
-done this sweep: 73 (fixed=71 skipped=2 blocked=0)
+done this sweep: 74 (fixed=72 skipped=2 blocked=0)
 
 ## Conflict-fixer queue
 
-in-flight:
-  - slot: conflict-fixer-tomacheese-watch-quicpay-2531
-    target: tomacheese/watch-quicpay#2531 (fix PR, base repo tomacheese/watch-quicpay)
-    detected: mergeable=CONFLICTING mergeStateStatus=DIRTY (2026-09-20)
+in-flight: (none)
 pending: (none)
+
+### tomacheese/watch-quicpay#2525
+
+- checkpoint: fix-pr-rebased
+- conflict-fixer note: fix PR #2531 (eslint-config 1.16.67 bump + unicorn/prefer-early-return fix in src/discord.ts) went CONFLICTING/DIRTY after other Renovate PRs merged to `master` (incl. `@book000/node-utils` bumps). Rebased `fix/discord-early-return` onto current `origin/master`; only conflict was in `pnpm-lock.yaml` (package.json auto-merged cleanly), resolved by taking master's lockfile and regenerating with `pnpm install --lockfile-only` to reapply the eslint-config 1.16.67 bump — resulting diff matches the PR's original intended change exactly. Verified locally: `pnpm run lint` clean, `tsc` clean, `pnpm test` 1/1 passing. Force-pushed rebased branch. CI re-ran green on all non-skipped checks; PR now `mergeable=MERGEABLE mergeStateStatus=CLEAN`.
 
 ## Escalate-to-user policy
 
