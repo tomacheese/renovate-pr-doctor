@@ -37,11 +37,14 @@ Agent roles used by these skills: `.claude/agents/investigator.md`,
   `repo<TAB>pr_number<TAB>pr_url<TAB>failing_check_names`.
 - `scripts/pr-ci-detail.sh <owner/repo> <pr-number>` — print which checks are
   failing for one PR, with their detail URLs.
+- `scripts/check-dependency-currency.sh` — check whether a Renovate PR
+  proposes a stale (non-latest) dependency version; see
+  `.claude/skills/renovate-maintain/reference/dependency-currency.md`.
 
 Run tests with:
 
 ```bash
-for t in scripts/tests/test-*.sh; do bash "$t" || echo "FAILED: $t"; done
+for t in scripts/tests/test-*.sh scripts/test-check-dependency-currency.sh; do bash "$t" || echo "FAILED: $t"; done
 ```
 
 ## Records

@@ -18,6 +18,7 @@ This repository persists scripts and history permanently (it is a real git repo,
 
 ```
 broken-renovate-prs/
+├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 ├── STATE.md
@@ -116,4 +117,4 @@ polluting its own context.
 **Parallel-execution independence**: each sub-agent works in its own repo and
 its own clone directory, so parallel runs across different repos do not
 conflict. Multiple failing PRs in the *same* repo are serialized (never
-dispatched concurrently) — see `CLAUDE.md`'s "Same-repo serialization" fact.
+dispatched concurrently) — see `AGENTS.md`'s "Same-repo serialization" fact.
