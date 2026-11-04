@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Dependency currency check for one Renovate PR: is it proposing a stale
 # (non-latest) version of the dependency it bumps? See
-# docs/superpowers/specs/2026-07-13-renovate-dependency-currency-design.md
+# .claude/skills/renovate-maintain/reference/dependency-currency.md
 set -euo pipefail
 
 # ---- Pure parsing functions (no network; unit-tested via fixtures) ----

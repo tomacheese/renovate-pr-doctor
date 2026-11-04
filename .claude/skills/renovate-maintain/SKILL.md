@@ -59,7 +59,7 @@ PR progress. Driving a whole-backlog sweep in one invocation additionally
 needs a durable record of *queue* state — which candidates haven't been
 dispatched yet, and which slot each in-flight sub-agent currently occupies
 — so the sweep can resume correctly if the session is interrupted mid-run
-(conversation memory is not trusted; see `CLAUDE.md`'s STATE.md-discipline
+(conversation memory is not trusted; see `AGENTS.md`'s STATE.md-discipline
 note). Maintain this section in `STATE.md`, rewritten every time
 the queue changes (a dispatch, a completion, a slot refill):
 
