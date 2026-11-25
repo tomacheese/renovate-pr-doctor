@@ -141,6 +141,27 @@ assert_eq "numeric identifier precedes alphanumeric" "stale-minor" "$(semver_cla
 assert_eq "longer prerelease wins" "stale-minor" "$(semver_classify 1.2.3-alpha 1.2.3-alpha.1)"
 assert_eq "core version dominates prerelease" "current" "$(semver_classify 2.0.0-rc.1 1.9.9)"
 assert_eq "major prerelease gap" "stale-major" "$(semver_classify 1.9.9 2.0.0-rc.1)"
+# shellcheck disable=SC2329 # Called by latest_docker through the sourced script.
+curl() {
+  printf '%s' "$DOCKER_RESPONSE"
+  printf '%s\n' "${!#}" > "$DOCKER_URL_FILE"
+}
+DOCKER_URL_FILE="$(mktemp)"
+DOCKER_RESPONSE='{"results":[{"name":"latest"},{"name":"3.15.2"},{"name":"3.14.0"}]}'
+actual="$(latest_docker library/python)"
+assert_eq "docker ignores latest and selects a version" "3.15.2" "$actual"
+assert_eq "docker version classification at latest boundary" "current" "$(semver_classify 3.15.2 "$actual")"
+assert_eq "docker newer version remains detectable" "stale-minor" "$(semver_classify 3.15.1 "$actual")"
+assert_eq "docker named namespace path" "https://hub.docker.com/v2/repositories/library/python/tags/?page_size=100&ordering=-last_updated" "$(cat "$DOCKER_URL_FILE")"
+actual="$(latest_docker node)"
+assert_eq "docker official image path" "https://hub.docker.com/v2/repositories/library/node/tags/?page_size=100&ordering=-last_updated" "$(cat "$DOCKER_URL_FILE")"
+DOCKER_RESPONSE='{"results":[{"name":"3.15.2"},{"name":"latest"}]}'
+assert_eq "docker version before latest is retained" "3.15.2" "$(latest_docker node)"
+DOCKER_RESPONSE='{"results":[{"name":"latest"}]}'
+assert_eq "docker latest alone cannot establish a version" "" "$(latest_docker node)"
+assert_eq "docker latest alone produces lookup failure" "lookup-failed" "$(semver_classify 3.15.2 "$(latest_docker node)")"
+rm -f "$DOCKER_URL_FILE"
+unset -f curl
 
 # --- latest_maven's version-selection pipeline: pre-release must not win over stable ---
 actual="$(printf '4.12.0\n4.12.0-rc1\n' | grep -vE -- '-' | sort -V | tail -1)"
