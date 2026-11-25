@@ -7,6 +7,16 @@ source "$DIR/check-dependency-currency.sh"
 
 fail=0
 
+stub_dir="$(mktemp -d)"
+trap 'rm -rf "$stub_dir"' EXIT
+cat >"$stub_dir/curl" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$@" >"$CURL_ARGS_FILE"
+printf '%s\n' '{"dist-tags":{"latest":"1.2.3"},"info":{"version":"1.2.3"},"response":{"docs":[{"v":"1.2.3"}]},"results":[{"name":"1.2.3"}]}'
+EOF
+chmod +x "$stub_dir/curl"
+export PATH="$stub_dir:$PATH" CURL_ARGS_FILE="$stub_dir/curl-args"
+
 assert_eq() {
   local desc="$1" expected="$2" actual="$3"
   if [[ "$expected" == "$actual" ]]; then
@@ -18,6 +28,14 @@ assert_eq() {
     fail=1
   fi
 }
+
+for lookup in 'npm package' 'pip package' 'maven group:artifact' 'docker namespace/repository'; do
+  read -r manager package <<<"$lookup"
+  actual="$(lookup_latest_version "$manager" "$package")"
+  assert_eq "$manager lookup returns version" "1.2.3" "$actual"
+  actual="$(cat "$CURL_ARGS_FILE")"
+  assert_eq "$manager curl timeout arguments" $'-sf\n--connect-timeout\n5\n--max-time\n30' "$(head -n 5 <<<"$actual")"
+done
 
 # --- extract_packages_from_body: single package ---
 single_pkg_body='This PR contains the following updates:

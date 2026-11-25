@@ -142,16 +142,19 @@ semver_classify() {
 # let a failure here abort the script under `set -e` — each ends by
 # guaranteeing a zero exit status.
 
+# Allow 5 seconds to connect and 30 seconds for the complete registry request.
+curl_timeout_args=(--connect-timeout 5 --max-time 30)
+
 latest_npm() {
   local pkg="$1" encoded
   encoded="$(sed 's#/#%2f#' <<<"$pkg")"
-  curl -sf "https://registry.npmjs.org/${encoded}" 2>/dev/null \
+  curl -sf "${curl_timeout_args[@]}" "https://registry.npmjs.org/${encoded}" 2>/dev/null \
     | jq -r '."dist-tags".latest // empty' 2>/dev/null || echo ""
 }
 
 latest_pip() {
   local pkg="$1"
-  curl -sf "https://pypi.org/pypi/${pkg}/json" 2>/dev/null \
+  curl -sf "${curl_timeout_args[@]}" "https://pypi.org/pypi/${pkg}/json" 2>/dev/null \
     | jq -r '.info.version // empty' 2>/dev/null || echo ""
 }
 
@@ -162,7 +165,7 @@ latest_maven() {
   # "1.2.3-alpha" sorts after "1.2.3"), which would otherwise report a
   # pre-release as "latest" and invert semver precedence.
   local g="${1%%:*}" a="${1##*:}"
-  curl -sf "https://search.maven.org/solrsearch/select?q=g:%22${g}%22+AND+a:%22${a}%22&core=gav&rows=200&wt=json" 2>/dev/null \
+  curl -sf "${curl_timeout_args[@]}" "https://search.maven.org/solrsearch/select?q=g:%22${g}%22+AND+a:%22${a}%22&core=gav&rows=200&wt=json" 2>/dev/null \
     | jq -r '.response.docs[].v // empty' 2>/dev/null | grep -vE -- '-' | sort -V | tail -1 || echo ""
 }
 
@@ -188,7 +191,7 @@ latest_docker() {
   # registries fall through to empty (lookup-failed), per the design's
   # graceful-degradation rule.
   local ns="${1%%/*}" repo="${1##*/}"
-  curl -sf "https://hub.docker.com/v2/repositories/${ns}/${repo}/tags/?page_size=100&ordering=-last_updated" 2>/dev/null \
+  curl -sf "${curl_timeout_args[@]}" "https://hub.docker.com/v2/repositories/${ns}/${repo}/tags/?page_size=100&ordering=-last_updated" 2>/dev/null \
     | jq -r '.results[0].name // empty' 2>/dev/null || echo ""
 }
 
