@@ -229,8 +229,11 @@ latest_docker() {
   # registries fall through to empty (lookup-failed), per the design's
   # graceful-degradation rule.
   local ns="${1%%/*}" repo="${1##*/}"
+  if [[ "$1" != */* ]]; then
+    ns="library"
+  fi
   curl -sf "${curl_timeout_args[@]}" "https://hub.docker.com/v2/repositories/${ns}/${repo}/tags/?page_size=100&ordering=-last_updated" 2>/dev/null \
-    | jq -r '.results[0].name // empty' 2>/dev/null || echo ""
+    | jq -r '[.results[].name | select(. != "latest")][0] // empty' 2>/dev/null || echo ""
 }
 
 # lookup_latest_version <manager> <package>
