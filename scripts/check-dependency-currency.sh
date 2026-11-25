@@ -107,6 +107,43 @@ semver_major() {
   echo "${v%%.*}"
 }
 
+# Compare valid SemVer versions, returning -1, 0, or 1.
+_semver_compare() {
+  local left="${1%%+*}" right="${2%%+*}" left_core right_core left_pre right_pre
+  local a b i LC_ALL=C
+  left_core="${left%%-*}"; right_core="${right%%-*}"
+  local -a left_parts right_parts
+  IFS=. read -r -a left_parts <<<"$left_core"
+  IFS=. read -r -a right_parts <<<"$right_core"
+  for i in 0 1 2; do
+    a="${left_parts[$i]}"; b="${right_parts[$i]}"
+    if (( ${#a} < ${#b} )) || { (( ${#a} == ${#b} )) && [[ "$a" < "$b" ]]; }; then echo -1; return; fi
+    if (( ${#a} > ${#b} )) || { (( ${#a} == ${#b} )) && [[ "$a" > "$b" ]]; }; then echo 1; return; fi
+  done
+  if [[ "$left" != *-* && "$right" != *-* ]]; then echo 0; return; fi
+  if [[ "$left" != *-* ]]; then echo 1; return; fi
+  if [[ "$right" != *-* ]]; then echo -1; return; fi
+  left_pre="${left#*-}"; right_pre="${right#*-}"
+  IFS=. read -r -a left_parts <<<"$left_pre"
+  IFS=. read -r -a right_parts <<<"$right_pre"
+  for ((i = 0; i < ${#left_parts[@]} && i < ${#right_parts[@]}; i++)); do
+    a="${left_parts[$i]}"; b="${right_parts[$i]}"
+    [[ "$a" == "$b" ]] && continue
+    if [[ "$a" =~ ^[0-9]+$ && "$b" =~ ^[0-9]+$ ]]; then
+      if (( ${#a} < ${#b} )) || { (( ${#a} == ${#b} )) && [[ "$a" < "$b" ]]; }; then echo -1; else echo 1; fi
+    elif [[ "$a" =~ ^[0-9]+$ ]]; then echo -1
+    elif [[ "$b" =~ ^[0-9]+$ ]]; then echo 1
+    elif [[ "$a" < "$b" ]]; then echo -1
+    else echo 1
+    fi
+    return
+  done
+  if (( ${#left_parts[@]} < ${#right_parts[@]} )); then echo -1
+  elif (( ${#left_parts[@]} > ${#right_parts[@]} )); then echo 1
+  else echo 0
+  fi
+}
+
 # semver_classify <proposed> <latest>: current | stale-minor | stale-major | lookup-failed
 semver_classify() {
   local proposed="$1" latest="$2"
@@ -114,22 +151,21 @@ semver_classify() {
     echo "lookup-failed"
     return
   fi
-  # Compare v-stripped versions -- otherwise a v-prefixed proposed version
-  # (e.g. github-actions "v1.2.3") can rank above an unprefixed, actually
-  # newer latest ("1.2.4") under `sort -V`'s inconsistent handling of a
-  # leading "v", masking a real minor/major gap as "current".
-  local proposed_norm latest_norm
+  local proposed_norm latest_norm newer semver_pattern
   proposed_norm="$(_strip_v_prefix "$proposed")"
   latest_norm="$(_strip_v_prefix "$latest")"
-  if [[ "$proposed_norm" == "$latest_norm" ]]; then
-    echo "current"
-    return
-  fi
-  local newer
-  newer="$(printf '%s\n%s\n' "$proposed_norm" "$latest_norm" | sort -V | tail -1)"
-  if [[ "$newer" == "$proposed_norm" ]]; then
-    echo "current" # the Renovate PR already proposes the newer (or equal) version
-    return
+  semver_pattern='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-([0-9A-Za-z-]+\.)*[0-9A-Za-z-]+)?(\+([0-9A-Za-z-]+\.)*[0-9A-Za-z-]+)?$'
+  if [[ "$proposed_norm" =~ $semver_pattern && "$latest_norm" =~ $semver_pattern ]]; then
+    if [[ "$(_semver_compare "$proposed_norm" "$latest_norm")" != -1 ]]; then
+      echo "current"
+      return
+    fi
+  else
+    newer="$(printf '%s\n%s\n' "$proposed_norm" "$latest_norm" | sort -V | tail -1)"
+    if [[ "$newer" == "$proposed_norm" ]]; then
+      echo "current"
+      return
+    fi
   fi
   if [[ "$(semver_major "$proposed")" != "$(semver_major "$latest")" ]]; then
     echo "stale-major"

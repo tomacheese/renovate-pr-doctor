@@ -114,6 +114,16 @@ assert_eq "already current (equal)" "current" "$(semver_classify 1.2.0 1.2.0)"
 assert_eq "already current (proposed newer than lookup result)" "current" "$(semver_classify 2.0.0 1.9.0)"
 assert_eq "lookup failed (empty latest)" "lookup-failed" "$(semver_classify 1.2.0 "")"
 
+assert_eq "prerelease before release" "stale-minor" "$(semver_classify 1.2.3-rc.1 1.2.3)"
+assert_eq "release after prerelease" "current" "$(semver_classify 1.2.3 1.2.3-rc.1)"
+assert_eq "prerelease with metadata before release" "stale-minor" "$(semver_classify v1.2.3-rc.1+build 1.2.3+other)"
+assert_eq "build metadata does not affect precedence" "current" "$(semver_classify 1.2.3+aaa 1.2.3+zzz)"
+assert_eq "numeric prerelease identifiers" "stale-minor" "$(semver_classify 1.2.3-rc.2 1.2.3-rc.11)"
+assert_eq "numeric identifier precedes alphanumeric" "stale-minor" "$(semver_classify 1.2.3-1 1.2.3-alpha)"
+assert_eq "longer prerelease wins" "stale-minor" "$(semver_classify 1.2.3-alpha 1.2.3-alpha.1)"
+assert_eq "core version dominates prerelease" "current" "$(semver_classify 2.0.0-rc.1 1.9.9)"
+assert_eq "major prerelease gap" "stale-major" "$(semver_classify 1.9.9 2.0.0-rc.1)"
+
 # --- latest_maven's version-selection pipeline: pre-release must not win over stable ---
 actual="$(printf '4.12.0\n4.12.0-rc1\n' | grep -vE -- '-' | sort -V | tail -1)"
 assert_eq "maven pipeline: stable beats pre-release regardless of input order" "4.12.0" "$actual"
