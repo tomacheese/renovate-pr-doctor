@@ -66,11 +66,13 @@ infer_manager_from_files() {
   local f
   while IFS= read -r f || [[ -n "$f" ]]; do
     case "$f" in
+      .github/workflows/*.yml|.github/workflows/*.yaml) actions=1; continue ;;
+    esac
+    case "${f##*/}" in
       package.json|package-lock.json|pnpm-lock.yaml|yarn.lock) npm=1 ;;
       pom.xml) maven=1 ;;
       requirements*.txt|pyproject.toml|poetry.lock|Pipfile|Pipfile.lock) pip=1 ;;
-      Dockerfile|Dockerfile.*|docker-compose.yml|docker-compose.yaml) docker=1 ;;
-      .github/workflows/*.yml|.github/workflows/*.yaml) actions=1 ;;
+      Dockerfile|Dockerfile.*|docker-compose.yml|docker-compose.yaml|compose.yml|compose.yaml) docker=1 ;;
     esac
   done
   local hits=$((npm + maven + pip + docker + actions))
