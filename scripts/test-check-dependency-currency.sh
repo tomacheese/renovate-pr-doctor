@@ -80,8 +80,26 @@ assert_eq "npm manifest files" "npm" "$actual"
 actual="$(printf 'pom.xml\n' | infer_manager_from_files)"
 assert_eq "maven manifest file" "maven" "$actual"
 
+for manifest in viewer/package.json a/b/package-lock.json a/pnpm-lock.yaml a/yarn.lock; do
+  assert_eq "nested npm manifest: $manifest" "npm" "$(infer_manager_from_files <<<"$manifest")"
+done
+assert_eq "nested maven manifest" "maven" "$(infer_manager_from_files <<<'service/pom.xml')"
+for manifest in requirements-dev.txt pyproject.toml poetry.lock Pipfile Pipfile.lock; do
+  assert_eq "nested pip manifest: $manifest" "pip" "$(infer_manager_from_files <<<"service/$manifest")"
+done
+for manifest in Dockerfile Dockerfile.prod docker-compose.yml docker-compose.yaml compose.yml compose.yaml; do
+  assert_eq "root docker manifest: $manifest" "docker" "$(infer_manager_from_files <<<"$manifest")"
+  assert_eq "nested docker manifest: $manifest" "docker" "$(infer_manager_from_files <<<"service/$manifest")"
+done
+assert_eq "nested mixed ecosystems -> unknown" "unknown" \
+  "$(printf 'viewer/package.json\nservice/pom.xml\n' | infer_manager_from_files)"
+assert_eq "nested workflow is not a root workflow" "unknown" \
+  "$(infer_manager_from_files <<<'service/.github/workflows/ci.yml')"
+
 actual="$(printf '.github/workflows/ci.yml\n' | infer_manager_from_files)"
 assert_eq "github-actions workflow file" "github-actions" "$actual"
+assert_eq "workflow with compose filename" "github-actions" \
+  "$(infer_manager_from_files <<<'.github/workflows/compose.yml')"
 
 actual="$(printf 'package.json\npom.xml\n' | infer_manager_from_files)"
 assert_eq "mixed ecosystems -> unknown" "unknown" "$actual"
